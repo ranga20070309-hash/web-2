@@ -17,11 +17,9 @@
     </div>
 
     <div id="background-container">
-        <div id="bg-motion-layer">
-            <video id="bg-video" autoplay loop muted playsinline class="hidden"></video>
-            <div id="background-img"></div>
-        </div>
+        <div id="vr-background"></div>
         <div id="background-overlay"></div>
+        <div id="vr-fallback"></div>
     </div>
 
     <div id="rain-container"></div>
@@ -104,6 +102,7 @@
         <source src="" type="audio/mpeg" id="audio-source">
     </audio>
 
+    <script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js"></script>
     <script src="config.js"></script>
     <script src="script.js"></script>
 </body>
