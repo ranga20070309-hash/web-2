@@ -18,16 +18,16 @@ document.addEventListener("DOMContentLoaded", () => {
         if (isDeleting) {
             document.title = currentText + "|";
             titleIndex--;
-            if (titleIndex < 0) { 
-                isDeleting = false; 
-                titleIndex = 0; 
+            if (titleIndex < 0) {
+                isDeleting = false;
+                titleIndex = 0;
             }
         } else {
             document.title = currentText + "|";
             titleIndex++;
-            if (titleIndex > titleText.length + 3) { 
-                isDeleting = true; 
-                titleIndex = titleText.length; 
+            if (titleIndex > titleText.length + 3) {
+                isDeleting = true;
+                titleIndex = titleText.length;
             }
         }
     }, 300);
@@ -36,7 +36,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const mediaUrl = CONFIG.backgroundMedia;
     const bgVideo = document.getElementById('bg-video');
     const bgImg = document.getElementById('background-img');
-    const bgOrbWrap = document.getElementById('bg-orb-wrap');
+    const bgMotionLayer = document.getElementById('bg-motion-layer');
 
     const isVideo = mediaUrl.match(/\.(mp4|webm|ogg)$/i);
 
@@ -54,45 +54,60 @@ document.addEventListener("DOMContentLoaded", () => {
     document.documentElement.style.setProperty('--primary-color', CONFIG.primaryColor);
     document.documentElement.style.setProperty('--primary-glow', CONFIG.primaryColor + 'B3');
 
-    // Background 3D mouse movement
-    let mouseX = 0;
-    let mouseY = 0;
-    let currentX = 0;
-    let currentY = 0;
-    let currentRotateX = 0;
-    let currentRotateY = 0;
+    // VR-like background movement
+    let targetMouseX = 0;
+    let targetMouseY = 0;
+    let currentMouseX = 0;
+    let currentMouseY = 0;
+    let currentRotX = 0;
+    let currentRotY = 0;
 
     const isTouchDevice = window.matchMedia("(pointer: coarse)").matches;
+    const autoPanStrength = isTouchDevice ? 10 : 26;
+    const mouseMoveStrengthX = isTouchDevice ? 0 : 18;
+    const mouseMoveStrengthY = isTouchDevice ? 0 : 10;
+    const rotateStrength = isTouchDevice ? 0 : 1.8;
 
-    if (!isTouchDevice && bgOrbWrap) {
-        document.addEventListener('mousemove', (e) => {
-            const x = (e.clientX / window.innerWidth) - 0.5;
-            const y = (e.clientY / window.innerHeight) - 0.5;
+    document.addEventListener('mousemove', (e) => {
+        if (isTouchDevice) return;
 
-            // move opposite to cursor
-            mouseX = -x * 42;
-            mouseY = -y * 42;
-        });
+        const x = (e.clientX / window.innerWidth) - 0.5;
+        const y = (e.clientY / window.innerHeight) - 0.5;
 
-        function animateBackgroundOrb() {
-            currentX += (mouseX - currentX) * 0.06;
-            currentY += (mouseY - currentY) * 0.06;
+        // opposite side movement
+        targetMouseX = -x * mouseMoveStrengthX;
+        targetMouseY = -y * mouseMoveStrengthY;
+    });
 
-            currentRotateY += (((currentX * 0.18)) - currentRotateY) * 0.08;
-            currentRotateX += (((currentY * -0.18)) - currentRotateX) * 0.08;
+    function animateBackgroundMotion(time) {
+        const t = time * 0.00028;
 
-            bgOrbWrap.style.transform = `
-                translate3d(calc(-50% + ${currentX}px), calc(-50% + ${currentY}px), 0)
-                rotateX(${currentRotateX}deg)
-                rotateY(${currentRotateY}deg)
-                scale(1.02)
-            `;
+        // left-right slow pan like VR turning
+        const autoPanX = Math.sin(t) * autoPanStrength;
 
-            requestAnimationFrame(animateBackgroundOrb);
-        }
+        currentMouseX += (targetMouseX - currentMouseX) * 0.06;
+        currentMouseY += (targetMouseY - currentMouseY) * 0.06;
 
-        animateBackgroundOrb();
+        const finalX = autoPanX + currentMouseX;
+        const finalY = currentMouseY;
+
+        const targetRotY = ((finalX / 30) * rotateStrength);
+        const targetRotX = ((-finalY / 24) * rotateStrength);
+
+        currentRotY += (targetRotY - currentRotY) * 0.05;
+        currentRotX += (targetRotX - currentRotX) * 0.05;
+
+        bgMotionLayer.style.transform = `
+            translate3d(${finalX}px, ${finalY}px, 0)
+            rotateX(${currentRotX}deg)
+            rotateY(${currentRotY}deg)
+            scale(1.06)
+        `;
+
+        requestAnimationFrame(animateBackgroundMotion);
     }
+
+    requestAnimationFrame(animateBackgroundMotion);
 
     // Setup Fallbacks while Lanyard loads
     const fallbackAvatar = CONFIG.fallbackDiscordAvatarUrl;
@@ -144,6 +159,7 @@ document.addEventListener("DOMContentLoaded", () => {
                         if (customStatus) {
                             let text = "";
                             const statusIcon = document.getElementById('d-status-icon');
+
                             if (customStatus.emoji) {
                                 if (customStatus.emoji.id) {
                                     const ext = customStatus.emoji.animated ? 'gif' : 'png';
@@ -156,6 +172,7 @@ document.addEventListener("DOMContentLoaded", () => {
                             } else {
                                 statusIcon.style.display = 'none';
                             }
+
                             if (customStatus.state) text += customStatus.state;
                             document.getElementById('d-status-text').textContent = text || (data.discord_status === 'offline' ? 'Offline' : 'Online');
                         } else {
@@ -170,9 +187,10 @@ document.addEventListener("DOMContentLoaded", () => {
                 setTimeout(connectLanyard, 5000);
             };
         }
+
         connectLanyard();
     } else {
-        document.getElementById('d-status-text').textContent = "Please add your Discord ID in config.js (Read Instructions)";
+        document.getElementById('d-status-text').textContent = "Please add your Discord ID in config.js";
     }
 
     document.getElementById('link-spotify').href = CONFIG.socials.spotify;
@@ -182,6 +200,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // Music Src inject
     document.getElementById('song-title-text').textContent = CONFIG.songTitle;
     document.getElementById('audio-source').src = CONFIG.audioSrc;
+
     const albumArtEl = document.getElementById('player-album-art');
     if (albumArtEl && CONFIG.albumArt) {
         albumArtEl.src = CONFIG.albumArt;
@@ -223,10 +242,10 @@ document.addEventListener("DOMContentLoaded", () => {
             audio.volume = 0.5;
             let playPromise = audio.play();
             if (playPromise !== undefined) {
-                playPromise.then(_ => {
+                playPromise.then(() => {
                     isPlaying = true;
                     updatePlayPauseIcon();
-                }).catch(error => {
+                }).catch(() => {
                     console.log("Audio permission denied. Muted autoplay fallback missing.");
                 });
             }
@@ -243,6 +262,7 @@ document.addEventListener("DOMContentLoaded", () => {
         volumeSlider.addEventListener('input', (e) => {
             const vol = e.target.value / 100;
             audio.volume = vol;
+
             if (vol === 0) {
                 audio.muted = true;
                 audioToggle.innerHTML = '<i class="fa-solid fa-volume-xmark"></i>';
@@ -305,25 +325,23 @@ document.addEventListener("DOMContentLoaded", () => {
 
     function createRaindrop() {
         if (document.hidden) return;
+
         const drop = document.createElement('div');
         drop.classList.add('raindrop');
-
         drop.style.left = Math.random() * 100 + 'vw';
 
         const duration = Math.random() * 0.4 + 0.3;
         drop.style.animationDuration = duration + 's';
-
         drop.style.opacity = Math.random() * 0.4 + 0.1;
         drop.style.height = (Math.random() * 30 + 50) + 'px';
 
         rainContainer.appendChild(drop);
-
         setTimeout(() => drop.remove(), duration * 1000);
     }
 
     setInterval(createRaindrop, 60);
 
-    // Live Shared Counter for visits using API
+    // Views Counter
     const uniqueKey = "guns_bio_" + CONFIG.name.replace(/[^a-zA-Z0-9]/g, '');
 
     let viewsCount = CONFIG.viewsStartingCount;
@@ -340,7 +358,7 @@ document.addEventListener("DOMContentLoaded", () => {
             viewsCount = total;
             document.getElementById('views').textContent = formatNumber(viewsCount);
         })
-        .catch(err => {
+        .catch(() => {
             console.log("Using Local Storage for Views Counter");
             let localViews = parseInt(localStorage.getItem('fakeViewsCounter') || CONFIG.viewsStartingCount);
             localViews += Math.floor(Math.random() * 5) + 1;
