@@ -385,18 +385,31 @@ document.addEventListener("DOMContentLoaded", () => {
 
         const drop = document.createElement("div");
         drop.classList.add("raindrop");
-        drop.style.left = Math.random() * 100 + "vw";
+        // Start from -20vw up to 130vw to account for the angled fall
+        drop.style.left = (Math.random() * 150 - 20) + "vw";
 
-        const duration = Math.random() * 0.4 + 0.3;
+        const duration = Math.random() * 0.3 + 0.2; // Faster drops
         drop.style.animationDuration = duration + "s";
-        drop.style.opacity = Math.random() * 0.4 + 0.1;
-        drop.style.height = (Math.random() * 30 + 50) + "px";
+        drop.style.opacity = Math.random() * 0.45 + 0.1;
+        drop.style.height = (Math.random() * 40 + 60) + "px";
+
+        // Add depth to realistic rain (some drops closer/blurred)
+        const depth = Math.random();
+        if (depth < 0.3) {
+            drop.style.filter = "blur(1.5px)";
+            drop.style.zIndex = "1";
+        } else if (depth > 0.8) {
+            drop.style.filter = "blur(3px)";
+            drop.style.zIndex = "3";
+        } else {
+            drop.style.zIndex = "-1";
+        }
 
         rainContainer.appendChild(drop);
         setTimeout(() => drop.remove(), duration * 1000);
     }
 
-    setInterval(createRaindrop, 60);
+    setInterval(createRaindrop, 25);
 
     // Views
     const uniqueKey = "guns_bio_" + CONFIG.name.replace(/[^a-zA-Z0-9]/g, "");
