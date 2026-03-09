@@ -103,12 +103,14 @@ document.addEventListener("DOMContentLoaded", () => {
         currentRotY += (targetRotY - currentRotY) * 0.04;
         currentRotX += (targetRotX - currentRotX) * 0.04;
 
-        bgMotionLayer.style.transform = `
-            translate3d(${currentX}px, ${currentY}px, 0)
-            rotateX(${currentRotX}deg)
-            rotateY(${currentRotY}deg)
-            scale(1.06)
-        `;
+        if (bgMotionLayer) {
+            bgMotionLayer.style.transform = `
+                translate3d(${currentX}px, ${currentY}px, 0)
+                rotateX(${currentRotX}deg)
+                rotateY(${currentRotY}deg)
+                scale(1.06)
+            `;
+        }
 
         requestAnimationFrame(animateBackground);
     }
@@ -226,18 +228,47 @@ document.addEventListener("DOMContentLoaded", () => {
     const audio = document.getElementById("bg-music");
     audio.load();
 
-    // Cursor
+    // Custom cursor
     const cursor = document.getElementById("cursor");
-    document.addEventListener("mousemove", (e) => {
-        cursor.style.left = e.clientX + "px";
-        cursor.style.top = e.clientY + "px";
-    });
 
-    const clickables = document.querySelectorAll("a, button, .discord-card, .progress-bar-bg, .player-buttons i, #enter-screen");
-    clickables.forEach((el) => {
-        el.addEventListener("mouseenter", () => cursor.classList.add("cursor-hover"));
-        el.addEventListener("mouseleave", () => cursor.classList.remove("cursor-hover"));
-    });
+    if (cursor) {
+        let mouseX = window.innerWidth / 2;
+        let mouseY = window.innerHeight / 2;
+        let cursorX = mouseX;
+        let cursorY = mouseY;
+
+        document.addEventListener("mousemove", (e) => {
+            mouseX = e.clientX;
+            mouseY = e.clientY;
+            cursor.style.opacity = "1";
+        });
+
+        document.addEventListener("mouseleave", () => {
+            cursor.style.opacity = "0";
+        });
+
+        document.addEventListener("mouseenter", () => {
+            cursor.style.opacity = "1";
+        });
+
+        function animateCursor() {
+            cursorX += (mouseX - cursorX) * 0.35;
+            cursorY += (mouseY - cursorY) * 0.35;
+
+            cursor.style.left = cursorX + "px";
+            cursor.style.top = cursorY + "px";
+
+            requestAnimationFrame(animateCursor);
+        }
+
+        animateCursor();
+
+        const clickables = document.querySelectorAll("a, button, .discord-card, .progress-bar-bg, .player-buttons i, #enter-screen, input, .social-icon");
+        clickables.forEach((el) => {
+            el.addEventListener("mouseenter", () => cursor.classList.add("cursor-hover"));
+            el.addEventListener("mouseleave", () => cursor.classList.remove("cursor-hover"));
+        });
+    }
 
     const enterScreen = document.getElementById("enter-screen");
     const mainContent = document.getElementById("main-content");
