@@ -6,7 +6,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title id="page-title">||RANGA||</title>
     <link rel="stylesheet" href="style.css">
-    <!-- Font Awesome API -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 
@@ -17,14 +16,12 @@
         <p class="blink">click to enter...</p>
     </div>
 
-    <!-- Background Layer -->
     <div id="background-container">
-        <div id="bg-orb-wrap">
-            <div id="bg-orb-spin">
-                <video id="bg-video" autoplay loop muted playsinline class="hidden"></video>
-                <div id="background-img"></div>
-            </div>
+        <div id="bg-motion-layer">
+            <video id="bg-video" autoplay loop muted playsinline class="hidden"></video>
+            <div id="background-img"></div>
         </div>
+        <div id="background-overlay"></div>
     </div>
 
     <div id="rain-container"></div>
@@ -47,7 +44,6 @@
                 <i class="fa-solid fa-location-dot"></i> <span id="profile-location">Loading...</span>
             </div>
 
-            <!-- Discord Presence Profile -->
             <div class="discord-card">
                 <div class="avatar-container">
                     <img src="" alt="Avatar" class="avatar" id="d-avatar">
@@ -71,15 +67,12 @@
                 </div>
             </div>
 
-            <!-- Social Links -->
             <div class="social-links">
-                <a href="#" target="_blank" class="social-icon" id="link-spotify"><i
-                        class="fa-brands fa-spotify"></i></a>
+                <a href="#" target="_blank" class="social-icon" id="link-spotify"><i class="fa-brands fa-spotify"></i></a>
                 <a href="#" target="_blank" class="social-icon" id="link-tiktok"><i class="fa-brands fa-tiktok"></i></a>
                 <a href="#" target="_blank" class="social-icon" id="link-apple"><i class="fa-brands fa-apple"></i></a>
             </div>
 
-            <!-- Music Player -->
             <div class="music-player">
                 <div class="album-art">
                     <img src="https://ui-avatars.com/api/?name=Music&background=222&color=f00" alt="Album View" id="player-album-art">
