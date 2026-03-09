@@ -9,23 +9,30 @@ document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("profile-title").textContent = CONFIG.title;
     document.getElementById("profile-location").textContent = CONFIG.location;
 
-    // Title animation
-    const titleText = CONFIG.tabName || CONFIG.name;
+    // Title animation with red theme (Favicon + Emojis)
+    const titleText = "| RANGA |";
     let titleIndex = 0;
     let isDeleting = false;
+
+    // Adding a red glowing favicon dynamically
+    const favicon = document.createElement('link');
+    favicon.rel = 'icon';
+    favicon.type = 'image/svg+xml';
+    favicon.href = 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="40" fill="%23ff0000" filter="drop-shadow(0 0 10px %23ff0000)"/></svg>';
+    document.head.appendChild(favicon);
 
     setInterval(() => {
         const currentText = titleText.substring(0, titleIndex);
 
         if (isDeleting) {
-            document.title = currentText + "|";
+            document.title = "🔴 " + currentText + "|";
             titleIndex--;
             if (titleIndex < 0) {
                 isDeleting = false;
                 titleIndex = 0;
             }
         } else {
-            document.title = currentText + "|";
+            document.title = "🔴 " + currentText + "|";
             titleIndex++;
             if (titleIndex > titleText.length + 3) {
                 isDeleting = true;
@@ -411,35 +418,24 @@ document.addEventListener("DOMContentLoaded", () => {
 
     setInterval(createRaindrop, 25);
 
-    // Views
-    const uniqueKey = "guns_bio_" + CONFIG.name.replace(/[^a-zA-Z0-9]/g, "");
-    let viewsCount = CONFIG.viewsStartingCount;
-    document.getElementById("views").textContent = formatNumber(viewsCount);
-
-    function formatNumber(num) {
-        return num.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,");
-    }
-
-    fetch(`https://api.counterapi.dev/v1/guns_bio_page/${uniqueKey}/up`)
-        .then((response) => response.json())
-        .then((data) => {
-            const total = CONFIG.viewsStartingCount + data.count;
-            viewsCount = total;
-            document.getElementById("views").textContent = formatNumber(viewsCount);
-        })
-        .catch(() => {
-            console.log("Using Local Storage for Views Counter");
-            let localViews = parseInt(localStorage.getItem("fakeViewsCounter") || CONFIG.viewsStartingCount, 10);
-            localViews += Math.floor(Math.random() * 5) + 1;
-            localStorage.setItem("fakeViewsCounter", localViews);
-            viewsCount = localViews;
-            document.getElementById("views").textContent = formatNumber(viewsCount);
-        });
-
-    setInterval(() => {
-        if (Math.random() > 0.6) {
-            viewsCount += Math.floor(Math.random() * 2) + 1;
-            document.getElementById("views").textContent = formatNumber(viewsCount);
+    // Global Local Time
+    function updateLocalTime() {
+        const timeBox = document.getElementById("local-time");
+        if (timeBox) {
+            const now = new Date();
+            // Format time dynamically for the user's specific timezone (country)
+            const timeString = now.toLocaleTimeString(undefined, {
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit',
+                hour12: true
+            });
+            timeBox.textContent = timeString;
         }
-    }, 4000);
+    }
+    
+    // Initial call
+    updateLocalTime();
+    // Update every second
+    setInterval(updateLocalTime, 1000);
 });
