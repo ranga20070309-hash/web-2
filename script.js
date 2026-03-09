@@ -1,56 +1,104 @@
 document.addEventListener("DOMContentLoaded", () => {
     // 1. Load CONFIG setup to HTML
     document.getElementById('page-title').textContent = CONFIG.name;
-    
+
     const profileNameEl = document.getElementById('profile-name');
     profileNameEl.innerHTML = CONFIG.name;
-    profileNameEl.setAttribute('data-text', CONFIG.name); // for glitch effect
-    
+    profileNameEl.setAttribute('data-text', CONFIG.name);
+
     document.getElementById('profile-title').textContent = CONFIG.title;
     document.getElementById('profile-location').textContent = CONFIG.location;
 
-    // Title Tab Scroll Animation (Typewriter style)
+    // Title Tab Scroll Animation
     const titleText = CONFIG.tabName || CONFIG.name;
     let titleIndex = 0;
     let isDeleting = false;
     setInterval(() => {
         let currentText = titleText.substring(0, titleIndex);
-        if(isDeleting) {
+        if (isDeleting) {
             document.title = currentText + "|";
             titleIndex--;
-            if(titleIndex < 0) { isDeleting = false; titleIndex = 0; }
+            if (titleIndex < 0) { 
+                isDeleting = false; 
+                titleIndex = 0; 
+            }
         } else {
             document.title = currentText + "|";
             titleIndex++;
-            if(titleIndex > titleText.length + 3) { isDeleting = true; titleIndex = titleText.length; }
+            if (titleIndex > titleText.length + 3) { 
+                isDeleting = true; 
+                titleIndex = titleText.length; 
+            }
         }
     }, 300);
 
-    // Background & Colors Variables
-    // Background Media rendering logic (Image or Video)
+    // Background Media rendering logic
     const mediaUrl = CONFIG.backgroundMedia;
     const bgVideo = document.getElementById('bg-video');
     const bgImg = document.getElementById('background-img');
-    
-    // Check if the URL string has typical video extensions
+    const bgOrbWrap = document.getElementById('bg-orb-wrap');
+
     const isVideo = mediaUrl.match(/\.(mp4|webm|ogg)$/i);
 
     if (isVideo) {
-        bgImg.style.display = 'none'; // hide image area
+        bgImg.style.display = 'none';
         bgVideo.src = mediaUrl;
-        bgVideo.classList.remove('hidden'); // unhide video
+        bgVideo.classList.remove('hidden');
+        bgVideo.style.display = 'block';
     } else {
-        bgVideo.style.display = 'none'; // hide video area
+        bgVideo.style.display = 'none';
+        bgImg.style.display = 'block';
         bgImg.style.backgroundImage = `url('${mediaUrl}')`;
     }
+
     document.documentElement.style.setProperty('--primary-color', CONFIG.primaryColor);
     document.documentElement.style.setProperty('--primary-glow', CONFIG.primaryColor + 'B3');
+
+    // Background 3D mouse movement
+    let mouseX = 0;
+    let mouseY = 0;
+    let currentX = 0;
+    let currentY = 0;
+    let currentRotateX = 0;
+    let currentRotateY = 0;
+
+    const isTouchDevice = window.matchMedia("(pointer: coarse)").matches;
+
+    if (!isTouchDevice && bgOrbWrap) {
+        document.addEventListener('mousemove', (e) => {
+            const x = (e.clientX / window.innerWidth) - 0.5;
+            const y = (e.clientY / window.innerHeight) - 0.5;
+
+            // move opposite to cursor
+            mouseX = -x * 42;
+            mouseY = -y * 42;
+        });
+
+        function animateBackgroundOrb() {
+            currentX += (mouseX - currentX) * 0.06;
+            currentY += (mouseY - currentY) * 0.06;
+
+            currentRotateY += (((currentX * 0.18)) - currentRotateY) * 0.08;
+            currentRotateX += (((currentY * -0.18)) - currentRotateX) * 0.08;
+
+            bgOrbWrap.style.transform = `
+                translate3d(calc(-50% + ${currentX}px), calc(-50% + ${currentY}px), 0)
+                rotateX(${currentRotateX}deg)
+                rotateY(${currentRotateY}deg)
+                scale(1.02)
+            `;
+
+            requestAnimationFrame(animateBackgroundOrb);
+        }
+
+        animateBackgroundOrb();
+    }
 
     // Setup Fallbacks while Lanyard loads
     const fallbackAvatar = CONFIG.fallbackDiscordAvatarUrl;
     document.getElementById('d-avatar').src = fallbackAvatar;
     document.getElementById('d-username').textContent = CONFIG.fallbackDiscordUsername;
-    document.getElementById('d-status-indicator').style.backgroundColor = '#747f8d'; // offline grey
+    document.getElementById('d-status-indicator').style.backgroundColor = '#747f8d';
     document.getElementById('d-status-text').textContent = "Connecting to Discord...";
 
     // Realtime Discord Connection via Lanyard API
@@ -62,17 +110,16 @@ document.addEventListener("DOMContentLoaded", () => {
             ws.onmessage = (event) => {
                 const message = JSON.parse(event.data);
 
-                if (message.op === 1) { // Hello
+                if (message.op === 1) {
                     ws.send(JSON.stringify({
                         op: 2,
                         d: { subscribe_to_id: discordId }
                     }));
-                } else if (message.op === 0) { // Event
+                } else if (message.op === 0) {
                     if (message.t === "INIT_STATE" || message.t === "PRESENCE_UPDATE") {
                         const data = message.d;
                         const user = data.discord_user;
 
-                        // Update Avatar
                         if (user.avatar) {
                             const ext = user.avatar.startsWith('a_') ? 'gif' : 'png';
                             document.getElementById('d-avatar').src = `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.${ext}?size=128`;
@@ -80,10 +127,8 @@ document.addEventListener("DOMContentLoaded", () => {
                             document.getElementById('d-avatar').src = fallbackAvatar;
                         }
 
-                        // Update Username but keep it formatted correctly for the requested style
                         document.getElementById('d-username').textContent = "ranga____";
 
-                        // Maintain the exact badge HTML the user requested for "KONG"
                         document.getElementById('d-badges').innerHTML = `
                             <span style="font-size: 1rem; margin-right: 4px;">🔥</span>
                             <span style="color: red; font-weight: bold; font-size: 0.85rem; letter-spacing: 1px;">KONG</span>
@@ -92,23 +137,19 @@ document.addEventListener("DOMContentLoaded", () => {
                             </div>
                         `;
 
-                        // Update Status Color
                         const statusColors = { online: '#43b581', idle: '#faa61a', dnd: '#f04747', offline: '#747f8d' };
                         document.getElementById('d-status-indicator').style.backgroundColor = statusColors[data.discord_status] || '#747f8d';
 
-                        // Update Custom Status Text using exact Lanyard emoji formatting if available
                         const customStatus = data.activities.find(a => a.type === 4);
                         if (customStatus) {
                             let text = "";
                             const statusIcon = document.getElementById('d-status-icon');
                             if (customStatus.emoji) {
                                 if (customStatus.emoji.id) {
-                                    // Custom Discord Emoji
                                     const ext = customStatus.emoji.animated ? 'gif' : 'png';
                                     statusIcon.src = `https://cdn.discordapp.com/emojis/${customStatus.emoji.id}.${ext}`;
                                     statusIcon.style.display = 'block';
                                 } else {
-                                    // Unicode Emoji
                                     text += customStatus.emoji.name + " ";
                                     statusIcon.style.display = 'none';
                                 }
@@ -124,9 +165,9 @@ document.addEventListener("DOMContentLoaded", () => {
                     }
                 }
             };
-            
+
             ws.onclose = () => {
-                setTimeout(connectLanyard, 5000); // Reconnect if closed
+                setTimeout(connectLanyard, 5000);
             };
         }
         connectLanyard();
@@ -145,7 +186,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (albumArtEl && CONFIG.albumArt) {
         albumArtEl.src = CONFIG.albumArt;
     }
-    
+
     const audio = document.getElementById('bg-music');
     audio.load();
 
@@ -155,7 +196,7 @@ document.addEventListener("DOMContentLoaded", () => {
         cursor.style.left = e.clientX + 'px';
         cursor.style.top = e.clientY + 'px';
     });
-    // Add interactions
+
     const clickables = document.querySelectorAll('a, button, .discord-card, .progress-bar-bg, .player-buttons i, #enter-screen');
     clickables.forEach(el => {
         el.addEventListener('mouseenter', () => cursor.classList.add('cursor-hover'));
@@ -175,11 +216,10 @@ document.addEventListener("DOMContentLoaded", () => {
         setTimeout(() => {
             enterScreen.style.display = 'none';
             mainContent.classList.remove('hidden');
-            
-            // Also unhide the view counter now that we entered the site
+
             const viewCounterBox = document.getElementById('view-counter-box');
-            if(viewCounterBox) viewCounterBox.classList.remove('hidden');
-            
+            if (viewCounterBox) viewCounterBox.classList.remove('hidden');
+
             audio.volume = 0.5;
             let playPromise = audio.play();
             if (playPromise !== undefined) {
@@ -190,7 +230,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     console.log("Audio permission denied. Muted autoplay fallback missing.");
                 });
             }
-        }, 1000); 
+        }, 1000);
     });
 
     audioToggle.addEventListener('click', () => {
@@ -231,7 +271,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     audio.addEventListener('timeupdate', () => {
-        if(audio.duration) {
+        if (audio.duration) {
             const progressPercent = (audio.currentTime / audio.duration) * 100;
             progressBarFill.style.width = progressPercent + '%';
             currentTimeEl.textContent = formatTime(audio.currentTime);
@@ -260,47 +300,39 @@ document.addEventListener("DOMContentLoaded", () => {
         playPauseBtn.className = isPlaying ? 'fa-solid fa-pause' : 'fa-solid fa-play';
     }
 
-    // Advanced CSS Background Realistic Rain Generator
+    // Rain Generator
     const rainContainer = document.getElementById('rain-container');
 
     function createRaindrop() {
-        if(document.hidden) return; // Save memory footprint
+        if (document.hidden) return;
         const drop = document.createElement('div');
         drop.classList.add('raindrop');
-        
-        // Random horizontal position
+
         drop.style.left = Math.random() * 100 + 'vw';
-        
-        // Realistic fast raindrop speed
-        const duration = Math.random() * 0.4 + 0.3; 
+
+        const duration = Math.random() * 0.4 + 0.3;
         drop.style.animationDuration = duration + 's';
-        
-        // Varying widths and opacity for depth
+
         drop.style.opacity = Math.random() * 0.4 + 0.1;
         drop.style.height = (Math.random() * 30 + 50) + 'px';
-        
+
         rainContainer.appendChild(drop);
-        
-        setTimeout(() => drop.remove(), duration * 1000); 
+
+        setTimeout(() => drop.remove(), duration * 1000);
     }
-    
-    // Create lots of rain frequently!
+
     setInterval(createRaindrop, 60);
 
     // Live Shared Counter for visits using API
-    // We send a request to a public counter service based on your domain or a unique key
     const uniqueKey = "guns_bio_" + CONFIG.name.replace(/[^a-zA-Z0-9]/g, '');
-    
-    // Fallback starting count logic in case API fails
-    let viewsCount = CONFIG.viewsStartingCount; 
+
+    let viewsCount = CONFIG.viewsStartingCount;
     document.getElementById('views').textContent = formatNumber(viewsCount);
 
     function formatNumber(num) {
         return num.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,');
     }
 
-    // Try to get live count
-    // Using a more reliable API (api.counterapi.dev)
     fetch(`https://api.counterapi.dev/v1/guns_bio_page/${uniqueKey}/up`)
         .then(response => response.json())
         .then(data => {
@@ -311,15 +343,14 @@ document.addEventListener("DOMContentLoaded", () => {
         .catch(err => {
             console.log("Using Local Storage for Views Counter");
             let localViews = parseInt(localStorage.getItem('fakeViewsCounter') || CONFIG.viewsStartingCount);
-            localViews += Math.floor(Math.random() * 5) + 1; 
+            localViews += Math.floor(Math.random() * 5) + 1;
             localStorage.setItem('fakeViewsCounter', localViews);
             viewsCount = localViews;
             document.getElementById('views').textContent = formatNumber(viewsCount);
         });
 
-    // Animate the counter occasionally so it looks very active!
     setInterval(() => {
-        if(Math.random() > 0.6) {
+        if (Math.random() > 0.6) {
             viewsCount += Math.floor(Math.random() * 2) + 1;
             document.getElementById('views').textContent = formatNumber(viewsCount);
         }
