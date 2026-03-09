@@ -14,6 +14,11 @@
     cursor: none !important;
 }
 
+html, body {
+    width: 100%;
+    height: 100%;
+}
+
 body {
     background-color: var(--bg-color);
     color: var(--text-color);
@@ -52,41 +57,31 @@ body {
     inset: 0;
     z-index: -3;
     overflow: hidden;
-    filter: grayscale(80%) brightness(0.35);
-    perspective: 1600px;
+    background: #000;
 }
 
-#bg-motion-layer {
-    position: absolute;
-    top: -8%;
-    left: -8%;
-    width: 116%;
-    height: 116%;
-    will-change: transform;
-    transform-style: preserve-3d;
-    transform: translate3d(0, 0, 0) rotateX(0deg) rotateY(0deg) scale(1.06);
-}
-
-#bg-video,
-#background-img {
+#vr-background {
     position: absolute;
     inset: 0;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    backface-visibility: hidden;
-    transform-origin: center center;
+    z-index: 0;
+    filter: grayscale(65%) brightness(0.52);
 }
 
-#bg-video {
-    display: none;
+#vr-background canvas {
+    display: block;
+    width: 100% !important;
+    height: 100% !important;
 }
 
-#background-img {
+#vr-fallback {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
-    transition: opacity 0.5s ease-in-out;
+    transform: scale(1.06);
+    filter: grayscale(65%) brightness(0.45);
 }
 
 #background-overlay {
@@ -95,7 +90,8 @@ body {
     z-index: 2;
     pointer-events: none;
     background:
-        radial-gradient(circle at center, rgba(0, 0, 0, 0.08) 0%, rgba(0, 0, 0, 0.35) 32%, rgba(0, 0, 0, 0.88) 100%);
+        radial-gradient(circle at center, rgba(0, 0, 0, 0.02) 0%, rgba(0, 0, 0, 0.18) 30%, rgba(0, 0, 0, 0.72) 100%),
+        linear-gradient(to bottom, rgba(0, 0, 0, 0.18), rgba(0, 0, 0, 0.28));
 }
 
 /* Rain */
@@ -569,13 +565,6 @@ input[type=range]::-webkit-slider-runnable-track {
     .view-counter {
         top: 20px;
         right: 20px;
-    }
-
-    #bg-motion-layer {
-        top: -10%;
-        left: -10%;
-        width: 120%;
-        height: 120%;
     }
 }
 
