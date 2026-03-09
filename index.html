@@ -17,12 +17,16 @@
         <p class="blink">click to enter...</p>
     </div>
 
-    <!-- Background Layer (Supporting Video and Image in JS) -->
+    <!-- Background Layer -->
     <div id="background-container">
-        <video id="bg-video" autoplay loop muted playsinline class="hidden"></video>
-        <div id="background-img"></div>
+        <div id="bg-orb-wrap">
+            <div id="bg-orb-spin">
+                <video id="bg-video" autoplay loop muted playsinline class="hidden"></video>
+                <div id="background-img"></div>
+            </div>
+        </div>
     </div>
-    
+
     <div id="rain-container"></div>
 
     <div id="main-content" class="hidden">
@@ -53,7 +57,6 @@
                     <div class="username-wrapper">
                         <span class="d-username" id="d-username">Loading...</span>
                         <div class="badges" id="d-badges">
-                            <!-- Custom Badges will be injected here if offline -> hardcoded, else dynamic -->
                             <span style="margin-right: 4px; font-size: 1rem;">🔥</span>
                             <span style="color: red; font-weight: bold; font-size: 0.85rem; letter-spacing: 1px;">KONG</span>
                             <div style="background: rgba(255, 0, 0, 0.7); border-radius: 50%; width: 16px; height: 16px; display: inline-flex; align-items: center; justify-content: center; margin-left: 5px;">
@@ -76,11 +79,9 @@
                 <a href="#" target="_blank" class="social-icon" id="link-apple"><i class="fa-brands fa-apple"></i></a>
             </div>
 
-
             <!-- Music Player -->
             <div class="music-player">
                 <div class="album-art">
-                    <!-- Default fallback cover -->
                     <img src="https://ui-avatars.com/api/?name=Music&background=222&color=f00" alt="Album View" id="player-album-art">
                 </div>
                 <div class="player-info">
@@ -101,13 +102,11 @@
             </div>
         </div>
 
-        <!-- View Counter (Moved here to fix position:fixed issue) -->
         <div class="view-counter hidden" id="view-counter-box">
             <i class="fa-solid fa-eye"></i> <span id="views">10</span>
         </div>
     </div>
 
-    <!-- Hidden Audio Data -->
     <audio id="bg-music" loop>
         <source src="" type="audio/mpeg" id="audio-source">
     </audio>
