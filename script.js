@@ -73,10 +73,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const isTouchDevice = window.matchMedia("(pointer: coarse)").matches;
 
-    const autoPanStrength = isTouchDevice ? 8 : 22;
-    const mouseStrengthX = isTouchDevice ? 0 : 16;
-    const mouseStrengthY = isTouchDevice ? 0 : 8;
-    const rotateStrength = isTouchDevice ? 0 : 1.25;
+    const autoPanStrength = isTouchDevice ? 8 : 12;
+    const mouseStrengthX = isTouchDevice ? 0 : 90;
+    const mouseStrengthY = isTouchDevice ? 0 : 45;
+    const rotateStrength = isTouchDevice ? 0 : 5.5;
 
     document.addEventListener("mousemove", (e) => {
         if (isTouchDevice) return;
@@ -108,7 +108,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 translate3d(${currentX}px, ${currentY}px, 0)
                 rotateX(${currentRotX}deg)
                 rotateY(${currentRotY}deg)
-                scale(1.06)
+                scale(1.15)
             `;
         }
 
