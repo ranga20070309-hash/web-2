@@ -14,11 +14,12 @@ document.addEventListener("DOMContentLoaded", () => {
     let titleIndex = 0;
     let isDeleting = false;
 
-    // Adding a red glowing favicon dynamically
+    // Adding a red glowing favicon dynamically (Safe Encoding)
     const favicon = document.createElement('link');
     favicon.rel = 'icon';
     favicon.type = 'image/svg+xml';
-    favicon.href = 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="40" fill="%23ff0000" filter="drop-shadow(0 0 10px %23ff0000)"/></svg>';
+    const svgContent = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="40" fill="#ff0000" filter="drop-shadow(0 0 15px #ff0000)"/></svg>';
+    favicon.href = 'data:image/svg+xml,' + encodeURIComponent(svgContent);
     document.head.appendChild(favicon);
 
     setInterval(() => {
@@ -81,9 +82,25 @@ document.addEventListener("DOMContentLoaded", () => {
     const isTouchDevice = window.matchMedia("(pointer: coarse)").matches;
 
     const autoPanStrength = isTouchDevice ? 8 : 12;
-    const mouseStrengthX = isTouchDevice ? 0 : 90;
-    const mouseStrengthY = isTouchDevice ? 0 : 45;
-    const rotateStrength = isTouchDevice ? 0 : 5.5;
+    const mouseStrengthX = 90;
+    const mouseStrengthY = 45;
+    const rotateStrength = 5.5;
+
+    // Wrap the container for middle details parallax without breaking CSS animations
+    const containerEl = document.querySelector(".container");
+    let parallaxWrapper = null;
+    if (containerEl && containerEl.parentNode) {
+        parallaxWrapper = document.createElement("div");
+        parallaxWrapper.style.width = "100%";
+        parallaxWrapper.style.display = "flex";
+        parallaxWrapper.style.flexDirection = "column";
+        parallaxWrapper.style.alignItems = "center";
+        parallaxWrapper.style.perspective = "1200px";
+        parallaxWrapper.style.transformStyle = "preserve-3d";
+        
+        containerEl.parentNode.insertBefore(parallaxWrapper, containerEl);
+        parallaxWrapper.appendChild(containerEl);
+    }
 
     document.addEventListener("mousemove", (e) => {
         if (isTouchDevice) return;
@@ -94,6 +111,29 @@ document.addEventListener("DOMContentLoaded", () => {
         pointerX = -x * mouseStrengthX;
         pointerY = -y * mouseStrengthY;
     });
+
+    function handleOrientation(event) {
+        if (!event.gamma || !event.beta) return;
+        
+        let x = event.gamma; // -90 to 90
+        let y = event.beta;  // -180 to 180
+        
+        // Clamp ranges to prevent extreme flips
+        if (x > 45) x = 45;
+        if (x < -45) x = -45;
+        
+        // Assume holding phone at ~45 degrees is neutral
+        y = y - 45; 
+        if (y > 45) y = 45;
+        if (y < -45) y = -45;
+        
+        const normX = x / 45; 
+        const normY = y / 45; 
+        
+        // Responsively update the same pointer variables used for background logic
+        pointerX = -normX * mouseStrengthX * 0.8;
+        pointerY = -normY * mouseStrengthY * 0.8;
+    }
 
     function animateBackground(time) {
         const t = time * 0.00022;
@@ -116,6 +156,19 @@ document.addEventListener("DOMContentLoaded", () => {
                 rotateX(${currentRotX}deg)
                 rotateY(${currentRotY}deg)
                 scale(1.15)
+            `;
+        }
+
+        if (parallaxWrapper) {
+            const wrapX = -currentX * 0.15;
+            const wrapY = -currentY * 0.15;
+            const wrapRotX = currentRotX * 0.5;
+            const wrapRotY = currentRotY * 0.5;
+
+            parallaxWrapper.style.transform = `
+                translate3d(${wrapX}px, ${wrapY}px, 20px)
+                rotateX(${wrapRotX}deg)
+                rotateY(${wrapRotY}deg)
             `;
         }
 
@@ -285,6 +338,20 @@ document.addEventListener("DOMContentLoaded", () => {
     let isPlaying = false;
 
     enterScreen.addEventListener("click", () => {
+        // Request Device Orientation Permission for iOS 13+
+        if (typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function') {
+            DeviceOrientationEvent.requestPermission()
+                .then(permissionState => {
+                    if (permissionState === 'granted') {
+                        window.addEventListener('deviceorientation', handleOrientation);
+                    }
+                })
+                .catch(console.error);
+        } else {
+            // For other mobile devices
+            window.addEventListener('deviceorientation', handleOrientation);
+        }
+
         enterScreen.style.opacity = "0";
 
         setTimeout(() => {
