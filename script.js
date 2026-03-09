@@ -32,82 +32,208 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }, 300);
 
-    // Background Media rendering logic
-    const mediaUrl = CONFIG.backgroundMedia;
-    const bgVideo = document.getElementById('bg-video');
-    const bgImg = document.getElementById('background-img');
-    const bgMotionLayer = document.getElementById('bg-motion-layer');
-
-    const isVideo = mediaUrl.match(/\.(mp4|webm|ogg)$/i);
-
-    if (isVideo) {
-        bgImg.style.display = 'none';
-        bgVideo.src = mediaUrl;
-        bgVideo.classList.remove('hidden');
-        bgVideo.style.display = 'block';
-    } else {
-        bgVideo.style.display = 'none';
-        bgImg.style.display = 'block';
-        bgImg.style.backgroundImage = `url('${mediaUrl}')`;
-    }
-
     document.documentElement.style.setProperty('--primary-color', CONFIG.primaryColor);
     document.documentElement.style.setProperty('--primary-glow', CONFIG.primaryColor + 'B3');
 
-    // VR-like background movement
-    let targetMouseX = 0;
-    let targetMouseY = 0;
-    let currentMouseX = 0;
-    let currentMouseY = 0;
-    let currentRotX = 0;
-    let currentRotY = 0;
+    // 360 VR Background
+    const mediaUrl = CONFIG.backgroundMedia;
+    const vrContainer = document.getElementById('vr-background');
+    const vrFallback = document.getElementById('vr-fallback');
+    const isVideo = /\.(mp4|webm|ogg)$/i.test(mediaUrl || "");
 
-    const isTouchDevice = window.matchMedia("(pointer: coarse)").matches;
-    const autoPanStrength = isTouchDevice ? 10 : 26;
-    const mouseMoveStrengthX = isTouchDevice ? 0 : 18;
-    const mouseMoveStrengthY = isTouchDevice ? 0 : 10;
-    const rotateStrength = isTouchDevice ? 0 : 1.8;
+    let scene, camera, renderer, sphere, videoEl;
+    let lon = 0;
+    let lat = 0;
+    let targetLon = 12;
+    let targetLat = 0;
+    let isDragging = false;
+    let pointerStartX = 0;
+    let pointerStartY = 0;
+    let pointerStartLon = 0;
+    let pointerStartLat = 0;
 
-    document.addEventListener('mousemove', (e) => {
-        if (isTouchDevice) return;
+    function buildVRBackground() {
+        if (!window.THREE || !vrContainer || !mediaUrl) {
+            if (mediaUrl) vrFallback.style.backgroundImage = `url('${mediaUrl}')`;
+            return;
+        }
 
-        const x = (e.clientX / window.innerWidth) - 0.5;
-        const y = (e.clientY / window.innerHeight) - 0.5;
+        scene = new THREE.Scene();
 
-        // opposite side movement
-        targetMouseX = -x * mouseMoveStrengthX;
-        targetMouseY = -y * mouseMoveStrengthY;
-    });
+        camera = new THREE.PerspectiveCamera(
+            68,
+            window.innerWidth / window.innerHeight,
+            1,
+            1100
+        );
 
-    function animateBackgroundMotion(time) {
-        const t = time * 0.00028;
+        renderer = new THREE.WebGLRenderer({
+            antialias: true,
+            alpha: true,
+            powerPreference: "high-performance"
+        });
 
-        // left-right slow pan like VR turning
-        const autoPanX = Math.sin(t) * autoPanStrength;
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.6));
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        vrContainer.innerHTML = "";
+        vrContainer.appendChild(renderer.domElement);
 
-        currentMouseX += (targetMouseX - currentMouseX) * 0.06;
-        currentMouseY += (targetMouseY - currentMouseY) * 0.06;
+        const geometry = new THREE.SphereGeometry(500, 96, 64);
+        geometry.scale(-1, 1, 1);
 
-        const finalX = autoPanX + currentMouseX;
-        const finalY = currentMouseY;
+        let material;
 
-        const targetRotY = ((finalX / 30) * rotateStrength);
-        const targetRotX = ((-finalY / 24) * rotateStrength);
+        if (isVideo) {
+            videoEl = document.createElement("video");
+            videoEl.src = mediaUrl;
+            videoEl.crossOrigin = "anonymous";
+            videoEl.loop = true;
+            videoEl.muted = true;
+            videoEl.playsInline = true;
+            videoEl.setAttribute("webkit-playsinline", "true");
+            videoEl.setAttribute("playsinline", "true");
+            videoEl.autoplay = true;
 
-        currentRotY += (targetRotY - currentRotY) * 0.05;
-        currentRotX += (targetRotX - currentRotX) * 0.05;
+            const texture = new THREE.VideoTexture(videoEl);
+            texture.colorSpace = THREE.SRGBColorSpace;
+            texture.minFilter = THREE.LinearFilter;
+            texture.magFilter = THREE.LinearFilter;
+            texture.generateMipmaps = false;
 
-        bgMotionLayer.style.transform = `
-            translate3d(${finalX}px, ${finalY}px, 0)
-            rotateX(${currentRotX}deg)
-            rotateY(${currentRotY}deg)
-            scale(1.06)
-        `;
+            material = new THREE.MeshBasicMaterial({ map: texture });
 
-        requestAnimationFrame(animateBackgroundMotion);
+            videoEl.play().catch(() => {
+                // will retry after user click
+            });
+        } else {
+            const textureLoader = new THREE.TextureLoader();
+            textureLoader.setCrossOrigin("anonymous");
+
+            textureLoader.load(
+                mediaUrl,
+                (texture) => {
+                    texture.colorSpace = THREE.SRGBColorSpace;
+                },
+                undefined,
+                () => {
+                    vrFallback.style.backgroundImage = `url('${mediaUrl}')`;
+                }
+            );
+
+            const texture = textureLoader.load(mediaUrl);
+            texture.colorSpace = THREE.SRGBColorSpace;
+            material = new THREE.MeshBasicMaterial({ map: texture });
+        }
+
+        sphere = new THREE.Mesh(geometry, material);
+        scene.add(sphere);
+
+        window.addEventListener("resize", onWindowResize);
+
+        const dragSurface = document.body;
+
+        dragSurface.addEventListener("mousedown", onPointerDown);
+        dragSurface.addEventListener("mousemove", onPointerMove);
+        dragSurface.addEventListener("mouseup", onPointerUp);
+        dragSurface.addEventListener("mouseleave", onPointerUp);
+
+        dragSurface.addEventListener("touchstart", onTouchStart, { passive: true });
+        dragSurface.addEventListener("touchmove", onTouchMove, { passive: true });
+        dragSurface.addEventListener("touchend", onPointerUp);
+
+        animateVR();
     }
 
-    requestAnimationFrame(animateBackgroundMotion);
+    function onWindowResize() {
+        if (!camera || !renderer) return;
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+    }
+
+    function onPointerDown(event) {
+        isDragging = true;
+        pointerStartX = event.clientX;
+        pointerStartY = event.clientY;
+        pointerStartLon = targetLon;
+        pointerStartLat = targetLat;
+    }
+
+    function onPointerMove(event) {
+        if (!isDragging) {
+            const x = (event.clientX / window.innerWidth) - 0.5;
+            const y = (event.clientY / window.innerHeight) - 0.5;
+            targetLon += x * 0.08;
+            targetLat += -y * 0.02;
+            return;
+        }
+
+        const deltaX = event.clientX - pointerStartX;
+        const deltaY = event.clientY - pointerStartY;
+
+        targetLon = pointerStartLon - (deltaX * 0.13);
+        targetLat = pointerStartLat + (deltaY * 0.08);
+    }
+
+    function onPointerUp() {
+        isDragging = false;
+    }
+
+    function onTouchStart(event) {
+        if (!event.touches.length) return;
+        const touch = event.touches[0];
+        isDragging = true;
+        pointerStartX = touch.clientX;
+        pointerStartY = touch.clientY;
+        pointerStartLon = targetLon;
+        pointerStartLat = targetLat;
+    }
+
+    function onTouchMove(event) {
+        if (!event.touches.length || !isDragging) return;
+        const touch = event.touches[0];
+
+        const deltaX = touch.clientX - pointerStartX;
+        const deltaY = touch.clientY - pointerStartY;
+
+        targetLon = pointerStartLon - (deltaX * 0.12);
+        targetLat = pointerStartLat + (deltaY * 0.07);
+    }
+
+    function animateVR() {
+        requestAnimationFrame(animateVR);
+
+        if (!isDragging) {
+            targetLon += 0.018; // slow cinema-style left-right auto rotation
+        }
+
+        targetLat = Math.max(-22, Math.min(22, targetLat));
+
+        lon += (targetLon - lon) * 0.05;
+        lat += (targetLat - lat) * 0.05;
+
+        const phi = THREE.MathUtils.degToRad(90 - lat);
+        const theta = THREE.MathUtils.degToRad(lon);
+
+        const x = 500 * Math.sin(phi) * Math.cos(theta);
+        const y = 500 * Math.cos(phi);
+        const z = 500 * Math.sin(phi) * Math.sin(theta);
+
+        camera.lookAt(x, y, z);
+
+        if (renderer && scene && camera) {
+            renderer.render(scene, camera);
+        }
+    }
+
+    buildVRBackground();
+
+    // retry video playback after first interaction
+    document.addEventListener("click", () => {
+        if (videoEl && videoEl.paused) {
+            videoEl.play().catch(() => {});
+        }
+    }, { once: false });
 
     // Setup Fallbacks while Lanyard loads
     const fallbackAvatar = CONFIG.fallbackDiscordAvatarUrl;
@@ -245,6 +371,9 @@ document.addEventListener("DOMContentLoaded", () => {
                 playPromise.then(() => {
                     isPlaying = true;
                     updatePlayPauseIcon();
+                    if (videoEl && videoEl.paused) {
+                        videoEl.play().catch(() => {});
+                    }
                 }).catch(() => {
                     console.log("Audio permission denied. Muted autoplay fallback missing.");
                 });
