@@ -1,14 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title id="page-title">||RANGA||</title>
-    <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
 </head>
-
 <body>
     <div id="cursor"></div>
 
@@ -17,9 +15,11 @@
     </div>
 
     <div id="background-container">
-        <div id="vr-background"></div>
+        <div id="bg-motion-layer">
+            <video id="bg-video" autoplay loop muted playsinline></video>
+            <div id="background-img"></div>
+        </div>
         <div id="background-overlay"></div>
-        <div id="vr-fallback"></div>
     </div>
 
     <div id="rain-container"></div>
@@ -30,7 +30,7 @@
                 <i class="fa-solid fa-volume-high"></i>
             </button>
             <div class="volume-slider-container">
-                <input type="range" id="volume-slider" min="0" max="100" value="50">
+                <input type="range" id="volume-slider" min="0" max="100" value="50" />
             </div>
         </div>
 
@@ -39,12 +39,13 @@
             <p class="subtitle glow" id="profile-title">Loading...</p>
 
             <div class="location">
-                <i class="fa-solid fa-location-dot"></i> <span id="profile-location">Loading...</span>
+                <i class="fa-solid fa-location-dot"></i>
+                <span id="profile-location">Loading...</span>
             </div>
 
             <div class="discord-card">
                 <div class="avatar-container">
-                    <img src="" alt="Avatar" class="avatar" id="d-avatar">
+                    <img src="" alt="Avatar" class="avatar" id="d-avatar" />
                     <div class="status-indicator" id="d-status-indicator"></div>
                 </div>
                 <div class="discord-info">
@@ -59,7 +60,7 @@
                         </div>
                     </div>
                     <div class="status-wrapper" style="display: flex; align-items: center; gap: 6px; margin-top: 5px;">
-                        <img src="" id="d-status-icon" style="width: 20px; height: 20px; border-radius: 3px; display: none;">
+                        <img src="" id="d-status-icon" style="width: 20px; height: 20px; border-radius: 3px; display: none;" />
                         <span class="d-status-text" id="d-status-text" style="color: red !important;">Loading...</span>
                     </div>
                 </div>
@@ -73,7 +74,7 @@
 
             <div class="music-player">
                 <div class="album-art">
-                    <img src="https://ui-avatars.com/api/?name=Music&background=222&color=f00" alt="Album View" id="player-album-art">
+                    <img src="https://ui-avatars.com/api/?name=Music&background=222&color=f00" alt="Album View" id="player-album-art" />
                 </div>
                 <div class="player-info">
                     <div class="song-title glow" id="song-title-text">Loading...</div>
@@ -99,12 +100,10 @@
     </div>
 
     <audio id="bg-music" loop>
-        <source src="" type="audio/mpeg" id="audio-source">
+        <source src="" type="audio/mpeg" id="audio-source" />
     </audio>
 
-    <script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js"></script>
     <script src="config.js"></script>
     <script src="script.js"></script>
 </body>
-
 </html>
