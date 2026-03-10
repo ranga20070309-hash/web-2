@@ -81,10 +81,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const isTouchDevice = window.matchMedia("(pointer: coarse)").matches;
 
-    const autoPanStrength = isTouchDevice ? 8 : 12;
-    const mouseStrengthX = 90;
-    const mouseStrengthY = 45;
-    const rotateStrength = 5.5;
+    const autoPanStrength = isTouchDevice ? 6 : 10;
+    const mouseStrengthX = 50;
+    const mouseStrengthY = 25;
+    const rotateStrength = 3.5;
 
     // Wrap the container for middle details parallax without breaking CSS animations
     const containerEl = document.querySelector(".container");
@@ -97,6 +97,7 @@ document.addEventListener("DOMContentLoaded", () => {
         parallaxWrapper.style.alignItems = "center";
         parallaxWrapper.style.perspective = "1200px";
         parallaxWrapper.style.transformStyle = "preserve-3d";
+        parallaxWrapper.classList.add("js-parallax-wrapper");
         
         containerEl.parentNode.insertBefore(parallaxWrapper, containerEl);
         parallaxWrapper.appendChild(containerEl);
@@ -150,27 +151,11 @@ document.addEventListener("DOMContentLoaded", () => {
         currentRotY += (targetRotY - currentRotY) * 0.04;
         currentRotX += (targetRotX - currentRotX) * 0.04;
 
-        if (bgMotionLayer) {
-            bgMotionLayer.style.transform = `
-                translate3d(${currentX}px, ${currentY}px, 0)
-                rotateX(${currentRotX}deg)
-                rotateY(${currentRotY}deg)
-                scale(1.15)
-            `;
-        }
-
-        if (parallaxWrapper) {
-            const wrapX = -currentX * 0.15;
-            const wrapY = -currentY * 0.15;
-            const wrapRotX = currentRotX * 0.5;
-            const wrapRotY = currentRotY * 0.5;
-
-            parallaxWrapper.style.transform = `
-                translate3d(${wrapX}px, ${wrapY}px, 20px)
-                rotateX(${wrapRotX}deg)
-                rotateY(${wrapRotY}deg)
-            `;
-        }
+        // Apply CSS variables for generic elements
+        document.documentElement.style.setProperty('--mx', currentX);
+        document.documentElement.style.setProperty('--my', currentY);
+        document.documentElement.style.setProperty('--rx', currentRotX);
+        document.documentElement.style.setProperty('--ry', currentRotY);
 
         requestAnimationFrame(animateBackground);
     }
@@ -328,6 +313,12 @@ document.addEventListener("DOMContentLoaded", () => {
             el.addEventListener("mouseenter", () => cursor.classList.add("cursor-hover"));
             el.addEventListener("mouseleave", () => cursor.classList.remove("cursor-hover"));
         });
+
+        const spotifyBox = document.querySelector(".premium-spotify-box");
+        if (spotifyBox) {
+            spotifyBox.addEventListener("mouseenter", () => cursor.classList.add("hide-cursor"));
+            spotifyBox.addEventListener("mouseleave", () => cursor.classList.remove("hide-cursor"));
+        }
     }
 
     const enterScreen = document.getElementById("enter-screen");
@@ -505,4 +496,22 @@ document.addEventListener("DOMContentLoaded", () => {
     updateLocalTime();
     // Update every second
     setInterval(updateLocalTime, 1000);
+
+    // Mobile scroll animation for Spotify widget
+    const spotifyWidget = document.querySelector(".premium-spotify-box");
+    if (spotifyWidget) {
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add("in-view");
+                } else {
+                    entry.target.classList.remove("in-view");
+                }
+            });
+        }, {
+            threshold: 0.3 // Trigger when 30% of the widget is visible
+        });
+        
+        observer.observe(spotifyWidget);
+    }
 });
