@@ -1,3 +1,9 @@
+// Force scroll to top on refresh
+if (history.scrollRestoration) {
+    history.scrollRestoration = 'manual';
+}
+window.scrollTo(0, 0);
+
 document.addEventListener("DOMContentLoaded", () => {
     // Load CONFIG
     document.getElementById("page-title").textContent = CONFIG.name;
@@ -9,31 +15,26 @@ document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("profile-title").textContent = CONFIG.title;
     document.getElementById("profile-location").textContent = CONFIG.location;
 
-    // Title animation with red theme (Favicon + Emojis)
-    const titleText = "| RANGA |";
+    // Tab Title Animation
+    const titleText = CONFIG.tabName || "@RANGA";
     let titleIndex = 0;
     let isDeleting = false;
 
-    // Adding a red glowing favicon dynamically (Safe Encoding)
-    const favicon = document.createElement('link');
-    favicon.rel = 'icon';
-    favicon.type = 'image/svg+xml';
-    const svgContent = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="40" fill="#ff0000" filter="drop-shadow(0 0 15px #ff0000)"/></svg>';
-    favicon.href = 'data:image/svg+xml,' + encodeURIComponent(svgContent);
-    document.head.appendChild(favicon);
+    // Optional: Add a custom favicon if needed, for now using default.
+    // To restore a standard favicon, just add <link rel="icon" ...> to index.html.
 
     setInterval(() => {
         const currentText = titleText.substring(0, titleIndex);
 
         if (isDeleting) {
-            document.title = "🔴 " + currentText + "|";
+            document.title = currentText + "|";
             titleIndex--;
             if (titleIndex < 0) {
                 isDeleting = false;
                 titleIndex = 0;
             }
         } else {
-            document.title = "🔴 " + currentText + "|";
+            document.title = currentText + "|";
             titleIndex++;
             if (titleIndex > titleText.length + 3) {
                 isDeleting = true;
@@ -273,19 +274,49 @@ document.addEventListener("DOMContentLoaded", () => {
     const audio = document.getElementById("bg-music");
     audio.load();
 
-    // Custom cursor
+    // Custom cursor and water tail
     const cursor = document.getElementById("cursor");
+    const canvas = document.getElementById("water-tail");
+    const ctx = canvas ? canvas.getContext("2d") : null;
 
     if (cursor) {
         let mouseX = window.innerWidth / 2;
         let mouseY = window.innerHeight / 2;
         let cursorX = mouseX;
         let cursorY = mouseY;
+        // Extremely realistic Rippling Water effect
+        let ripples = [];
+        let r_lastTime = 0;
+
+        if (canvas) {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            window.addEventListener('resize', () => {
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+            });
+        }
 
         document.addEventListener("mousemove", (e) => {
             mouseX = e.clientX;
             mouseY = e.clientY;
             cursor.style.opacity = "1";
+
+            if (canvas) {
+                let now = Date.now();
+                if (now - r_lastTime > 400) { // Very slow bubble creation rate (less frequent)
+                    ripples.push({
+                        x: mouseX,
+                        y: mouseY,
+                        radius: 0,
+                        maxRadius: Math.random() * 20 + 50, // Don't expand too huge
+                        speed: Math.random() * 0.2 + 0.3, // Very slow expansion speed
+                        life: 1, // Full opacity
+                        thickness: 2 // Clear neon line thickness
+                    });
+                    r_lastTime = now;
+                }
+            }
         });
 
         document.addEventListener("mouseleave", () => {
@@ -303,12 +334,44 @@ document.addEventListener("DOMContentLoaded", () => {
             cursor.style.left = cursorX + "px";
             cursor.style.top = cursorY + "px";
 
+            // Draw hyper-realistic ripples
+            if (ctx && canvas) {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                
+                for (let i = ripples.length - 1; i >= 0; i--) {
+                    let r = ripples[i];
+                    r.radius += r.speed;
+                    // Ease-out life (fade slower initially, faster at the end)
+                    let progress = r.radius / r.maxRadius;
+                    r.life = 1 - Math.pow(progress, 1.5);
+                    
+                    if (r.life <= 0) {
+                        ripples.splice(i, 1);
+                        continue;
+                    }
+                    
+                    // Clear realistic Neon Red ripple (No heavy blur, sharp and bright)
+                    ctx.beginPath();
+                    ctx.arc(r.x, r.y, r.radius, 0, Math.PI * 2);
+                    ctx.lineWidth = r.thickness; 
+                    
+                    // Main bright solid red line
+                    ctx.strokeStyle = `rgba(255, 0, 0, ${r.life})`; 
+                    
+                    // Subtle sharp neon glow
+                    ctx.shadowColor = `rgba(255, 0, 0, ${r.life * 0.8})`;
+                    ctx.shadowBlur = 5; // Low blur for clear edge
+                    
+                    ctx.stroke();
+                }
+            }
+
             requestAnimationFrame(animateCursor);
         }
 
         animateCursor();
 
-        const clickables = document.querySelectorAll("a, button, .discord-card, .progress-bar-bg, .player-buttons i, #enter-screen, input, .social-icon");
+        const clickables = document.querySelectorAll("a, button, .discord-card, .progress-bar-bg, .player-buttons i, input, .social-icon");
         clickables.forEach((el) => {
             el.addEventListener("mouseenter", () => cursor.classList.add("cursor-hover"));
             el.addEventListener("mouseleave", () => cursor.classList.remove("cursor-hover"));
@@ -319,16 +382,23 @@ document.addEventListener("DOMContentLoaded", () => {
             spotifyBox.addEventListener("mouseenter", () => cursor.classList.add("hide-cursor"));
             spotifyBox.addEventListener("mouseleave", () => cursor.classList.remove("hide-cursor"));
         }
+
+        const appleBox = document.querySelector(".premium-apple-box");
+        if (appleBox) {
+            appleBox.addEventListener("mouseenter", () => cursor.classList.add("hide-cursor"));
+            appleBox.addEventListener("mouseleave", () => cursor.classList.remove("hide-cursor"));
+        }
     }
 
     const enterScreen = document.getElementById("enter-screen");
+    const enterBtn = document.querySelector(".enter-btn");
     const mainContent = document.getElementById("main-content");
     const audioToggle = document.getElementById("audio-toggle");
     const playPauseBtn = document.getElementById("play-pause-btn");
 
     let isPlaying = false;
 
-    enterScreen.addEventListener("click", () => {
+    enterBtn.addEventListener("click", () => {
         // Request Device Orientation Permission for iOS 13+
         if (typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function') {
             DeviceOrientationEvent.requestPermission()
@@ -343,11 +413,31 @@ document.addEventListener("DOMContentLoaded", () => {
             window.addEventListener('deviceorientation', handleOrientation);
         }
 
-        enterScreen.style.opacity = "0";
+        enterScreen.classList.add("enter-leaving");
 
         setTimeout(() => {
             enterScreen.style.display = "none";
+            document.body.classList.add("scroll-enabled");
             mainContent.classList.remove("hidden");
+            
+            // Apply staggering entry animation to main content blocks
+            const blocksToAnimate = [
+                document.querySelector(".container"),
+                document.getElementById("view-counter-box"),
+                document.getElementById("apple-wrapper"),
+                document.getElementById("spotify-wrapper"),
+                document.getElementById("obscura-section"),
+                document.querySelector(".spotify-tape-container"),
+                document.querySelector(".bottom-social-section"),
+                document.querySelector(".tape-copyright")
+            ];
+            
+            blocksToAnimate.forEach((block, index) => {
+                if (block) {
+                    block.style.opacity = "0";
+                    block.style.animation = `mainEntrance 1.2s cubic-bezier(0.25, 0.1, 0.25, 1) ${0.2 + (index * 0.15)}s forwards`;
+                }
+            });
             
             const obscuraSection = document.getElementById("obscura-section");
             if (obscuraSection) obscuraSection.classList.remove("hidden");
@@ -372,7 +462,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     console.log("Background video autoplay blocked.");
                 });
             }
-        }, 1000);
+        }, 1100); // Wait for the 1.2s exit animation to almost finish before showing new content
     });
 
     audioToggle.addEventListener("click", () => {
