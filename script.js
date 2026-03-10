@@ -348,6 +348,9 @@ document.addEventListener("DOMContentLoaded", () => {
         setTimeout(() => {
             enterScreen.style.display = "none";
             mainContent.classList.remove("hidden");
+            
+            const obscuraSection = document.getElementById("obscura-section");
+            if (obscuraSection) obscuraSection.classList.remove("hidden");
 
             const viewCounterBox = document.getElementById("view-counter-box");
             if (viewCounterBox) viewCounterBox.classList.remove("hidden");
@@ -513,5 +516,39 @@ document.addEventListener("DOMContentLoaded", () => {
         });
         
         observer.observe(spotifyWidget);
+    }
+
+    // Scroll animation for Discord cards
+    const obscuraCards = document.querySelectorAll(".discord-profile-card");
+    if (obscuraCards.length > 0) {
+        const cardObserver = new IntersectionObserver((entries) => {
+            entries.forEach((entry, index) => {
+                if (entry.isIntersecting) {
+                    setTimeout(() => {
+                        entry.target.classList.add("in-view");
+                    }, index * 200); // Staggered reveal effect
+                }
+            });
+        }, {
+            threshold: 0.2
+        });
+        
+        obscuraCards.forEach(card => cardObserver.observe(card));
+    }
+
+    // Scroll animation for regular elements (Title, Desc, Button)
+    const scrollElements = document.querySelectorAll(".scroll-animate");
+    if (scrollElements.length > 0) {
+        const scrollObserver = new IntersectionObserver((entries) => {
+            entries.forEach((entry) => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add("in-view");
+                }
+            });
+        }, {
+            threshold: 0.1
+        });
+
+        scrollElements.forEach(el => scrollObserver.observe(el));
     }
 });
