@@ -9,15 +9,21 @@
 </head>
 <body>
     <div id="cursor"></div>
+    <canvas id="water-tail"></canvas>
 
     <div id="enter-screen">
-        <p class="blink">click to enter...</p>
+        <video class="enter-video" src="https://image2url.com/r2/default/videos/1773178239885-4fc6156d-03bd-4dd6-ae95-ba022f2a9959.mp4" autoplay loop muted playsinline></video>
+        <div class="enter-video-overlay"></div>
+        <div class="enter-content">
+            <h1 class="enter-title">Welcome To My Site Buddy</h1>
+            <button class="enter-btn">I'm Here To Look Your Site</button>
+        </div>
     </div>
 
     <div id="background-container">
         <div id="bg-motion-layer">
             <video id="bg-video" autoplay loop muted playsinline></video>
-            <div id="background-img"></div>
+            <div id="background-img" class="ripple-bg"></div>
         </div>
         <div id="background-overlay"></div>
     </div>
@@ -98,28 +104,57 @@
             <i class="fa-solid fa-clock"></i> <span id="local-time">00:00:00</span>
         </div>
 
-        <div class="premium-spotify-box">
-            <div class="spotify-box-glow"></div>
-            <div class="spotify-box-content">
-                <div class="spotify-header">
-                    <div class="spotify-title">
-                        <i class="fa-brands fa-spotify"></i>
-                        <span>LIVE ARTIST PROFILE</span>
+        <div id="spotify-wrapper">
+            <div class="premium-spotify-box">
+                <div class="spotify-box-glow"></div>
+                <div class="spotify-box-content">
+                    <div class="spotify-header">
+                        <div class="spotify-title">
+                            <i class="fa-brands fa-spotify"></i>
+                            <span>LIVE ARTIST PROFILE</span>
+                        </div>
+                        <div class="spotify-live-indicator">
+                            <span class="live-dot"></span>
+                            <span class="live-text">ONLINE</span>
+                        </div>
                     </div>
-                    <div class="spotify-live-indicator">
-                        <span class="live-dot"></span>
-                        <span class="live-text">ONLINE</span>
+                    <!-- Box is now fully interactive so the user can select music from the playlist -->
+                    <div class="spotify-iframe-wrapper">
+                        <iframe src="https://open.spotify.com/embed/artist/4qzgHdPtzT0UJgcV9Bbc5O?utm_source=generator&theme=0" width="100%" height="100%" frameBorder="0" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+                    </div>
+                    <div class="spotify-footer">
+                        <a href="https://open.spotify.com/artist/4qzgHdPtzT0UJgcV9Bbc5O" target="_blank" class="spotify-action-btn">
+                            <span>OPEN IN SPOTIFY APP</span>
+                            <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                        </a>
                     </div>
                 </div>
-                <!-- Box is now fully interactive so the user can select music from the playlist -->
-                <div class="spotify-iframe-wrapper">
-                    <iframe src="https://open.spotify.com/embed/artist/4qzgHdPtzT0UJgcV9Bbc5O?utm_source=generator&theme=0" width="100%" height="100%" frameBorder="0" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
-                </div>
-                <div class="spotify-footer">
-                    <a href="https://open.spotify.com/artist/4qzgHdPtzT0UJgcV9Bbc5O" target="_blank" class="spotify-action-btn">
-                        <span>OPEN IN SPOTIFY APP</span>
-                        <i class="fa-solid fa-arrow-up-right-from-square"></i>
-                    </a>
+            </div>
+        </div>
+
+        <div id="apple-wrapper">
+            <div class="premium-apple-box">
+                <div class="apple-box-glow"></div>
+                <div class="apple-box-content">
+                    <div class="apple-header">
+                        <div class="apple-title">
+                            <i class="fa-brands fa-apple"></i>
+                            <span>APPLE MUSIC PROFILE</span>
+                        </div>
+                        <div class="apple-live-indicator">
+                            <span class="live-dot"></span>
+                            <span class="live-text">ONLINE</span>
+                        </div>
+                    </div>
+                    <div class="apple-iframe-wrapper">
+                        <iframe lang="zh-CN" allow="autoplay *; encrypted-media *; fullscreen *; clipboard-write" frameborder="0" height="100%" style="width:100%;max-width:660px;overflow:hidden;background:transparent;" sandbox="allow-forms allow-popups allow-same-origin allow-scripts allow-storage-access-by-user-activation allow-top-navigation-by-user-activation" src="https://embed.music.apple.com/us/album/midu-echoing-funk-single/1879504219?theme=dark&l=zh-CN"></iframe>
+                    </div>
+                    <div class="apple-footer">
+                        <a href="https://music.apple.com/us/artist/ph%C3%B8nixwave/1838299671" target="_blank" class="apple-action-btn">
+                            <span>OPEN IN APPLE MUSIC</span>
+                            <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                        </a>
+                    </div>
                 </div>
             </div>
         </div>
@@ -203,30 +238,130 @@
             <div class="tape-track">
                 <!-- Duplicated for endless loop -->
                 <div class="tape-items">
-                    <a href="https://open.spotify.com/album/5UjUGkRTqodtoni6VLQJ4t" target="_blank"><img src="https://ui-avatars.com/api/?name=EP&background=000&color=f00" class="tape-art" data-index="1"></a>
-                    <a href="https://open.spotify.com/album/68lxvBtYV8WAYRVQqWQb1K" target="_blank"><img src="https://ui-avatars.com/api/?name=EP&background=111&color=f00" class="tape-art" data-index="2"></a>
-                    <a href="https://open.spotify.com/album/0rrReZ1ZOQzKHoymhzw0ZW" target="_blank"><img src="https://ui-avatars.com/api/?name=EP&background=222&color=f00" class="tape-art" data-index="3"></a>
-                    <a href="https://open.spotify.com/album/6MktDdi4f9BGbHbX8tiPYO" target="_blank"><img src="https://ui-avatars.com/api/?name=EP&background=333&color=f00" class="tape-art" data-index="4"></a>
-                    <a href="https://open.spotify.com/album/7wZlx1gIo8MI53tusokhpj" target="_blank"><img src="https://ui-avatars.com/api/?name=EP&background=444&color=f00" class="tape-art" data-index="5"></a>
-                    <a href="https://open.spotify.com/album/3W5CFVedLjSFVbTubHnX9P" target="_blank"><img src="https://ui-avatars.com/api/?name=EP&background=555&color=f00" class="tape-art" data-index="6"></a>
-                    <a href="https://open.spotify.com/album/6hDzhelEz77j5B65l6Pwfv" target="_blank"><img src="https://ui-avatars.com/api/?name=EP&background=666&color=f00" class="tape-art" data-index="7"></a>
-                    <a href="https://open.spotify.com/album/13fRxuorQl3YXdpAwk3A68" target="_blank"><img src="https://ui-avatars.com/api/?name=EP&background=777&color=f00" class="tape-art" data-index="8"></a>
-                    <a href="https://open.spotify.com/album/2vkNxS3Vx4Z5rpNZihmx58" target="_blank"><img src="https://ui-avatars.com/api/?name=EP&background=888&color=f00" class="tape-art" data-index="9"></a>
-                    <a href="https://open.spotify.com/album/1OTVqW97vPGx09kjeBw9Ob" target="_blank"><img src="https://ui-avatars.com/api/?name=EP&background=999&color=f00" class="tape-art" data-index="10"></a>
+                    <a href="https://open.spotify.com/album/5UjUGkRTqodtoni6VLQJ4t" target="_blank" class="tape-link">
+                        <img src="https://image-cdn-ak.spotifycdn.com/image/ab67616d00001e021e7234ca35ed22aa3b5d6bc4" class="tape-art" data-index="1">
+                        <span class="tape-artist">sayuruxt</span>
+                    </a>
+                    <a href="https://open.spotify.com/album/68lxvBtYV8WAYRVQqWQb1K" target="_blank" class="tape-link">
+                        <img src="https://image-cdn-ak.spotifycdn.com/image/ab67616d00001e02e6df767b61d2c5b8b33d71c1" class="tape-art" data-index="2">
+                        <span class="tape-artist">Phetow Rsa</span>
+                    </a>
+                    <a href="https://open.spotify.com/album/0rrReZ1ZOQzKHoymhzw0ZW" target="_blank" class="tape-link">
+                        <img src="https://image-cdn-ak.spotifycdn.com/image/ab67616d00001e02e58cc340e6580774a3e62d5e" class="tape-art" data-index="3">
+                        <span class="tape-artist">sayuruxt</span>
+                    </a>
+                    <a href="https://open.spotify.com/album/6MktDdi4f9BGbHbX8tiPYO" target="_blank" class="tape-link">
+                        <img src="https://image-cdn-ak.spotifycdn.com/image/ab67616d00001e02549226e77adc4a2522923447" class="tape-art" data-index="4">
+                        <span class="tape-artist">Phetow Rsa</span>
+                    </a>
+                    <a href="https://open.spotify.com/album/7wZlx1gIo8MI53tusokhpj" target="_blank" class="tape-link">
+                        <img src="https://image-cdn-ak.spotifycdn.com/image/ab67616d00001e02fe3f0bc8fe75a73a9e01dca0" class="tape-art" data-index="5">
+                        <span class="tape-artist">sayuruxt</span>
+                    </a>
+                    <a href="https://open.spotify.com/album/3W5CFVedLjSFVbTubHnX9P" target="_blank" class="tape-link">
+                        <img src="https://image-cdn-ak.spotifycdn.com/image/ab67616d00001e0298e9aeb6a3f9be954ba5a31a" class="tape-art" data-index="6">
+                        <span class="tape-artist">FL4ME</span>
+                    </a>
+                    <a href="https://open.spotify.com/album/6hDzhelEz77j5B65l6Pwfv" target="_blank" class="tape-link">
+                        <img src="https://image-cdn-ak.spotifycdn.com/image/ab67616d00001e0224efe9658c0cca9af9f4d8f4" class="tape-art" data-index="7">
+                        <span class="tape-artist">FL4ME</span>
+                    </a>
+                    <a href="https://open.spotify.com/album/13fRxuorQl3YXdpAwk3A68" target="_blank" class="tape-link">
+                        <img src="https://image-cdn-fa.spotifycdn.com/image/ab67616d00001e02a1df6fd8249a52e99677491e" class="tape-art" data-index="8">
+                        <span class="tape-artist">SXVNR</span>
+                    </a>
+                    <a href="https://open.spotify.com/album/2vkNxS3Vx4Z5rpNZihmx58" target="_blank" class="tape-link">
+                        <img src="https://image-cdn-fa.spotifycdn.com/image/ab67616d00001e021b879e8166497beb5ef233cb" class="tape-art" data-index="9">
+                        <span class="tape-artist">sayuruxt</span>
+                    </a>
+                    <a href="https://open.spotify.com/album/1OTVqW97vPGx09kjeBw9Ob" target="_blank" class="tape-link">
+                        <img src="https://image-cdn-ak.spotifycdn.com/image/ab67616d00001e023d2f3c7e3a35bc93e1982ec5" class="tape-art" data-index="10">
+                        <span class="tape-artist">FORGOTTEN K8D</span>
+                    </a>
+                    <a href="https://open.spotify.com/album/12lH36h6aNuL5p0GOd6Xwq" target="_blank" class="tape-link">
+                        <img src="https://image-cdn-ak.spotifycdn.com/image/ab67616d00001e02e48370269d3f213762de47ad" class="tape-art" data-index="11">
+                        <span class="tape-artist">sayuruxt</span>
+                    </a>
+                    <a href="https://open.spotify.com/album/11pvLdu8DICkTV3Gik1h4V" target="_blank" class="tape-link">
+                        <img src="https://image-cdn-ak.spotifycdn.com/image/ab67616d00001e027d3e48ccca636865c20def30" class="tape-art" data-index="12">
+                        <span class="tape-artist">sayuruxt</span>
+                    </a>
                 </div>
                 <div class="tape-items">
-                    <a href="https://open.spotify.com/album/5UjUGkRTqodtoni6VLQJ4t" target="_blank"><img src="https://ui-avatars.com/api/?name=EP&background=000&color=f00" class="tape-art" data-index="1"></a>
-                    <a href="https://open.spotify.com/album/68lxvBtYV8WAYRVQqWQb1K" target="_blank"><img src="https://ui-avatars.com/api/?name=EP&background=111&color=f00" class="tape-art" data-index="2"></a>
-                    <a href="https://open.spotify.com/album/0rrReZ1ZOQzKHoymhzw0ZW" target="_blank"><img src="https://ui-avatars.com/api/?name=EP&background=222&color=f00" class="tape-art" data-index="3"></a>
-                    <a href="https://open.spotify.com/album/6MktDdi4f9BGbHbX8tiPYO" target="_blank"><img src="https://ui-avatars.com/api/?name=EP&background=333&color=f00" class="tape-art" data-index="4"></a>
-                    <a href="https://open.spotify.com/album/7wZlx1gIo8MI53tusokhpj" target="_blank"><img src="https://ui-avatars.com/api/?name=EP&background=444&color=f00" class="tape-art" data-index="5"></a>
-                    <a href="https://open.spotify.com/album/3W5CFVedLjSFVbTubHnX9P" target="_blank"><img src="https://ui-avatars.com/api/?name=EP&background=555&color=f00" class="tape-art" data-index="6"></a>
-                    <a href="https://open.spotify.com/album/6hDzhelEz77j5B65l6Pwfv" target="_blank"><img src="https://ui-avatars.com/api/?name=EP&background=666&color=f00" class="tape-art" data-index="7"></a>
-                    <a href="https://open.spotify.com/album/13fRxuorQl3YXdpAwk3A68" target="_blank"><img src="https://ui-avatars.com/api/?name=EP&background=777&color=f00" class="tape-art" data-index="8"></a>
-                    <a href="https://open.spotify.com/album/2vkNxS3Vx4Z5rpNZihmx58" target="_blank"><img src="https://ui-avatars.com/api/?name=EP&background=888&color=f00" class="tape-art" data-index="9"></a>
-                    <a href="https://open.spotify.com/album/1OTVqW97vPGx09kjeBw9Ob" target="_blank"><img src="https://ui-avatars.com/api/?name=EP&background=999&color=f00" class="tape-art" data-index="10"></a>
+                    <a href="https://open.spotify.com/album/5UjUGkRTqodtoni6VLQJ4t" target="_blank" class="tape-link">
+                        <img src="https://image-cdn-ak.spotifycdn.com/image/ab67616d00001e021e7234ca35ed22aa3b5d6bc4" class="tape-art" data-index="1">
+                        <span class="tape-artist">sayuruxt</span>
+                    </a>
+                    <a href="https://open.spotify.com/album/68lxvBtYV8WAYRVQqWQb1K" target="_blank" class="tape-link">
+                        <img src="https://image-cdn-ak.spotifycdn.com/image/ab67616d00001e02e6df767b61d2c5b8b33d71c1" class="tape-art" data-index="2">
+                        <span class="tape-artist">Phetow Rsa</span>
+                    </a>
+                    <a href="https://open.spotify.com/album/0rrReZ1ZOQzKHoymhzw0ZW" target="_blank" class="tape-link">
+                        <img src="https://image-cdn-ak.spotifycdn.com/image/ab67616d00001e02e58cc340e6580774a3e62d5e" class="tape-art" data-index="3">
+                        <span class="tape-artist">sayuruxt</span>
+                    </a>
+                    <a href="https://open.spotify.com/album/6MktDdi4f9BGbHbX8tiPYO" target="_blank" class="tape-link">
+                        <img src="https://image-cdn-ak.spotifycdn.com/image/ab67616d00001e02549226e77adc4a2522923447" class="tape-art" data-index="4">
+                        <span class="tape-artist">Phetow Rsa</span>
+                    </a>
+                    <a href="https://open.spotify.com/album/7wZlx1gIo8MI53tusokhpj" target="_blank" class="tape-link">
+                        <img src="https://image-cdn-ak.spotifycdn.com/image/ab67616d00001e02fe3f0bc8fe75a73a9e01dca0" class="tape-art" data-index="5">
+                        <span class="tape-artist">sayuruxt</span>
+                    </a>
+                    <a href="https://open.spotify.com/album/3W5CFVedLjSFVbTubHnX9P" target="_blank" class="tape-link">
+                        <img src="https://image-cdn-ak.spotifycdn.com/image/ab67616d00001e0298e9aeb6a3f9be954ba5a31a" class="tape-art" data-index="6">
+                        <span class="tape-artist">FL4ME</span>
+                    </a>
+                    <a href="https://open.spotify.com/album/6hDzhelEz77j5B65l6Pwfv" target="_blank" class="tape-link">
+                        <img src="https://image-cdn-ak.spotifycdn.com/image/ab67616d00001e0224efe9658c0cca9af9f4d8f4" class="tape-art" data-index="7">
+                        <span class="tape-artist">FL4ME</span>
+                    </a>
+                    <a href="https://open.spotify.com/album/13fRxuorQl3YXdpAwk3A68" target="_blank" class="tape-link">
+                        <img src="https://image-cdn-fa.spotifycdn.com/image/ab67616d00001e02a1df6fd8249a52e99677491e" class="tape-art" data-index="8">
+                        <span class="tape-artist">SXVNR</span>
+                    </a>
+                    <a href="https://open.spotify.com/album/2vkNxS3Vx4Z5rpNZihmx58" target="_blank" class="tape-link">
+                        <img src="https://image-cdn-fa.spotifycdn.com/image/ab67616d00001e021b879e8166497beb5ef233cb" class="tape-art" data-index="9">
+                        <span class="tape-artist">sayuruxt</span>
+                    </a>
+                    <a href="https://open.spotify.com/album/1OTVqW97vPGx09kjeBw9Ob" target="_blank" class="tape-link">
+                        <img src="https://image-cdn-ak.spotifycdn.com/image/ab67616d00001e023d2f3c7e3a35bc93e1982ec5" class="tape-art" data-index="10">
+                        <span class="tape-artist">FORGOTTEN K8D</span>
+                    </a>
+                    <a href="https://open.spotify.com/album/12lH36h6aNuL5p0GOd6Xwq" target="_blank" class="tape-link">
+                        <img src="https://image-cdn-ak.spotifycdn.com/image/ab67616d00001e02e48370269d3f213762de47ad" class="tape-art" data-index="11">
+                        <span class="tape-artist">sayuruxt</span>
+                    </a>
+                    <a href="https://open.spotify.com/album/11pvLdu8DICkTV3Gik1h4V" target="_blank" class="tape-link">
+                        <img src="https://image-cdn-ak.spotifycdn.com/image/ab67616d00001e027d3e48ccca636865c20def30" class="tape-art" data-index="12">
+                        <span class="tape-artist">sayuruxt</span>
+                    </a>
                 </div>
             </div>
+        </div>
+        
+        <div class="bottom-social-section">
+            <h3 class="social-title">CONTACT WITH SOCIAL MEDIA</h3>
+            <div class="bottom-social-links">
+                <a href="https://www.instagram.com/recordsobscura?igsh=NnRhMjQ4dTRrMnQz" target="_blank" class="b-social-btn flex-center">
+                    <i class="fa-brands fa-instagram"></i>
+                    <span>INSTAGRAM</span>
+                </a>
+                <a href="https://www.tiktok.com/@obscura.records?_r=1&_t=ZS-94a7Rx7BvTb" target="_blank" class="b-social-btn flex-center">
+                    <i class="fa-brands fa-tiktok"></i>
+                    <span>TIKTOK</span>
+                </a>
+                <a href="https://youtube.com/@obscurarecords1?si=OsjFtvcIk_Etx82h" target="_blank" class="b-social-btn flex-center">
+                    <i class="fa-brands fa-youtube"></i>
+                    <span>YOUTUBE</span>
+                </a>
+            </div>
+        </div>
+        
+        <div class="tape-copyright">
+            <div class="neon-line"></div>
+            <p>COPYRIGHTED BY OBSCURA RECORDS</p>
+            <div class="neon-line"></div>
         </div>
     </div>
 
