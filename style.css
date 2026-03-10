@@ -28,9 +28,42 @@ body {
     background-color: var(--bg-color);
     color: var(--text-color);
     font-family: 'Inter', sans-serif;
-    overflow: hidden;
+    overflow-x: hidden;
+    overflow-y: auto;
     height: 100vh;
     user-select: none;
+    scroll-behavior: smooth;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+    width: 6px;
+    background: transparent;
+}
+
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #cc0000;
+    border-radius: 20px;
+    box-shadow: 
+        0 0 15px #ff0000, 
+        0 0 30px #ff0000, 
+        0 0 50px #ff0000, 
+        inset 0 0 8px rgba(255, 0, 0, 0.8);
+    border: 1px solid rgba(255, 0, 0, 0.8);
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #ff0000;
+    box-shadow: 
+        0 0 20px #ff0000, 
+        0 0 40px #ff0000, 
+        0 0 80px #ff0000, 
+        0 0 120px #ff0000,
+        inset 0 0 15px #ffffff;
 }
 
 /* Custom Cursor */
@@ -904,6 +937,321 @@ input[type=range]::-webkit-slider-runnable-track {
     }
 }
 
+/* ----------------------------------
+   OBSCURA RECORDS SECTION
+----------------------------------- */
+#obscura-section {
+    position: relative;
+    width: 100%;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 100px 20px;
+    z-index: 10;
+    transition: opacity 2s ease-in;
+    background: linear-gradient(to bottom, transparent, rgba(15, 0, 0, 0.5) 20%, rgba(10, 0, 0, 0.8) 100%);
+}
+
+.obscura-title {
+    font-family: 'Courier Prime', monospace;
+    font-size: 4rem;
+    letter-spacing: 12px;
+    color: #fff;
+    text-shadow: 0 0 10px #ff0000, 0 0 20px #ff0000, 0 0 40px #ff0000;
+    margin-bottom: 20px;
+    text-align: center;
+    text-transform: uppercase;
+    animation: neon-pulse-red 3s infinite alternate;
+}
+
+.obscura-description {
+    font-size: 1rem;
+    color: #ffcccc;
+    text-align: center;
+    max-width: 700px;
+    line-height: 1.6;
+    margin-bottom: 40px;
+    letter-spacing: 1px;
+    text-shadow: 0 0 5px rgba(255, 0, 0, 0.4), 0 0 10px rgba(255, 0, 0, 0.2);
+    font-weight: 500;
+}
+
+.neon-desc {
+    animation: neon-pulse-soft 4s infinite alternate;
+}
+
+@keyframes neon-pulse-soft {
+    0% { filter: drop-shadow(0 0 2px rgba(255,60,60,0.4)); text-shadow: 0 0 5px rgba(255, 0, 0, 0.4), 0 0 10px rgba(255, 0, 0, 0.2); }
+    100% { filter: drop-shadow(0 0 5px rgba(255,60,60,0.8)); text-shadow: 0 0 8px rgba(255, 50, 50, 0.7), 0 0 15px rgba(255, 0, 0, 0.4); }
+}
+
+@keyframes neon-pulse-red {
+    0% { filter: drop-shadow(0 0 10px rgba(255,0,0,0.4)); }
+    100% { filter: drop-shadow(0 0 25px rgba(255,0,0,0.9)); }
+}
+
+.scroll-animate {
+    opacity: 0;
+    transform: translateY(40px);
+    transition: all 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.scroll-animate.in-view {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.obscura-invite-wrapper {
+    margin-bottom: 80px;
+}
+
+.obscura-invite-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    background: rgba(10, 10, 10, 0.8);
+    border: 2px solid #5865F2; /* Discord Color */
+    color: #fff;
+    font-size: 1.2rem;
+    font-weight: bold;
+    padding: 15px 40px;
+    border-radius: 40px;
+    text-decoration: none;
+    box-shadow: 0 0 20px rgba(88, 101, 242, 0.4), inset 0 0 10px rgba(88, 101, 242, 0.2);
+    transition: all 0.3s ease;
+    backdrop-filter: blur(10px);
+}
+
+.obscura-invite-btn i {
+    font-size: 1.8rem;
+    color: #5865F2;
+    transition: transform 0.3s ease;
+}
+
+.obscura-invite-btn:hover {
+    background: #5865F2;
+    color: #fff;
+    box-shadow: 0 0 30px rgba(88, 101, 242, 0.8), 0 0 60px rgba(88, 101, 242, 0.5);
+    transform: translateY(-5px) scale(1.05);
+}
+
+.obscura-invite-btn:hover i {
+    color: #fff;
+    transform: rotate(360deg);
+}
+
+.profiles-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 40px;
+    width: 100%;
+    max-width: 1200px;
+}
+
+/* Discord Mock Card */
+.discord-profile-card {
+    background: #111214;
+    width: 340px;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 15px 40px rgba(0,0,0,0.8), 0 0 0 1px rgba(255,255,255,0.05);
+    transform: translateY(100px);
+    opacity: 0;
+    transition: all 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.discord-profile-card.in-view {
+    transform: translateY(0);
+    opacity: 1;
+}
+
+/* Sequential Inner Animations */
+.discord-profile-card .role-badge,
+.discord-profile-card .d-name,
+.discord-profile-card .d-bio-box {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: all 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.discord-profile-card.in-view .role-badge { opacity: 1; transform: translateY(0); transition-delay: 0.3s; }
+.discord-profile-card.in-view .d-name { opacity: 1; transform: translateY(0); transition-delay: 0.5s; }
+.discord-profile-card.in-view .d-bio-box { opacity: 1; transform: translateY(0); transition-delay: 0.6s; }
+
+.discord-profile-card:hover {
+    transform: translateY(-10px) scale(1.02);
+    box-shadow: 0 25px 50px rgba(255,0,0,0.15), 0 0 0 1px rgba(255,0,0,0.3);
+}
+
+.d-banner {
+    width: 100%;
+    height: 120px;
+    background-size: cover;
+    background-position: center;
+}
+
+.d-avatar-wrapper {
+    position: relative;
+    margin-top: -50px;
+    margin-left: 20px;
+    width: 100px;
+    height: 100px;
+}
+
+.d-avatar-img {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    border: 6px solid #111214;
+    background: #111214;
+    object-fit: cover;
+}
+
+.d-status {
+    position: absolute;
+    bottom: 4px;
+    right: 4px;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    border: 4px solid #111214;
+}
+
+.d-status.dnd { background-color: #f04747; }
+.d-status.idle { background-color: #faa61a; }
+.d-status.online { background-color: #43b581; }
+
+.d-card-content {
+    padding: 15px 20px 25px 20px;
+    position: relative;
+}
+
+.d-name {
+    color: #f2f3f5;
+    font-size: 1.4rem;
+    font-weight: bold;
+    margin-top: 10px;
+}
+
+.d-username {
+    color: #b5bac1;
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 4px;
+}
+
+.d-badge {
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    font-weight: bold;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.d-kong { background: rgba(255,0,0,0.1); color: #ff4d4d; border: 1px solid rgba(255,0,0,0.3); }
+.d-void { background: rgba(170,0,255,0.1); color: #d580ff; border: 1px solid rgba(170,0,255,0.3); }
+.d-phonk { background: rgba(100,100,100,0.2); color: #ccc; border: 1px solid rgba(255,255,255,0.2); }
+
+.d-bio-box {
+    background: #1e1f22;
+    border-radius: 8px;
+    padding: 15px;
+    margin-top: 20px;
+    color: #dbdee1;
+    font-size: 0.9rem;
+    line-height: 1.5;
+}
+
+.d-bio-head {
+    text-transform: uppercase;
+    font-size: 0.75rem;
+    font-weight: bold;
+    color: #b5bac1;
+    margin-bottom: 8px;
+}
+
+.d-bio-box p {
+    margin-bottom: 4px;
+}
+
+.mt-3 {
+    margin-top: 15px !important;
+}
+
+.d-link {
+    color: #00a8fc;
+    text-decoration: none;
+}
+.d-link:hover {
+    text-decoration: underline;
+}
+
+.pixel-text {
+    font-family: 'Courier Prime', monospace; /* Approximate fallback for pixel text */
+    letter-spacing: 2px;
+}
+
+/* Role Labels Overlays */
+.role-badge {
+    position: absolute;
+    top: -20px;
+    right: 20px;
+    padding: 5px 15px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: bold;
+    letter-spacing: 1px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+    backdrop-filter: blur(5px);
+}
+
+.role-owner { background: rgba(255, 0, 0, 0.2); color: #ff4d4d; border: 1px solid rgba(255,0,0,0.5); box-shadow: 0 0 10px rgba(255,0,0,0.2); }
+.role-admin { background: rgba(255, 150, 0, 0.2); color: #ffa600; border: 1px solid rgba(255,150,0,0.5); box-shadow: 0 0 10px rgba(255,150,0,0.2); }
+.role-ar { background: rgba(0, 150, 255, 0.2); color: #66ccff; border: 1px solid rgba(0,150,255,0.5); box-shadow: 0 0 10px rgba(0,150,255,0.2); }
+
+/* Footer */
+.obscura-footer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 100px;
+    padding-top: 60px;
+    border-top: 1px solid rgba(255,0,0,0.2);
+    width: 100%;
+    max-width: 800px;
+    text-align: center;
+}
+
+.footer-title {
+    font-family: 'Courier Prime', monospace;
+    font-size: 2.5rem;
+    letter-spacing: 5px;
+    color: #fff;
+    margin-bottom: 20px;
+    text-shadow: 0 0 10px #ff0000, 0 0 20px #ff0000, 0 0 40px #ff0000;
+}
+
+.footer-desc {
+    font-size: 1.2rem;
+    color: #ffd6d6;
+    margin-bottom: 30px;
+    letter-spacing: 1px;
+}
+
+.footer-thanks {
+    font-family: 'Courier Prime', monospace;
+    font-size: 3.5rem;
+    color: #ff0000;
+    text-shadow: 0 0 15px rgba(255,0,0,0.8), 0 0 30px rgba(255,0,0,0.6);
+    animation: neon-pulse-soft 2s infinite alternate;
+}
+
 @media (max-width: 950px) {
     * {
         cursor: auto !important;
@@ -943,5 +1291,83 @@ input[type=range]::-webkit-slider-runnable-track {
     .premium-spotify-box.in-view, .premium-spotify-box:focus-within {
         transform: scale(1) !important;
         opacity: 1;
+    }
+    
+    .obscura-title {
+        font-size: 2.2rem;
+        letter-spacing: 6px;
+    }
+    
+    .footer-title {
+        font-size: 1.8rem;
+    }
+    
+    .footer-desc {
+        font-size: 1rem;
+    }
+    
+    .footer-thanks {
+        font-size: 2.5rem;
+    }
+}
+
+/* Tape Scrolling Animation */
+.spotify-tape-container {
+    width: 100vw;
+    margin-top: 100px;
+    padding: 30px 0;
+    margin-bottom: 50px;
+    background: rgba(10, 0, 0, 0.4);
+    border-top: 2px solid rgba(255, 0, 0, 0.2);
+    border-bottom: 2px solid rgba(255, 0, 0, 0.2);
+    overflow: hidden;
+    position: relative;
+    backdrop-filter: blur(10px);
+}
+
+.tape-track {
+    display: flex;
+    width: max-content;
+    animation: tape-slide 30s linear infinite;
+}
+
+.tape-track:hover {
+    animation-play-state: paused;
+}
+
+.tape-items {
+    display: flex;
+    gap: 30px;
+    padding: 0 15px;
+}
+
+.tape-art {
+    width: 220px;
+    height: 220px;
+    object-fit: cover;
+    border-radius: 8px;
+    border: 2px solid rgba(255, 0, 0, 0.3);
+    box-shadow: 0 0 15px rgba(255, 0, 0, 0.2);
+    transition: all 0.3s ease;
+    cursor: auto !important;
+}
+
+.tape-art:hover {
+    transform: scale(1.05) translateY(-10px);
+    border-color: #ff0000;
+    box-shadow: 0 0 30px rgba(255, 0, 0, 0.6), 0 10px 20px rgba(0, 0, 0, 0.8);
+    z-index: 10;
+    position: relative;
+}
+
+@keyframes tape-slide {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+}
+
+@media (max-width: 768px) {
+    .tape-art {
+        width: 160px;
+        height: 160px;
     }
 }
