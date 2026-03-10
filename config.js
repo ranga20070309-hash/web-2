@@ -1,7 +1,7 @@
 const CONFIG = {
     // General
     name: "||RANGA||",
-    tabName: "( | @RANGA | )",
+    tabName: "@RANGA",
     title: "Happy To See You! This Is One Of My Favorite Song",
     location: "China / Sri Lanka",
 
