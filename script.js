@@ -590,9 +590,9 @@ document.addEventListener("DOMContentLoaded", () => {
     // Update every second
     setInterval(updateLocalTime, 1000);
 
-    // Mobile scroll animation for Spotify widget
-    const spotifyWidget = document.querySelector(".premium-spotify-box");
-    if (spotifyWidget) {
+    // Mobile scroll animation for premium widgets
+    const premiumWidgets = document.querySelectorAll(".premium-spotify-box, .premium-apple-box");
+    if (premiumWidgets.length > 0) {
         const observer = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
@@ -605,7 +605,7 @@ document.addEventListener("DOMContentLoaded", () => {
             threshold: 0.3 // Trigger when 30% of the widget is visible
         });
         
-        observer.observe(spotifyWidget);
+        premiumWidgets.forEach(widget => observer.observe(widget));
     }
 
     // Scroll animation for Discord cards
@@ -641,4 +641,55 @@ document.addEventListener("DOMContentLoaded", () => {
 
         scrollElements.forEach(el => scrollObserver.observe(el));
     }
+
+    // Realistic Wind Effect for Enter Screen
+    function initWindEffect() {
+        const windContainer = document.getElementById("wind-container");
+        if (!windContainer) return;
+
+        let isRunning = true;
+
+        function createParticle(isDust) {
+            if (!isRunning) return;
+            const particle = document.createElement("div");
+            particle.classList.add(isDust ? "wind-dust" : "wind-streak");
+            
+            particle.style.top = Math.random() * 100 + "%";
+            
+            if (!isDust) {
+                particle.style.width = (Math.random() * 200 + 50) + "px";
+                particle.style.animationDuration = (Math.random() * 0.5 + 0.3) + "s";
+                particle.style.opacity = Math.random() * 0.3 + 0.1;
+            } else {
+                const size = (Math.random() * 3 + 2) + "px";
+                particle.style.width = size;
+                particle.style.height = size;
+                particle.style.setProperty("--drift-y", (Math.random() * 40 - 20) + "vh");
+                particle.style.animationDuration = (Math.random() * 1.5 + 0.5) + "s";
+                particle.style.opacity = Math.random() * 0.5 + 0.2;
+            }
+
+            windContainer.appendChild(particle);
+            
+            setTimeout(() => {
+                if (particle.parentNode) particle.remove();
+            }, parseInt(particle.style.animationDuration) * 1000); // Wait for animation to finish
+        }
+
+        // Generate particles occasionally
+        const streakInterval = setInterval(() => createParticle(false), 80);
+        const dustInterval = setInterval(() => createParticle(true), 40);
+
+        // Stop wind and clean up when entering site
+        const enterBtn = document.querySelector(".enter-btn");
+        if (enterBtn) {
+            enterBtn.addEventListener("click", () => {
+                isRunning = false;
+                clearInterval(streakInterval);
+                clearInterval(dustInterval);
+            });
+        }
+    }
+    
+    initWindEffect();
 });
