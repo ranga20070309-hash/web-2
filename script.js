@@ -81,7 +81,10 @@ document.addEventListener("DOMContentLoaded", () => {
         bgImg.style.display = "none";
 
         const attemptPlay = () => {
-            bgVideo.play().catch(e => console.log("Background video play failed:", e));
+            const playPromise = bgVideo.play();
+            if (playPromise !== undefined) {
+                playPromise.catch(e => console.log("Background video play failed:", e));
+            }
         };
 
         bgVideo.addEventListener("loadeddata", () => {
@@ -89,20 +92,31 @@ document.addEventListener("DOMContentLoaded", () => {
             attemptPlay();
         });
 
-        // Ensure video loops even if the attribute fails or gets paused
+        // Ensure video loops
         bgVideo.addEventListener("ended", attemptPlay);
-        bgVideo.addEventListener("pause", attemptPlay); // Force resume if paused by OS/Browser
 
-        // Also ensure enter video loops and auto resumes
+        // Also ensure enter video loops
         const enterVideo = document.querySelector('.enter-video');
         if (enterVideo) {
             enterVideo.muted = true;
             enterVideo.loop = true;
             enterVideo.setAttribute("playsinline", "");
-            const playEnter = () => enterVideo.play().catch(e => console.log("Enter video replay failed:", e));
+            enterVideo.setAttribute("webkit-playsinline", "");
+            
+            const playEnter = () => {
+                const ep = enterVideo.play();
+                if (ep !== undefined) {
+                    ep.catch(e => console.log("Enter video replay failed:", e));
+                }
+            };
+            
             enterVideo.addEventListener("ended", playEnter);
-            enterVideo.addEventListener("pause", playEnter);
             playEnter();
+            
+            // Re-trigger enter video on interaction to be safe
+            document.body.addEventListener('click', () => {
+                if (enterVideo.paused) playEnter();
+            }, { once: true });
         }
 
         bgVideo.addEventListener("error", () => {
