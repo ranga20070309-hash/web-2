@@ -21,7 +21,6 @@
 html {
     width: 100%;
     height: 100%;
-    scroll-behavior: smooth;
 }
 body {
     width: 100%;
@@ -36,12 +35,10 @@ body {
     overflow-y: hidden;
     height: 100vh;
     user-select: none;
-    scroll-behavior: smooth;
 }
 
 body.scroll-enabled {
     overflow-y: auto;
-    scroll-snap-type: y proximity;
 }
 
 /* Custom Scrollbar */
@@ -2014,7 +2011,6 @@ input[type=range]::-webkit-slider-runnable-track {
         display: flex;
         justify-content: center;
         align-items: center;
-        scroll-snap-align: center;
     }
 
     .premium-spotify-box,
