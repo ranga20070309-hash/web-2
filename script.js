@@ -5,6 +5,23 @@ if (history.scrollRestoration) {
 window.scrollTo(0, 0);
 
 document.addEventListener("DOMContentLoaded", () => {
+    // Initialize Lenis for Buttery Smooth Scrolling
+    const lenis = new Lenis({
+        duration: 1.2,
+        easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)), 
+        direction: 'vertical',
+        gestureDirection: 'vertical',
+        smooth: true,
+        smoothTouch: false,
+        touchMultiplier: 2,
+    });
+
+    function raf(time) {
+        lenis.raf(time);
+        requestAnimationFrame(raf);
+    }
+    requestAnimationFrame(raf);
+
     // Load CONFIG
     document.getElementById("page-title").textContent = CONFIG.name;
 
@@ -56,12 +73,37 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (isVideo) {
         bgVideo.src = mediaUrl;
+        bgVideo.muted = true;
+        bgVideo.loop = true;
+        bgVideo.setAttribute("playsinline", "");
+        bgVideo.setAttribute("webkit-playsinline", "");
         bgVideo.style.display = "block";
         bgImg.style.display = "none";
 
+        const attemptPlay = () => {
+            bgVideo.play().catch(e => console.log("Background video play failed:", e));
+        };
+
         bgVideo.addEventListener("loadeddata", () => {
             console.log("Background video loaded.");
+            attemptPlay();
         });
+
+        // Ensure video loops even if the attribute fails or gets paused
+        bgVideo.addEventListener("ended", attemptPlay);
+        bgVideo.addEventListener("pause", attemptPlay); // Force resume if paused by OS/Browser
+
+        // Also ensure enter video loops and auto resumes
+        const enterVideo = document.querySelector('.enter-video');
+        if (enterVideo) {
+            enterVideo.muted = true;
+            enterVideo.loop = true;
+            enterVideo.setAttribute("playsinline", "");
+            const playEnter = () => enterVideo.play().catch(e => console.log("Enter video replay failed:", e));
+            enterVideo.addEventListener("ended", playEnter);
+            enterVideo.addEventListener("pause", playEnter);
+            playEnter();
+        }
 
         bgVideo.addEventListener("error", () => {
             console.log("Background video failed to load.");
