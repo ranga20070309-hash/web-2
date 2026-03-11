@@ -77,46 +77,45 @@ document.addEventListener("DOMContentLoaded", () => {
         bgVideo.loop = true;
         bgVideo.setAttribute("playsinline", "");
         bgVideo.setAttribute("webkit-playsinline", "");
+        bgVideo.setAttribute("autoplay", "");
         bgVideo.style.display = "block";
         bgImg.style.display = "none";
+        bgVideo.load();
 
-        const attemptPlay = () => {
-            const playPromise = bgVideo.play();
-            if (playPromise !== undefined) {
-                playPromise.catch(e => console.log("Background video play failed:", e));
-            }
+        const forcePlay = (vid) => {
+            const p = vid.play();
+            if (p !== undefined) p.catch(() => {});
         };
 
-        bgVideo.addEventListener("loadeddata", () => {
-            console.log("Background video loaded.");
-            attemptPlay();
-        });
+        // Aggressive handling for ALL videos to never freeze
+        const enforceVideo = (vid) => {
+            vid.muted = true;
+            vid.loop = true;
+            vid.setAttribute("playsinline", "");
+            vid.setAttribute("webkit-playsinline", "");
+            vid.setAttribute("autoplay", "");
+            
+            // Native loop fallback
+            vid.addEventListener("ended", () => {
+                vid.currentTime = 0;
+                forcePlay(vid);
+            });
+            // Prevent auto-pausing by browser
+            vid.addEventListener("pause", () => {
+                if (vid.currentTime > 0 && !vid.ended) {
+                    forcePlay(vid);
+                }
+            });
+            forcePlay(vid);
+        };
 
-        // Ensure video loops
-        bgVideo.addEventListener("ended", attemptPlay);
+        enforceVideo(bgVideo);
 
-        // Also ensure enter video loops
         const enterVideo = document.querySelector('.enter-video');
         if (enterVideo) {
-            enterVideo.muted = true;
-            enterVideo.loop = true;
-            enterVideo.setAttribute("playsinline", "");
-            enterVideo.setAttribute("webkit-playsinline", "");
-            
-            const playEnter = () => {
-                const ep = enterVideo.play();
-                if (ep !== undefined) {
-                    ep.catch(e => console.log("Enter video replay failed:", e));
-                }
-            };
-            
-            enterVideo.addEventListener("ended", playEnter);
-            playEnter();
-            
-            // Re-trigger enter video on interaction to be safe
-            document.body.addEventListener('click', () => {
-                if (enterVideo.paused) playEnter();
-            }, { once: true });
+            enforceVideo(enterVideo);
+            // On user click, we also force the 2nd screen background video to play to overcome iOS restrictions
+            document.body.addEventListener("click", () => forcePlay(bgVideo), { once: true });
         }
 
         bgVideo.addEventListener("error", () => {
@@ -469,6 +468,22 @@ document.addEventListener("DOMContentLoaded", () => {
             window.addEventListener('deviceorientation', handleOrientation);
         }
 
+        // Play audio and video strictly on user gesture matching (fixes iOS and Safari pausing)
+        audio.volume = 0.5;
+        const playPromise = audio.play();
+        if (playPromise !== undefined) {
+            playPromise.then(() => {
+                isPlaying = true;
+                updatePlayPauseIcon();
+            }).catch(() => {
+                console.log("Audio permission denied.");
+            });
+        }
+
+        if (isVideo) {
+            bgVideo.play().catch(() => console.log("Background video play skipped."));
+        }
+
         enterScreen.classList.add("enter-leaving");
 
         setTimeout(() => {
@@ -500,26 +515,15 @@ document.addEventListener("DOMContentLoaded", () => {
 
             const viewCounterBox = document.getElementById("view-counter-box");
             if (viewCounterBox) viewCounterBox.classList.remove("hidden");
-
-            audio.volume = 0.5;
-
-            const playPromise = audio.play();
-            if (playPromise !== undefined) {
-                playPromise.then(() => {
-                    isPlaying = true;
-                    updatePlayPauseIcon();
-                }).catch(() => {
-                    console.log("Audio permission denied.");
-                });
-            }
-
-            if (isVideo) {
-                bgVideo.play().catch(() => {
-                    console.log("Background video autoplay blocked.");
-                });
-            }
         }, 1100); // Wait for the 1.2s exit animation to almost finish before showing new content
     });
+
+    // Enforce video playback continuously
+    setInterval(() => {
+        if (isVideo && bgVideo.paused) {
+            bgVideo.play().catch(() => {});
+        }
+    }, 1000);
 
     audioToggle.addEventListener("click", () => {
         audio.muted = !audio.muted;
