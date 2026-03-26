@@ -598,6 +598,315 @@ body.scroll-enabled {
     }
 }
 
+/* Fixes for Premium Boxes inside Center Modals */
+.music-modal .premium-spotify-box,
+.music-modal .premium-apple-box {
+    position: relative;
+    width: 380px;
+    height: 600px;
+    transform: none !important;
+    animation: none !important;
+    opacity: 1 !important;
+    max-width: 90vw;
+    z-index: 10;
+}
+
+/* Side Music Panel */
+.side-music-panel {
+    position: fixed;
+    left: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    z-index: 50;
+    transition: opacity 0.5s ease;
+}
+
+.side-music-btn {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: rgba(10, 10, 10, 0.7);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.8rem;
+    color: #fff;
+    cursor: none;
+    transition: all 0.3s ease;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+}
+
+.side-music-btn.spotify {
+    color: #1DB954;
+    border-color: rgba(29, 185, 84, 0.3);
+}
+
+.side-music-btn.apple {
+    color: #fa243c;
+    border-color: rgba(250, 36, 60, 0.3);
+}
+
+.side-music-btn:hover {
+    transform: scale(1.1);
+}
+
+.side-music-btn.spotify:hover {
+    background: rgba(29, 185, 84, 0.2);
+    box-shadow: 0 0 20px rgba(29, 185, 84, 0.8), 0 0 40px rgba(29, 185, 84, 0.4);
+}
+
+.side-music-btn.apple:hover {
+    background: rgba(250, 36, 60, 0.2);
+    box-shadow: 0 0 20px rgba(250, 36, 60, 0.8), 0 0 40px rgba(250, 36, 60, 0.4);
+}
+
+/* Modals for Spotify/Apple */
+.music-modal {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: rgba(0, 0, 0, 0.85);
+    backdrop-filter: blur(15px);
+    z-index: 10000;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.4s cubic-bezier(0.25, 0.1, 0.25, 1);
+}
+
+.music-modal.modal-active {
+    opacity: 1;
+    visibility: visible;
+}
+
+.music-modal .modal-content-box {
+    transform: scale(0.8) translateY(50px);
+    transition: all 0.5s cubic-bezier(0.25, 0.1, 0.25, 1);
+    opacity: 0;
+}
+
+.music-modal.modal-active .modal-content-box {
+    transform: scale(1) translateY(0);
+    opacity: 1;
+}
+
+.close-modal-btn {
+    position: absolute;
+    top: -40px;
+    right: 0;
+    color: #fff;
+    font-size: 2rem;
+    cursor: none;
+    transition: all 0.3s ease;
+}
+
+.close-modal-btn:hover {
+    color: var(--primary-color);
+    transform: scale(1.2) rotate(90deg);
+}
+
+/* Album Showcase Panel */
+#album-showcase {
+    position: fixed;
+    right: 30px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 360px;
+    max-height: 80vh;
+    z-index: 40;
+    border-radius: 20px;
+    background: rgba(15, 15, 15, 0.6);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(20px);
+    padding: 2px;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+    transition: all 0.5s ease;
+    animation: float-premium-translate 6s ease-in-out infinite alternate;
+}
+
+.album-box-glow {
+    position: absolute;
+    inset: -2px;
+    background: linear-gradient(45deg, #1DB954, #fa243c, #8a2be2);
+    border-radius: 22px;
+    z-index: -1;
+    opacity: 0.3;
+    filter: blur(10px);
+    transition: opacity 0.5s ease;
+}
+
+#album-showcase:hover .album-box-glow {
+    opacity: 0.6;
+    filter: blur(15px);
+}
+
+.album-showcase-content {
+    background: rgba(10, 10, 10, 0.85);
+    border-radius: 18px;
+    padding: 25px 20px;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.album-header {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 20px;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+    padding-bottom: 20px;
+}
+
+.album-cover {
+    width: 80px;
+    height: 80px;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+    object-fit: cover;
+}
+
+.album-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.album-type {
+    font-size: 0.7rem;
+    color: var(--primary-color);
+    letter-spacing: 2px;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.album-title {
+    font-size: 1.2rem;
+    color: #fff;
+    margin: 0 0 5px 0;
+    text-shadow: 0 0 10px rgba(255,255,255,0.3);
+}
+
+.album-artist {
+    font-size: 0.85rem;
+    color: #aaa;
+}
+
+.tracklist-container {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    overflow-y: auto;
+    max-height: 350px;
+    padding-right: 5px;
+}
+
+/* Custom Scrollbar for tracklist */
+.tracklist-container::-webkit-scrollbar {
+    width: 4px;
+}
+.tracklist-container::-webkit-scrollbar-thumb {
+    background: rgba(255,255,255,0.2);
+    border-radius: 4px;
+}
+
+.track-item {
+    display: flex;
+    align-items: center;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 10px;
+    padding: 12px 15px;
+    transition: all 0.3s ease;
+}
+
+.track-item:hover {
+    background: rgba(255, 255, 255, 0.08);
+    transform: translateX(5px);
+    border-color: rgba(255, 255, 255, 0.15);
+}
+
+.track-number {
+    font-size: 1rem;
+    color: #555;
+    font-weight: bold;
+    min-width: 25px;
+}
+
+.track-item:hover .track-number {
+    color: var(--primary-color);
+}
+
+.track-details {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.track-name {
+    font-size: 0.95rem;
+    color: #fff;
+    font-weight: 500;
+    margin-bottom: 4px;
+}
+
+.track-credits {
+    font-size: 0.65rem;
+    color: #888;
+    line-height: 1.3;
+}
+
+.track-stats {
+    font-size: 0.75rem;
+    color: #1DB954;
+    font-weight: bold;
+    white-space: nowrap;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.album-play-btn {
+    text-decoration: none;
+    background: #1DB954;
+    color: #000;
+    padding: 12px;
+    border-radius: 25px;
+    font-weight: bold;
+    font-size: 0.9rem;
+    letter-spacing: 1px;
+    margin-top: 15px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.3s ease;
+}
+
+.album-play-btn:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 20px rgba(29, 185, 84, 0.5);
+}
+
+@media (max-width: 1100px) {
+    #album-showcase {
+        position: relative;
+        right: auto;
+        top: auto;
+        transform: none;
+        width: 100%;
+        max-width: 450px;
+        margin: 40px auto;
+        animation: none;
+    }
+}
+
 @keyframes neon-flicker {
 
     0%,
@@ -2356,3 +2665,4 @@ input[type=range]::-webkit-slider-runnable-track {
     90% { opacity: 1; }
     100% { transform: translate(-120vw, var(--drift-y, 20vh)) scale(0.5) rotate(360deg); opacity: 0; }
 }
+
