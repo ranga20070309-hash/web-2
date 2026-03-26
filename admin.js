@@ -58,41 +58,29 @@ document.addEventListener('DOMContentLoaded', () => {
            <div class="form-group"><label>Display Text</label><input type="text" onchange="socData[${i}].text=this.value" value="${t.text||''}"></div>
            <div class="form-group"><label>Link URL</label><input type="text" onchange="socData[${i}].url=this.value" value="${t.url||''}"></div>
         </div>
-    `);
-
-    if(document.getElementById('add-team-btn')) document.getElementById('add-team-btn').onclick=()=>{ teamData.push({}); renderTeam();};
-    if(document.getElementById('add-tape-btn')) document.getElementById('add-tape-btn').onclick=()=>{ tapeData.push({}); renderTape();};
-    if(document.getElementById('add-soc-btn')) document.getElementById('add-soc-btn').onclick=()=>{ socData.push({}); renderSoc();};
-
-    const statusText=document.getElementById('connection-status'), dot=document.querySelector('.status-indicator .dot');
+    `);    const statusText=document.getElementById('connection-status'), dot=document.querySelector('.status-indicator .dot');
     const setVal = (id, val) => { if(document.getElementById(id)) document.getElementById(id).value = val || ''; }
     
     if (db) db.collection('settings').doc('main').get().then(doc => {
         const d = doc.exists ? doc.data() : (typeof CONFIG!=='undefined'?CONFIG:{});
         
         // Setup initial default values for Arrays if DB is empty
-        if (!doc.exists || (!d.team && !d.tape)) {
+        if (!doc.exists || !d.enterTitle) {
             d.enterVideo = "https://image2url.com/r2/default/videos/1773178239885-4fc6156d-03bd-4dd6-ae95-ba022f2a9959.mp4";
             d.enterTitle = "Welcome To My Site Buddy"; d.enterButton = "I'm Here To Look Your Site";
             d.obscuraTitle = "OBSCURA RECORDS"; d.obscuraDesc = "OBSCURA RECORDS is an independent music label focused on artist development, music production, and official releases.<br/>Our mission is to support talented artists and create high-quality music through collaboration and innovation.";
             d.obscuraDiscord = "https://discord.gg/uyvWq2UN"; d.obscuraFooterTitle = "We Are The Team Of OBSCURA";
             d.obscuraFooterDesc = "Join to the server and make music with other producers"; d.copyrightText = "COPYRIGHTED BY OBSCURA RECORDS";
             d.bottomSocialTitle = "CONTACT WITH SOCIAL MEDIA";
-            d.team = [
-                { role: "OWNER", name: "SVYUXU", bio: "OWNER OF OBSCURA RECORDS", bg1: "#112244", bg2: "#001122", color: "#66ccff" },
-                { role: "ADMIN", name: "!RANGA", bio: "ADMIN OF OBSCURA RECORDS", bg1: "#441111", bg2: "#110000", color: "#ffffff" },
-                { role: "A&R TEAM", name: "- VXIDMXNE -", bio: "A&R OF OBSCURA RECORDS", bg1: "#111111", bg2: "#333333", color: "#ffffff" },
-                { role: "A&R TEAM", name: "FL4ME", bio: "A&R OF OBSCURA RECORDS", bg1: "#111122", bg2: "#333355", color: "#ff4444" }
-            ];
-            d.tape = [ 
-                { url: "https://open.spotify.com/album/5UjUGkRTqodtoni6VLQJ4t", img: "https://image-cdn-ak.spotifycdn.com/image/ab67616d00001e021e7234ca35ed22aa3b5d6bc4", artist: "sayuruxt" },
-                { url: "https://open.spotify.com/album/68lxvBtYV8WAYRVQqWQb1K", img: "https://image-cdn-ak.spotifycdn.com/image/ab67616d00001e02e6df767b61d2c5b8b33d71c1", artist: "Phetow Rsa" }
-            ]; /* Added placeholder defaults for tape as well */
-            d.bottomSocials = [
-                { icon: "instagram", url: "https://instagram.com", text: "INSTAGRAM" },
-                { icon: "tiktok", url: "https://tiktok.com", text: "TIKTOK" },
-                { icon: "youtube", url: "https://youtube.com", text: "YOUTUBE" }
-            ];
+            d.latestSingle = {
+                cover: "https://image-cdn-ak.spotifycdn.com/image/ab67616d00001e021e7234ca35ed22aa3b5d6bc4",
+                title: "Echoing Funk",
+                streams: "142,500+",
+                prod: "RANGA",
+                mix: "SVYUXU",
+                coprod: "FL4ME",
+                url: "https://open.spotify.com/album/5UjUGkRTqodtoni6VLQJ4t"
+            };
         }
 
         setVal('config-name', d.name); setVal('config-tabname', d.tabName); setVal('config-title', d.title);
@@ -107,8 +95,11 @@ document.addEventListener('DOMContentLoaded', () => {
         setVal('cfg-obs-footer-title', d.obscuraFooterTitle); setVal('cfg-obs-footer-desc', d.obscuraFooterDesc); setVal('cfg-obs-copyright', d.copyrightText);
         setVal('cfg-btm-soc-title', d.bottomSocialTitle);
         
-        teamData = d.team || []; tapeData = d.tape || []; socData = d.bottomSocials || [];
-        renderTeam(); renderTape(); renderSoc();
+        if (d.latestSingle) {
+            setVal('cfg-ls-cover', d.latestSingle.cover); setVal('cfg-ls-title', d.latestSingle.title); setVal('cfg-ls-streams', d.latestSingle.streams);
+            setVal('cfg-ls-prod', d.latestSingle.prod); setVal('cfg-ls-mix', d.latestSingle.mix); setVal('cfg-ls-coprod', d.latestSingle.coprod);
+            setVal('cfg-ls-url', d.latestSingle.url);
+        }
 
         if(statusText){ statusText.textContent="Live Synced"; dot.style.background="#2ecc71"; }
     });
@@ -129,7 +120,10 @@ document.addEventListener('DOMContentLoaded', () => {
             obscuraTitle:val('cfg-obs-title'), obscuraDesc:val('cfg-obs-desc'), obscuraDiscord:val('cfg-obs-discord'),
             obscuraFooterTitle:val('cfg-obs-footer-title'), obscuraFooterDesc:val('cfg-obs-footer-desc'), copyrightText:val('cfg-obs-copyright'),
             bottomSocialTitle:val('cfg-btm-soc-title'),
-            team: teamData, tape: tapeData, bottomSocials: socData
+            latestSingle: {
+                cover: val('cfg-ls-cover'), title: val('cfg-ls-title'), streams: val('cfg-ls-streams'),
+                prod: val('cfg-ls-prod'), mix: val('cfg-ls-mix'), coprod: val('cfg-ls-coprod'), url: val('cfg-ls-url')
+            }
         };
         db.collection('settings').doc('main').set(newData,{merge:true}).then(()=>{
             saveBtn.innerHTML='Published!'; saveBtn.style.background='#2ecc71';
