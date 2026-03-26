@@ -10,22 +10,29 @@ document.addEventListener("DOMContentLoaded", () => {
         db.collection('settings').doc('main').get().then(doc => {
             if (doc.exists) {
                 const dbData = doc.data();
-                Object.assign(CONFIG, dbData);
-                if (dbData.socials) {
-                    CONFIG.socials = { ...CONFIG.socials, ...dbData.socials };
-                }
+                
+                // Extremely safe merge: only merge if truthy and not empty String
+                Object.keys(dbData).forEach(key => {
+                    if (dbData[key] && dbData[key] !== "") {
+                        if (key === 'socials' && typeof dbData[key] === 'object') {
+                            CONFIG.socials = { ...CONFIG.socials, ...dbData.socials };
+                        } else {
+                            CONFIG[key] = dbData[key];
+                        }
+                    }
+                });
 
-                // Inject Custom Data Dynamically
-                if (dbData.enterVideo) { const ev = document.querySelector('.enter-video'); if (ev) ev.src = dbData.enterVideo; }
-                if (dbData.enterTitle) { const et = document.querySelector('.enter-title'); if (et) { et.textContent = dbData.enterTitle; et.setAttribute('data-text', dbData.enterTitle); } }
-                if (dbData.enterButton) { const eb = document.querySelector('.enter-btn'); if (eb) { eb.textContent = dbData.enterButton; eb.setAttribute('data-text', dbData.enterButton); } }
-                if (dbData.obscuraTitle) { const ot = document.querySelector('.obscura-title'); if (ot) ot.textContent = dbData.obscuraTitle; }
-                if (dbData.obscuraDesc) { const od = document.querySelector('.obscura-description'); if (od) od.innerHTML = dbData.obscuraDesc; }
-                if (dbData.obscuraDiscord) { const oi = document.querySelector('.obscura-invite-btn'); if (oi) oi.href = dbData.obscuraDiscord; }
-                if (dbData.obscuraFooterTitle) { const ft = document.querySelector('.footer-title'); if (ft) ft.textContent = dbData.obscuraFooterTitle; }
-                if (dbData.obscuraFooterDesc) { const fd = document.querySelector('.footer-desc'); if (fd) fd.textContent = dbData.obscuraFooterDesc; }
-                if (dbData.copyrightText) { const ct = document.querySelector('.tape-copyright p'); if (ct) ct.textContent = dbData.copyrightText; }
-                if (dbData.bottomSocialTitle) { const bst = document.querySelector('.social-title'); if (bst) bst.textContent = dbData.bottomSocialTitle; }
+                // Inject Custom Data Dynamically only if valid
+                if (dbData.enterVideo && dbData.enterVideo !== "") { const ev = document.querySelector('.enter-video'); if (ev) ev.src = dbData.enterVideo; }
+                if (dbData.enterTitle && dbData.enterTitle !== "") { const et = document.querySelector('.enter-title'); if (et) { et.textContent = dbData.enterTitle; et.setAttribute('data-text', dbData.enterTitle); } }
+                if (dbData.enterButton && dbData.enterButton !== "") { const eb = document.querySelector('.enter-btn'); if (eb) { eb.textContent = dbData.enterButton; eb.setAttribute('data-text', dbData.enterButton); } }
+                if (dbData.obscuraTitle && dbData.obscuraTitle !== "") { const ot = document.querySelector('.obscura-title'); if (ot) ot.textContent = dbData.obscuraTitle; }
+                if (dbData.obscuraDesc && dbData.obscuraDesc !== "") { const od = document.querySelector('.obscura-description'); if (od) od.innerHTML = dbData.obscuraDesc; }
+                if (dbData.obscuraDiscord && dbData.obscuraDiscord !== "") { const oi = document.querySelector('.obscura-invite-btn'); if (oi) oi.href = dbData.obscuraDiscord; }
+                if (dbData.obscuraFooterTitle && dbData.obscuraFooterTitle !== "") { const ft = document.querySelector('.footer-title'); if (ft) ft.textContent = dbData.obscuraFooterTitle; }
+                if (dbData.obscuraFooterDesc && dbData.obscuraFooterDesc !== "") { const fd = document.querySelector('.footer-desc'); if (fd) fd.textContent = dbData.obscuraFooterDesc; }
+                if (dbData.copyrightText && dbData.copyrightText !== "") { const ct = document.querySelector('.tape-copyright p'); if (ct) ct.textContent = dbData.copyrightText; }
+                if (dbData.bottomSocialTitle && dbData.bottomSocialTitle !== "") { const bst = document.querySelector('.social-title'); if (bst) bst.textContent = dbData.bottomSocialTitle; }
 
                 if (dbData.team && dbData.team.length > 0) {
                     const pc = document.querySelector('.profiles-container');
