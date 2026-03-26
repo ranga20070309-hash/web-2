@@ -106,7 +106,6 @@ document.addEventListener('DOMContentLoaded', () => {
         setVal('cfg-obs-title', d.obscuraTitle); setVal('cfg-obs-desc', d.obscuraDesc); setVal('cfg-obs-discord', d.obscuraDiscord);
         setVal('cfg-obs-footer-title', d.obscuraFooterTitle); setVal('cfg-obs-footer-desc', d.obscuraFooterDesc); setVal('cfg-obs-copyright', d.copyrightText);
         setVal('cfg-btm-soc-title', d.bottomSocialTitle);
-        setVal('cfg-nr-title', d.nrTitle); setVal('cfg-nr-url', d.nrUrl);
         
         teamData = d.team || []; tapeData = d.tape || []; socData = d.bottomSocials || [];
         renderTeam(); renderTape(); renderSoc();
@@ -130,7 +129,6 @@ document.addEventListener('DOMContentLoaded', () => {
             obscuraTitle:val('cfg-obs-title'), obscuraDesc:val('cfg-obs-desc'), obscuraDiscord:val('cfg-obs-discord'),
             obscuraFooterTitle:val('cfg-obs-footer-title'), obscuraFooterDesc:val('cfg-obs-footer-desc'), copyrightText:val('cfg-obs-copyright'),
             bottomSocialTitle:val('cfg-btm-soc-title'),
-            nrTitle:val('cfg-nr-title'), nrUrl:val('cfg-nr-url'),
             team: teamData, tape: tapeData, bottomSocials: socData
         };
         db.collection('settings').doc('main').set(newData,{merge:true}).then(()=>{
