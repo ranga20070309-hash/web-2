@@ -4,7 +4,23 @@ if (history.scrollRestoration) {
 }
 window.scrollTo(0, 0);
 
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async () => {
+    // Fetch data from Firebase first, fallback to config.js if failed
+    if (typeof db !== 'undefined') {
+        try {
+            const doc = await db.collection('settings').doc('main').get();
+            if (doc.exists) {
+                const dbData = doc.data();
+                Object.assign(CONFIG, dbData);
+                if (dbData.socials) {
+                    CONFIG.socials = { ...CONFIG.socials, ...dbData.socials };
+                }
+            }
+        } catch (error) {
+            console.error("Failed to load settings from Firebase:", error);
+        }
+    }
+
     // Initialize Lenis for Buttery Smooth Scrolling
     const lenis = new Lenis({
         duration: 1.2,
