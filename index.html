@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title id="page-title">||RANGA||</title>
-    <link rel="stylesheet" href="style.css?v=3" />
+    <link rel="stylesheet" href="style.css?v=7" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
 </head>
 <body>
@@ -38,6 +38,119 @@
             </button>
             <div class="volume-slider-container">
                 <input type="range" id="volume-slider" min="0" max="100" value="50" />
+            </div>
+        </div>
+
+        <div class="side-music-panel hidden" id="side-music-panel">
+            <div class="side-music-btn spotify" onclick="openModal('spotify-modal')">
+                <i class="fa-brands fa-spotify"></i>
+            </div>
+            <div class="side-music-btn apple" onclick="openModal('apple-modal')">
+                <i class="fa-brands fa-apple"></i>
+            </div>
+        </div>
+
+        <!-- Custom Album / EP Right Window -->
+        <div id="album-showcase" class="album-showcase-panel hidden">
+            <div class="album-box-glow"></div>
+            <div class="album-showcase-content">
+                <div class="album-header" style="flex-direction: column; text-align: center; border-bottom: none; margin-bottom: 10px; padding-bottom: 0;">
+                    <!-- Replace the src with your actual Album Cover Image URL -->
+                    <img id="ls-cover" src="https://image-cdn-ak.spotifycdn.com/image/ab67616d00001e021e7234ca35ed22aa3b5d6bc4" class="album-cover" alt="Single Cover" style="width: 140px; height: 140px; border-radius: 12px; margin-bottom: 15px;" />
+                    <div class="album-info">
+                        <span class="album-type" style="font-size: 0.8rem; margin-bottom: 8px;">LATEST SINGLE</span>
+                        <h3 id="ls-title" class="album-title" style="font-size: 1.6rem; margin-bottom: 8px;">Echoing Funk</h3>
+                        <span id="ls-artist" class="album-artist" style="font-size: 1rem; color: #ccc;">||RANGA||</span>
+                    </div>
+                </div>
+                
+                <div class="single-details-container" style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05); border-radius: 12px; padding: 15px; margin-bottom: 15px; width: 100%;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; padding-bottom: 12px; border-bottom: 1px solid rgba(255,255,255,0.05);">
+                        <span style="color: #888; font-size: 0.75rem; font-weight: bold; letter-spacing: 1px;">TOTAL STREAMS</span>
+                        <span style="color: #1DB954; font-weight: bold; font-size: 0.95rem; text-shadow: 0 0 10px rgba(29,185,84,0.4);"><i class="fa-solid fa-play"></i> <span id="ls-streams">142,500+</span></span>
+                    </div>
+                    
+                    <div style="display: flex; flex-direction: column; gap: 8px;">
+                        <div style="display: flex; justify-content: space-between; font-size: 0.8rem;">
+                            <span style="color: #888;">Produced By:</span>
+                            <span id="ls-prod" style="color: #fff; font-weight: 500;">RANGA</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; font-size: 0.8rem;">
+                            <span style="color: #888;">Mix & Mastered By:</span>
+                            <span id="ls-mix" style="color: #fff; font-weight: 500;">SVYUXU</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; font-size: 0.8rem;">
+                            <span style="color: #888;">Co-Produced By:</span>
+                            <span id="ls-coprod" style="color: #fff; font-weight: 500;">FL4ME</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Replace href with your actual Spotify link -->
+                <a id="ls-url" href="https://open.spotify.com/album/5UjUGkRTqodtoni6VLQJ4t" target="_blank" class="album-play-btn">
+                    <i class="fa-brands fa-spotify" style="font-size: 1.1rem;"></i> STREAM SINGLE NOW
+                </a>
+            </div>
+        </div>
+
+        <!-- Modals -->
+        <div id="spotify-modal" class="music-modal" onclick="if(event.target===this) closeModals()">
+            <div class="modal-content-box" style="position: relative;">
+                <i class="fa-solid fa-xmark close-modal-btn" onclick="closeModals()"></i>
+                <div class="premium-spotify-box">
+                    <div class="spotify-box-glow"></div>
+                    <div class="spotify-box-content">
+                        <div class="spotify-header">
+                            <div class="spotify-title">
+                                <i class="fa-brands fa-spotify"></i>
+                                <span>LIVE ARTIST PROFILE</span>
+                            </div>
+                            <div class="spotify-live-indicator">
+                                <span class="live-dot"></span>
+                                <span class="live-text">ONLINE</span>
+                            </div>
+                        </div>
+                        <div class="spotify-iframe-wrapper">
+                            <iframe src="https://open.spotify.com/embed/artist/4qzgHdPtzT0UJgcV9Bbc5O?utm_source=generator&theme=0" width="100%" height="100%" frameBorder="0" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+                        </div>
+                        <div class="spotify-footer">
+                            <a href="https://open.spotify.com/artist/4qzgHdPtzT0UJgcV9Bbc5O" target="_blank" class="spotify-action-btn">
+                                <span>OPEN IN SPOTIFY APP</span>
+                                <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="apple-modal" class="music-modal" onclick="if(event.target===this) closeModals()">
+            <div class="modal-content-box" style="position: relative;">
+                <i class="fa-solid fa-xmark close-modal-btn" onclick="closeModals()"></i>
+                <div class="premium-apple-box">
+                    <div class="apple-box-glow"></div>
+                    <div class="apple-box-content">
+                        <div class="apple-header">
+                            <div class="apple-title">
+                                <i class="fa-brands fa-apple"></i>
+                                <span>APPLE MUSIC PROFILE</span>
+                            </div>
+                            <div class="apple-live-indicator">
+                                <span class="live-dot"></span>
+                                <span class="live-text">ONLINE</span>
+                            </div>
+                        </div>
+                        <div class="apple-iframe-wrapper">
+                            <iframe lang="zh-CN" allow="autoplay *; encrypted-media *; fullscreen *; clipboard-write" frameborder="0" height="100%" style="width:100%;max-width:660px;overflow:hidden;background:transparent;" sandbox="allow-forms allow-popups allow-same-origin allow-scripts allow-storage-access-by-user-activation allow-top-navigation-by-user-activation" src="https://embed.music.apple.com/us/album/midu-echoing-funk-single/1879504219?theme=dark&l=zh-CN"></iframe>
+                        </div>
+                        <div class="apple-footer">
+                            <a href="https://music.apple.com/us/artist/ph%C3%B8nixwave/1838299671" target="_blank" class="apple-action-btn">
+                                <span>OPEN IN APPLE MUSIC</span>
+                                <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -105,59 +218,6 @@
             <i class="fa-solid fa-clock"></i> <span id="local-time">00:00:00</span>
         </div>
 
-        <div id="spotify-wrapper">
-            <div class="premium-spotify-box">
-                <div class="spotify-box-glow"></div>
-                <div class="spotify-box-content">
-                    <div class="spotify-header">
-                        <div class="spotify-title">
-                            <i class="fa-brands fa-spotify"></i>
-                            <span>LIVE ARTIST PROFILE</span>
-                        </div>
-                        <div class="spotify-live-indicator">
-                            <span class="live-dot"></span>
-                            <span class="live-text">ONLINE</span>
-                        </div>
-                    </div>
-                    <!-- Box is now fully interactive so the user can select music from the playlist -->
-                    <div class="spotify-iframe-wrapper">
-                        <iframe src="https://open.spotify.com/embed/artist/4qzgHdPtzT0UJgcV9Bbc5O?utm_source=generator&theme=0" width="100%" height="100%" frameBorder="0" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
-                    </div>
-                    <div class="spotify-footer">
-                        <a href="https://open.spotify.com/artist/4qzgHdPtzT0UJgcV9Bbc5O" target="_blank" class="spotify-action-btn">
-                            <span>OPEN IN SPOTIFY APP</span>
-                            <i class="fa-solid fa-arrow-up-right-from-square"></i>
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div id="apple-wrapper">
-            <div class="premium-apple-box">
-                <div class="apple-box-glow"></div>
-                <div class="apple-box-content">
-                    <div class="apple-header">
-                        <div class="apple-title">
-                            <i class="fa-brands fa-apple"></i>
-                            <span>APPLE MUSIC PROFILE</span>
-                        </div>
-                        <div class="apple-live-indicator">
-                            <span class="live-dot"></span>
-                            <span class="live-text">ONLINE</span>
-                        </div>
-                    </div>
-                    <div class="apple-iframe-wrapper">
-                        <iframe lang="zh-CN" allow="autoplay *; encrypted-media *; fullscreen *; clipboard-write" frameborder="0" height="100%" style="width:100%;max-width:660px;overflow:hidden;background:transparent;" sandbox="allow-forms allow-popups allow-same-origin allow-scripts allow-storage-access-by-user-activation allow-top-navigation-by-user-activation" src="https://embed.music.apple.com/us/album/midu-echoing-funk-single/1879504219?theme=dark&l=zh-CN"></iframe>
-                    </div>
-                    <div class="apple-footer">
-                        <a href="https://music.apple.com/us/artist/ph%C3%B8nixwave/1838299671" target="_blank" class="apple-action-btn">
-                            <span>OPEN IN APPLE MUSIC</span>
-                            <i class="fa-solid fa-arrow-up-right-from-square"></i>
-                        </a>
-                    </div>
-                </div>
-            </div>
         </div>
     </div> <!-- Closes .container -->
 
@@ -391,7 +451,7 @@
       const db = firebase.firestore();
     </script>
 
-    <script src="config.js?v=3"></script>
-    <script src="script.js?v=3"></script>
+    <script src="config.js?v=7"></script>
+    <script src="script.js?v=7"></script>
 </body>
 </html>
