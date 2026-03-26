@@ -1,233 +1,806 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>OBSCURA - Admin Dashboard</title>
-    <link rel="stylesheet" href="admin.css" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&display=swap" rel="stylesheet">
-</head>
-<body>
-    <div class="dashboard">
-        <!-- Sidebar -->
-        <aside class="sidebar">
-            <div class="brand">
-                <i class="fa-solid fa-bolt"></i>
-                <span>OBSCURA ADMIN</span>
-            </div>
-            
-            <nav class="nav-menu">
-                <a href="#general" class="nav-item active" data-tab="general">
-                    <i class="fa-solid fa-user"></i> General Info
-                </a>
-                <a href="#media" class="nav-item" data-tab="media">
-                    <i class="fa-solid fa-photo-film"></i> Media & Colors
-                </a>
-                <a href="#audio" class="nav-item" data-tab="audio">
-                    <i class="fa-solid fa-music"></i> Audio System
-                </a>
-                <a href="#discord" class="nav-item" data-tab="discord">
-                    <i class="fa-brands fa-discord"></i> Discord & Lanyard
-                </a>
-                <a href="#socials" class="nav-item" data-tab="socials">
-                    <i class="fa-solid fa-hashtag"></i> Social Links
-                </a>
-                <!-- New Tabs -->
-                <a href="#enter-screen" class="nav-item" data-tab="enter-screen"><i class="fa-solid fa-door-open"></i> Enter Screen</a>
-                <a href="#obscura" class="nav-item" data-tab="obscura"><i class="fa-solid fa-building"></i> Obscura Info</a>
-                <a href="#team" class="nav-item" data-tab="team"><i class="fa-solid fa-users"></i> Team Profiles</a>
-                <a href="#tape" class="nav-item" data-tab="tape"><i class="fa-solid fa-compact-disc"></i> Spotify Tape</a>
-                <a href="#bottom-social" class="nav-item" data-tab="bottom-social"><i class="fa-solid fa-share-nodes"></i> Bottom Socials</a>
-            </nav>
+// Force scroll to top on refresh
+if (history.scrollRestoration) {
+    history.scrollRestoration = 'manual';
+}
+window.scrollTo(0, 0);
 
-            <div class="sidebar-footer">
-                <button id="save-btn" class="btn-primary">
-                    <i class="fa-solid fa-cloud-arrow-up"></i> Publish Settings
-                </button>
-            </div>
-        </aside>
+document.addEventListener("DOMContentLoaded", () => {
+    // Fetch data from Firebase in the background (DO NOT use await so we don't block the site loading locally)
+    if (typeof db !== 'undefined') {
+        db.collection('settings').doc('main').get().then(doc => {
+            if (doc.exists) {
+                const dbData = doc.data();
+                Object.assign(CONFIG, dbData);
+                if (dbData.socials) {
+                    CONFIG.socials = { ...CONFIG.socials, ...dbData.socials };
+                }
 
-        <!-- Main Content area -->
-        <main class="main-content">
-            <header class="top-header">
-                <div class="header-titles">
-                    <h1>Dashboard Settings</h1>
-                    <p>Live edit your profile dynamically</p>
-                </div>
-                <!-- Status indicator will be used when Firebase is linked -->
-                <div class="status-indicator">
-                    <span class="dot"></span>
-                    <span id="connection-status">Waiting for Database...</span>
-                </div>
-            </header>
+                // Inject Custom Data Dynamically
+                if (dbData.enterVideo) { const ev = document.querySelector('.enter-video'); if (ev) ev.src = dbData.enterVideo; }
+                if (dbData.enterTitle) { const et = document.querySelector('.enter-title'); if (et) { et.textContent = dbData.enterTitle; et.setAttribute('data-text', dbData.enterTitle); } }
+                if (dbData.enterButton) { const eb = document.querySelector('.enter-btn'); if (eb) { eb.textContent = dbData.enterButton; eb.setAttribute('data-text', dbData.enterButton); } }
+                if (dbData.obscuraTitle) { const ot = document.querySelector('.obscura-title'); if (ot) ot.textContent = dbData.obscuraTitle; }
+                if (dbData.obscuraDesc) { const od = document.querySelector('.obscura-description'); if (od) od.innerHTML = dbData.obscuraDesc; }
+                if (dbData.obscuraDiscord) { const oi = document.querySelector('.obscura-invite-btn'); if (oi) oi.href = dbData.obscuraDiscord; }
+                if (dbData.obscuraFooterTitle) { const ft = document.querySelector('.footer-title'); if (ft) ft.textContent = dbData.obscuraFooterTitle; }
+                if (dbData.obscuraFooterDesc) { const fd = document.querySelector('.footer-desc'); if (fd) fd.textContent = dbData.obscuraFooterDesc; }
+                if (dbData.copyrightText) { const ct = document.querySelector('.tape-copyright p'); if (ct) ct.textContent = dbData.copyrightText; }
+                if (dbData.bottomSocialTitle) { const bst = document.querySelector('.social-title'); if (bst) bst.textContent = dbData.bottomSocialTitle; }
 
-            <div class="content-area">
+                if (dbData.team && dbData.team.length > 0) {
+                    const pc = document.querySelector('.profiles-container');
+                    if (pc) pc.innerHTML = dbData.team.map(t => `<div class="discord-profile-card"><div class="d-banner" style="background-image: linear-gradient(45deg, ${t.bg1}, ${t.bg2}); height: 80px;"></div><div class="d-card-content" style="padding-top: 25px; text-align: center;"><div class="role-badge" style="right: 50%; transform: translateX(50%); top: -15px;">${t.role}</div><h2 class="d-name title" style="font-size: 2rem; letter-spacing: 4px; margin-top: 0; color: ${t.color}; text-shadow: 0 0 10px ${t.color}, 0 0 40px ${t.color};">${t.name}</h2><div class="d-bio-box"><p>${t.bio}</p></div></div></div>`).join('');
+                }
+                if (dbData.tape && dbData.tape.length > 0) {
+                    const tapeHtml = dbData.tape.map((t, i) => `<a href="${t.url}" target="_blank" class="tape-link"><img src="${t.img}" class="tape-art" data-index="${i+1}"><span class="tape-artist">${t.artist}</span></a>`).join('');
+                    document.querySelectorAll('.tape-items').forEach(div => div.innerHTML = tapeHtml);
+                }
+                if (dbData.bottomSocials && dbData.bottomSocials.length > 0) {
+                    const bsl = document.querySelector('.bottom-social-links');
+                    if (bsl) bsl.innerHTML = dbData.bottomSocials.map(s => `<a href="${s.url}" target="_blank" class="b-social-btn flex-center"><i class="fa-brands fa-${s.icon}"></i><span>${s.text}</span></a>`).join('');
+                }
                 
-                <!-- General Tab -->
-                <section id="general" class="tab-content active">
-                    <h2 class="section-title">General Information</h2>
-                    <div class="card">
-                        <div class="form-group">
-                            <label>Profile Name</label>
-                            <input type="text" id="config-name" placeholder="e.g. ||RANGA||">
-                        </div>
-                        <div class="form-group">
-                            <label>Tab Name (Browser Title)</label>
-                            <input type="text" id="config-tabname" placeholder="e.g. @RANGA">
-                        </div>
-                        <div class="form-group">
-                            <label>Sub Title</label>
-                            <input type="text" id="config-title" placeholder="e.g. Happy To See You!">
-                        </div>
-                        <div class="form-group">
-                            <label>Location Text</label>
-                            <input type="text" id="config-location" placeholder="e.g. China / Sri Lanka">
-                        </div>
-                    </div>
-                </section>
+                // Also apply name and title dynamically if changed
+                document.getElementById("page-title").textContent = CONFIG.name;
+                const pName = document.getElementById("profile-name");
+                if (pName) { pName.innerHTML = CONFIG.name; pName.setAttribute("data-text", CONFIG.name); }
+                const pTitle = document.getElementById("profile-title");
+                if (pTitle) pTitle.textContent = CONFIG.title;
+                const pLoc = document.getElementById("profile-location");
+                if (pLoc) pLoc.textContent = CONFIG.location;
+                document.documentElement.style.setProperty("--primary-color", CONFIG.primaryColor);
+                document.documentElement.style.setProperty("--primary-glow", CONFIG.primaryColor + "B3");
+            }
+        }).catch(error => {
+            console.error("Failed to load settings from Firebase:", error);
+        });
+    }
 
-                <!-- Media Tab -->
-                <section id="media" class="tab-content">
-                    <h2 class="section-title">Media & Styling</h2>
-                    <div class="card">
-                        <div class="form-group">
-                            <label>Background Video/Image URL (Direct link)</label>
-                            <input type="text" id="config-bg" placeholder="https://.../video.mp4">
-                            <small>Use a direct .mp4 or .jpg/.png link</small>
-                        </div>
-                        <div class="form-group">
-                            <label>Primary Theme Color (Hex)</label>
-                            <div class="color-picker-wrapper">
-                                <input type="color" id="config-color" value="#ff0000">
-                                <span id="color-hex-display">#ff0000</span>
+    // Initialize Lenis for Buttery Smooth Scrolling
+    const lenis = new Lenis({
+        duration: 1.2,
+        easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)), 
+        direction: 'vertical',
+        gestureDirection: 'vertical',
+        smooth: true,
+        smoothTouch: false,
+        touchMultiplier: 2,
+    });
+
+    function raf(time) {
+        lenis.raf(time);
+        requestAnimationFrame(raf);
+    }
+    requestAnimationFrame(raf);
+
+    // Load CONFIG
+    document.getElementById("page-title").textContent = CONFIG.name;
+
+    const profileNameEl = document.getElementById("profile-name");
+    profileNameEl.innerHTML = CONFIG.name;
+    profileNameEl.setAttribute("data-text", CONFIG.name);
+
+    document.getElementById("profile-title").textContent = CONFIG.title;
+    document.getElementById("profile-location").textContent = CONFIG.location;
+
+    // Tab Title Animation
+    const titleText = CONFIG.tabName || "@RANGA";
+    let titleIndex = 0;
+    let isDeleting = false;
+
+    // Optional: Add a custom favicon if needed, for now using default.
+    // To restore a standard favicon, just add <link rel="icon" ...> to index.html.
+
+    setInterval(() => {
+        const currentText = titleText.substring(0, titleIndex);
+
+        if (isDeleting) {
+            document.title = currentText + "|";
+            titleIndex--;
+            if (titleIndex < 0) {
+                isDeleting = false;
+                titleIndex = 0;
+            }
+        } else {
+            document.title = currentText + "|";
+            titleIndex++;
+            if (titleIndex > titleText.length + 3) {
+                isDeleting = true;
+                titleIndex = titleText.length;
+            }
+        }
+    }, 300);
+
+    document.documentElement.style.setProperty("--primary-color", CONFIG.primaryColor);
+    document.documentElement.style.setProperty("--primary-glow", CONFIG.primaryColor + "B3");
+
+    // Background media
+    const mediaUrl = CONFIG.backgroundMedia;
+    const bgVideo = document.getElementById("bg-video");
+    const bgImg = document.getElementById("background-img");
+    const bgMotionLayer = document.getElementById("bg-motion-layer");
+
+    const isVideo = /\.(mp4|webm|ogg)(\?.*)?$/i.test(mediaUrl || "");
+
+    if (isVideo) {
+        bgVideo.src = mediaUrl;
+        bgVideo.muted = true;
+        bgVideo.loop = true;
+        bgVideo.setAttribute("playsinline", "");
+        bgVideo.setAttribute("webkit-playsinline", "");
+        bgVideo.setAttribute("autoplay", "");
+        bgVideo.style.display = "block";
+        bgImg.style.display = "none";
+        bgVideo.load();
+
+        const forcePlay = (vid) => {
+            const p = vid.play();
+            if (p !== undefined) p.catch(() => {});
+        };
+
+        // Aggressive handling for ALL videos to never freeze
+        const enforceVideo = (vid) => {
+            vid.muted = true;
+            vid.loop = true;
+            vid.setAttribute("playsinline", "");
+            vid.setAttribute("webkit-playsinline", "");
+            vid.setAttribute("autoplay", "");
+            
+            // Native loop fallback
+            vid.addEventListener("ended", () => {
+                vid.currentTime = 0;
+                forcePlay(vid);
+            });
+            // Prevent auto-pausing by browser
+            vid.addEventListener("pause", () => {
+                if (vid.currentTime > 0 && !vid.ended) {
+                    forcePlay(vid);
+                }
+            });
+            forcePlay(vid);
+        };
+
+        enforceVideo(bgVideo);
+
+        const enterVideo = document.querySelector('.enter-video');
+        if (enterVideo) {
+            enforceVideo(enterVideo);
+            // On user click, we also force the 2nd screen background video to play to overcome iOS restrictions
+            document.body.addEventListener("click", () => forcePlay(bgVideo), { once: true });
+        }
+
+        bgVideo.addEventListener("error", () => {
+            console.log("Background video failed to load.");
+        });
+    } else {
+        bgImg.style.display = "block";
+        bgImg.style.backgroundImage = `url('${mediaUrl}')`;
+        bgVideo.style.display = "none";
+    }
+
+    // Fake VR / cinema motion
+    let pointerX = 0;
+    let pointerY = 0;
+    let currentX = 0;
+    let currentY = 0;
+    let currentRotX = 0;
+    let currentRotY = 0;
+
+    const isTouchDevice = window.matchMedia("(pointer: coarse)").matches;
+
+    const autoPanStrength = isTouchDevice ? 6 : 10;
+    const mouseStrengthX = 50;
+    const mouseStrengthY = 25;
+    const rotateStrength = 3.5;
+
+    // Wrap the container for middle details parallax without breaking CSS animations
+    const containerEl = document.querySelector(".container");
+    let parallaxWrapper = null;
+    if (containerEl && containerEl.parentNode) {
+        parallaxWrapper = document.createElement("div");
+        parallaxWrapper.style.width = "100%";
+        parallaxWrapper.style.display = "flex";
+        parallaxWrapper.style.flexDirection = "column";
+        parallaxWrapper.style.alignItems = "center";
+        parallaxWrapper.style.perspective = "1200px";
+        parallaxWrapper.style.transformStyle = "preserve-3d";
+        parallaxWrapper.classList.add("js-parallax-wrapper");
+        
+        containerEl.parentNode.insertBefore(parallaxWrapper, containerEl);
+        parallaxWrapper.appendChild(containerEl);
+    }
+
+    document.addEventListener("mousemove", (e) => {
+        if (isTouchDevice) return;
+
+        const x = (e.clientX / window.innerWidth) - 0.5;
+        const y = (e.clientY / window.innerHeight) - 0.5;
+
+        pointerX = -x * mouseStrengthX;
+        pointerY = -y * mouseStrengthY;
+    });
+
+    function handleOrientation(event) {
+        if (!event.gamma || !event.beta) return;
+        
+        let x = event.gamma; // -90 to 90
+        let y = event.beta;  // -180 to 180
+        
+        // Clamp ranges to prevent extreme flips
+        if (x > 45) x = 45;
+        if (x < -45) x = -45;
+        
+        // Assume holding phone at ~45 degrees is neutral
+        y = y - 45; 
+        if (y > 45) y = 45;
+        if (y < -45) y = -45;
+        
+        const normX = x / 45; 
+        const normY = y / 45; 
+        
+        // Responsively update the same pointer variables used for background logic
+        pointerX = -normX * mouseStrengthX * 0.8;
+        pointerY = -normY * mouseStrengthY * 0.8;
+    }
+
+    function animateBackground(time) {
+        const t = time * 0.00022;
+
+        const autoPanX = Math.sin(t) * autoPanStrength;
+        const autoPanY = Math.sin(t * 0.45) * 1.8;
+
+        currentX += ((autoPanX + pointerX) - currentX) * 0.04;
+        currentY += ((autoPanY + pointerY) - currentY) * 0.05;
+
+        const targetRotY = (currentX / 28) * rotateStrength;
+        const targetRotX = (-currentY / 22) * rotateStrength;
+
+        currentRotY += (targetRotY - currentRotY) * 0.04;
+        currentRotX += (targetRotX - currentRotX) * 0.04;
+
+        // Apply CSS variables for generic elements
+        document.documentElement.style.setProperty('--mx', currentX);
+        document.documentElement.style.setProperty('--my', currentY);
+        document.documentElement.style.setProperty('--rx', currentRotX);
+        document.documentElement.style.setProperty('--ry', currentRotY);
+
+        requestAnimationFrame(animateBackground);
+    }
+
+    requestAnimationFrame(animateBackground);
+
+    // Discord fallback
+    const fallbackAvatar = CONFIG.fallbackDiscordAvatarUrl;
+    document.getElementById("d-avatar").src = fallbackAvatar;
+    document.getElementById("d-username").textContent = CONFIG.fallbackDiscordUsername;
+    document.getElementById("d-status-indicator").style.backgroundColor = "#747f8d";
+    document.getElementById("d-status-text").textContent = "Connecting to Discord...";
+
+    // Lanyard
+    const discordId = CONFIG.discordUserId;
+    if (discordId !== "") {
+        function connectLanyard() {
+            const ws = new WebSocket("wss://api.lanyard.rest/socket");
+
+            ws.onmessage = (event) => {
+                const message = JSON.parse(event.data);
+
+                if (message.op === 1) {
+                    ws.send(JSON.stringify({
+                        op: 2,
+                        d: { subscribe_to_id: discordId }
+                    }));
+                } else if (message.op === 0) {
+                    if (message.t === "INIT_STATE" || message.t === "PRESENCE_UPDATE") {
+                        const data = message.d;
+                        const user = data.discord_user;
+
+                        if (user.avatar) {
+                            const ext = user.avatar.startsWith("a_") ? "gif" : "png";
+                            document.getElementById("d-avatar").src =
+                                `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.${ext}?size=128`;
+                        } else {
+                            document.getElementById("d-avatar").src = fallbackAvatar;
+                        }
+
+                        document.getElementById("d-username").textContent = "ranga____";
+
+                        document.getElementById("d-badges").innerHTML = `
+                            <span style="font-size: 1rem; margin-right: 4px;">🔥</span>
+                            <span style="color: red; font-weight: bold; font-size: 0.85rem; letter-spacing: 1px;">KONG</span>
+                            <div style="background: rgba(255, 0, 0, 0.7); border-radius: 50%; width: 16px; height: 16px; display: inline-flex; align-items: center; justify-content: center; margin-left: 5px;">
+                                <i class="fa-solid fa-chevron-down" style="color: black; font-size: 0.6rem;"></i>
                             </div>
-                        </div>
-                    </div>
-                </section>
+                        `;
 
-                <!-- Audio Tab -->
-                <section id="audio" class="tab-content">
-                    <h2 class="section-title">Music Player Setup</h2>
-                    <div class="card">
-                        <div class="form-group">
-                            <label>Audio Source Link (MP3)</label>
-                            <input type="text" id="config-audio-src" placeholder="https://.../song.mp3">
-                        </div>
-                        <div class="form-group">
-                            <label>Song Title</label>
-                            <input type="text" id="config-song-title" placeholder="e.g. My Polar Star">
-                        </div>
-                        <div class="form-group">
-                            <label>Album Art Image URL</label>
-                            <input type="text" id="config-album-art" placeholder="https://.../cover.jpg">
-                        </div>
-                    </div>
-                </section>
+                        const statusColors = {
+                            online: "#43b581",
+                            idle: "#faa61a",
+                            dnd: "#f04747",
+                            offline: "#747f8d"
+                        };
 
-                <!-- Discord Tab -->
-                <section id="discord" class="tab-content">
-                    <h2 class="section-title">Discord Integration</h2>
-                    <div class="card">
-                        <div class="form-group">
-                            <label>Discord User ID (For Lanyard)</label>
-                            <input type="text" id="config-discord-id" placeholder="1126206273722011708">
-                            <small>Must join discord.gg/lanyard to work</small>
-                        </div>
-                        <div class="form-group">
-                            <label>Fallback Avatar URL</label>
-                            <input type="text" id="config-discord-avatar" placeholder="https://.../avatar.jpg">
-                        </div>
-                        <div class="form-group">
-                            <label>Fallback Username</label>
-                            <input type="text" id="config-discord-username" placeholder="e.g. ranga____">
-                        </div>
-                    </div>
-                </section>
+                        document.getElementById("d-status-indicator").style.backgroundColor =
+                            statusColors[data.discord_status] || "#747f8d";
 
-                <!-- Socials Tab -->
-                <section id="socials" class="tab-content">
-                    <h2 class="section-title">Social Links</h2>
-                    <div class="card">
-                        <div class="form-group">
-                            <label><i class="fa-brands fa-spotify"></i> Spotify Profile URL</label>
-                            <input type="text" id="config-spotify" placeholder="https://open.spotify.com/...">
-                        </div>
-                        <div class="form-group">
-                            <label><i class="fa-brands fa-tiktok"></i> TikTok Profile URL</label>
-                            <input type="text" id="config-tiktok" placeholder="https://tiktok.com/@...">
-                        </div>
-                        <div class="form-group">
-                            <label><i class="fa-brands fa-apple"></i> Apple Music URL</label>
-                            <input type="text" id="config-apple" placeholder="https://music.apple.com/...">
-                        </div>
-                    </div>
-                </section>
+                        const customStatus = data.activities.find((a) => a.type === 4);
 
-                <!-- Enter Screen -->
-                <section id="enter-screen" class="tab-content">
-                    <h2 class="section-title">Enter Screen</h2>
-                    <div class="card">
-                        <div class="form-group"><label>Enter Video URL</label><input type="text" id="cfg-enter-video"></div>
-                        <div class="form-group"><label>Enter Title</label><input type="text" id="cfg-enter-title"></div>
-                        <div class="form-group"><label>Enter Button Text</label><input type="text" id="cfg-enter-btn"></div>
-                    </div>
-                </section>
+                        if (customStatus) {
+                            let text = "";
+                            const statusIcon = document.getElementById("d-status-icon");
 
-                <!-- Obscura Info -->
-                <section id="obscura" class="tab-content">
-                    <h2 class="section-title">Obscura Records Data</h2>
-                    <div class="card">
-                        <div class="form-group"><label>Main Title</label><input type="text" id="cfg-obs-title"></div>
-                        <div class="form-group"><label>Main Description</label><textarea id="cfg-obs-desc" rows="3" style="background:rgba(0,0,0,0.3);color:#fff;border:1px solid var(--border);border-radius:10px;padding:10px;"></textarea></div>
-                        <div class="form-group"><label>Discord Invite URL</label><input type="text" id="cfg-obs-discord"></div>
-                        <hr style="border-color:var(--border);">
-                        <div class="form-group"><label>Footer Title</label><input type="text" id="cfg-obs-footer-title"></div>
-                        <div class="form-group"><label>Footer Description</label><input type="text" id="cfg-obs-footer-desc"></div>
-                        <div class="form-group"><label>Copyright Text</label><input type="text" id="cfg-obs-copyright"></div>
-                    </div>
-                </section>
+                            if (customStatus.emoji) {
+                                if (customStatus.emoji.id) {
+                                    const ext = customStatus.emoji.animated ? "gif" : "png";
+                                    statusIcon.src = `https://cdn.discordapp.com/emojis/${customStatus.emoji.id}.${ext}`;
+                                    statusIcon.style.display = "block";
+                                } else {
+                                    text += customStatus.emoji.name + " ";
+                                    statusIcon.style.display = "none";
+                                }
+                            } else {
+                                statusIcon.style.display = "none";
+                            }
 
-                <!-- Team -->
-                <section id="team" class="tab-content">
-                    <div style="display:flex; justify-content:space-between; align-items:center;">
-                        <h2 class="section-title">Team Profiles</h2>
-                        <button id="add-team-btn" class="btn-primary" style="width:auto; padding:8px 15px; font-size:0.9rem;">+ Add Member</button>
-                    </div>
-                    <div id="team-container" style="display:flex; flex-direction:column; gap:20px;"></div>
-                </section>
+                            if (customStatus.state) text += customStatus.state;
+                            document.getElementById("d-status-text").textContent =
+                                text || (data.discord_status === "offline" ? "Offline" : "Online");
+                        } else {
+                            document.getElementById("d-status-icon").style.display = "none";
+                            document.getElementById("d-status-text").textContent =
+                                data.discord_status === "offline" ? "Offline" : "Online";
+                        }
+                    }
+                }
+            };
 
-                <!-- Tape -->
-                <section id="tape" class="tab-content">
-                    <div style="display:flex; justify-content:space-between; align-items:center;">
-                        <h2 class="section-title">Spotify Tape Albums</h2>
-                        <button id="add-tape-btn" class="btn-primary" style="width:auto; padding:8px 15px; font-size:0.9rem;">+ Add Album</button>
-                    </div>
-                    <div id="tape-container" style="display:flex; flex-direction:column; gap:20px;"></div>
-                </section>
+            ws.onclose = () => {
+                setTimeout(connectLanyard, 5000);
+            };
+        }
 
-                <!-- Bottom Socials -->
-                <section id="bottom-social" class="tab-content">
-                    <h2 class="section-title">Bottom Social Media</h2>
-                    <div class="card" style="margin-bottom:20px;">
-                        <div class="form-group"><label>Section Title</label><input type="text" id="cfg-btm-soc-title"></div>
-                    </div>
-                    <div style="display:flex; justify-content:space-between; align-items:center;">
-                        <h3 class="section-title" style="font-size:1.1rem; border-bottom:none;">Social Links</h3>
-                        <button id="add-soc-btn" class="btn-primary" style="width:auto; padding:8px 15px; font-size:0.9rem;">+ Add Link</button>
-                    </div>
-                    <div id="soc-container" style="display:flex; flex-direction:column; gap:20px;"></div>
-                </section>
+        connectLanyard();
+    } else {
+        document.getElementById("d-status-text").textContent = "Please add your Discord ID in config.js";
+    }
 
-            </div>
-        </main>
-    </div>
+    document.getElementById("link-spotify").href = CONFIG.socials.spotify;
+    document.getElementById("link-tiktok").href = CONFIG.socials.tiktok;
+    document.getElementById("link-apple").href = CONFIG.socials.apple;
 
-    <!-- Firebase SDKs -->
-    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+    // Music
+    document.getElementById("song-title-text").textContent = CONFIG.songTitle;
+    document.getElementById("audio-source").src = CONFIG.audioSrc;
+
+    const albumArtEl = document.getElementById("player-album-art");
+    if (albumArtEl && CONFIG.albumArt) {
+        albumArtEl.src = CONFIG.albumArt;
+    }
+
+    const audio = document.getElementById("bg-music");
+    audio.load();
+
+    // Custom cursor and water tail
+    const cursor = document.getElementById("cursor");
+    const canvas = document.getElementById("water-tail");
+    const ctx = canvas ? canvas.getContext("2d") : null;
+
+    if (cursor) {
+        let mouseX = window.innerWidth / 2;
+        let mouseY = window.innerHeight / 2;
+        let cursorX = mouseX;
+        let cursorY = mouseY;
+        // Extremely realistic Rippling Water effect
+        let ripples = [];
+        let r_lastTime = 0;
+
+        if (canvas) {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            window.addEventListener('resize', () => {
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+            });
+        }
+
+        document.addEventListener("mousemove", (e) => {
+            mouseX = e.clientX;
+            mouseY = e.clientY;
+            cursor.style.opacity = "1";
+
+            if (canvas) {
+                let now = Date.now();
+                if (now - r_lastTime > 400) { // Very slow bubble creation rate (less frequent)
+                    ripples.push({
+                        x: mouseX,
+                        y: mouseY,
+                        radius: 0,
+                        maxRadius: Math.random() * 20 + 50, // Don't expand too huge
+                        speed: Math.random() * 0.2 + 0.3, // Very slow expansion speed
+                        life: 1, // Full opacity
+                        thickness: 2 // Clear neon line thickness
+                    });
+                    r_lastTime = now;
+                }
+            }
+        });
+
+        document.addEventListener("mouseleave", () => {
+            cursor.style.opacity = "0";
+        });
+
+        document.addEventListener("mouseenter", () => {
+            cursor.style.opacity = "1";
+        });
+
+        function animateCursor() {
+            cursorX += (mouseX - cursorX) * 0.35;
+            cursorY += (mouseY - cursorY) * 0.35;
+
+            cursor.style.left = cursorX + "px";
+            cursor.style.top = cursorY + "px";
+
+            // Draw hyper-realistic ripples
+            if (ctx && canvas) {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                
+                for (let i = ripples.length - 1; i >= 0; i--) {
+                    let r = ripples[i];
+                    r.radius += r.speed;
+                    // Ease-out life (fade slower initially, faster at the end)
+                    let progress = r.radius / r.maxRadius;
+                    r.life = 1 - Math.pow(progress, 1.5);
+                    
+                    if (r.life <= 0) {
+                        ripples.splice(i, 1);
+                        continue;
+                    }
+                    
+                    // Clear realistic Neon Red ripple (No heavy blur, sharp and bright)
+                    ctx.beginPath();
+                    ctx.arc(r.x, r.y, r.radius, 0, Math.PI * 2);
+                    ctx.lineWidth = r.thickness; 
+                    
+                    // Main bright solid red line
+                    ctx.strokeStyle = `rgba(255, 0, 0, ${r.life})`; 
+                    
+                    // Subtle sharp neon glow
+                    ctx.shadowColor = `rgba(255, 0, 0, ${r.life * 0.8})`;
+                    ctx.shadowBlur = 5; // Low blur for clear edge
+                    
+                    ctx.stroke();
+                }
+            }
+
+            requestAnimationFrame(animateCursor);
+        }
+
+        animateCursor();
+
+        const clickables = document.querySelectorAll("a, button, .discord-card, .progress-bar-bg, .player-buttons i, input, .social-icon");
+        clickables.forEach((el) => {
+            el.addEventListener("mouseenter", () => cursor.classList.add("cursor-hover"));
+            el.addEventListener("mouseleave", () => cursor.classList.remove("cursor-hover"));
+        });
+
+        const spotifyBox = document.querySelector(".premium-spotify-box");
+        if (spotifyBox) {
+            spotifyBox.addEventListener("mouseenter", () => cursor.classList.add("hide-cursor"));
+            spotifyBox.addEventListener("mouseleave", () => cursor.classList.remove("hide-cursor"));
+        }
+
+        const appleBox = document.querySelector(".premium-apple-box");
+        if (appleBox) {
+            appleBox.addEventListener("mouseenter", () => cursor.classList.add("hide-cursor"));
+            appleBox.addEventListener("mouseleave", () => cursor.classList.remove("hide-cursor"));
+        }
+    }
+
+    const enterScreen = document.getElementById("enter-screen");
+    const enterBtn = document.querySelector(".enter-btn");
+    const mainContent = document.getElementById("main-content");
+    const audioToggle = document.getElementById("audio-toggle");
+    const playPauseBtn = document.getElementById("play-pause-btn");
+
+    let isPlaying = false;
+
+    enterBtn.addEventListener("click", () => {
+        // Request Device Orientation Permission for iOS 13+
+        if (typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function') {
+            DeviceOrientationEvent.requestPermission()
+                .then(permissionState => {
+                    if (permissionState === 'granted') {
+                        window.addEventListener('deviceorientation', handleOrientation);
+                    }
+                })
+                .catch(console.error);
+        } else {
+            // For other mobile devices
+            window.addEventListener('deviceorientation', handleOrientation);
+        }
+
+        // Play audio and video strictly on user gesture matching (fixes iOS and Safari pausing)
+        audio.volume = 0.5;
+        const playPromise = audio.play();
+        if (playPromise !== undefined) {
+            playPromise.then(() => {
+                isPlaying = true;
+                updatePlayPauseIcon();
+            }).catch(() => {
+                console.log("Audio permission denied.");
+            });
+        }
+
+        if (isVideo) {
+            bgVideo.play().catch(() => console.log("Background video play skipped."));
+        }
+
+        enterScreen.classList.add("enter-leaving");
+
+        setTimeout(() => {
+            enterScreen.style.display = "none";
+            document.body.classList.add("scroll-enabled");
+            mainContent.classList.remove("hidden");
+            
+            // Apply staggering entry animation to main content blocks
+            const blocksToAnimate = [
+                document.querySelector(".container"),
+                document.getElementById("view-counter-box"),
+                document.getElementById("apple-wrapper"),
+                document.getElementById("spotify-wrapper"),
+                document.getElementById("obscura-section"),
+                document.querySelector(".spotify-tape-container"),
+                document.querySelector(".bottom-social-section"),
+                document.querySelector(".tape-copyright")
+            ];
+            
+            blocksToAnimate.forEach((block, index) => {
+                if (block) {
+                    block.style.opacity = "0";
+                    block.style.animation = `mainEntrance 1.2s cubic-bezier(0.25, 0.1, 0.25, 1) ${0.2 + (index * 0.15)}s forwards`;
+                }
+            });
+            
+            const obscuraSection = document.getElementById("obscura-section");
+            if (obscuraSection) obscuraSection.classList.remove("hidden");
+
+            const viewCounterBox = document.getElementById("view-counter-box");
+            if (viewCounterBox) viewCounterBox.classList.remove("hidden");
+        }, 1100); // Wait for the 1.2s exit animation to almost finish before showing new content
+    });
+
+    // Enforce video playback continuously
+    setInterval(() => {
+        if (isVideo && bgVideo.paused) {
+            bgVideo.play().catch(() => {});
+        }
+    }, 1000);
+
+    audioToggle.addEventListener("click", () => {
+        audio.muted = !audio.muted;
+        audioToggle.innerHTML = audio.muted
+            ? '<i class="fa-solid fa-volume-xmark"></i>'
+            : '<i class="fa-solid fa-volume-high"></i>';
+    });
+
+    const volumeSlider = document.getElementById("volume-slider");
+    if (volumeSlider) {
+        volumeSlider.addEventListener("input", (e) => {
+            const vol = e.target.value / 100;
+            audio.volume = vol;
+
+            if (vol === 0) {
+                audio.muted = true;
+                audioToggle.innerHTML = '<i class="fa-solid fa-volume-xmark"></i>';
+            } else {
+                audio.muted = false;
+                audioToggle.innerHTML = '<i class="fa-solid fa-volume-high"></i>';
+            }
+        });
+    }
+
+    // Player math
+    const progressBarBg = document.getElementById("progress-bar-bg");
+    const progressBarFill = document.getElementById("progress-bar-fill");
+    const currentTimeEl = document.getElementById("current-time");
+    const totalTimeEl = document.getElementById("total-time");
+
+    function formatTime(seconds) {
+        if (isNaN(seconds)) return "0:00";
+        const mins = Math.floor(seconds / 60);
+        const secs = Math.floor(seconds % 60);
+        return `${mins}:${secs < 10 ? "0" : ""}${secs}`;
+    }
+
+    audio.addEventListener("loadedmetadata", () => {
+        totalTimeEl.textContent = formatTime(audio.duration);
+    });
+
+    audio.addEventListener("timeupdate", () => {
+        if (audio.duration) {
+            const progressPercent = (audio.currentTime / audio.duration) * 100;
+            progressBarFill.style.width = progressPercent + "%";
+            currentTimeEl.textContent = formatTime(audio.currentTime);
+        }
+    });
+
+    progressBarBg.addEventListener("click", (e) => {
+        const width = progressBarBg.clientWidth;
+        const clickX = e.offsetX;
+        const duration = audio.duration;
+        audio.currentTime = (clickX / width) * duration;
+    });
+
+    playPauseBtn.addEventListener("click", () => {
+        if (isPlaying) {
+            audio.pause();
+            isPlaying = false;
+        } else {
+            audio.play();
+            isPlaying = true;
+        }
+        updatePlayPauseIcon();
+    });
+
+    function updatePlayPauseIcon() {
+        playPauseBtn.className = isPlaying ? "fa-solid fa-pause" : "fa-solid fa-play";
+    }
+
+    // Rain
+    const rainContainer = document.getElementById("rain-container");
+
+    function createRaindrop() {
+        if (document.hidden) return;
+
+        const drop = document.createElement("div");
+        drop.classList.add("raindrop");
+        // Start from -20vw up to 130vw to account for the angled fall
+        drop.style.left = (Math.random() * 150 - 20) + "vw";
+
+        const duration = Math.random() * 0.3 + 0.2; // Faster drops
+        drop.style.animationDuration = duration + "s";
+        drop.style.opacity = Math.random() * 0.45 + 0.1;
+        drop.style.height = (Math.random() * 40 + 60) + "px";
+
+        // Add depth to realistic rain (some drops closer/blurred)
+        const depth = Math.random();
+        if (depth < 0.3) {
+            drop.style.filter = "blur(1.5px)";
+            drop.style.zIndex = "1";
+        } else if (depth > 0.8) {
+            drop.style.filter = "blur(3px)";
+            drop.style.zIndex = "3";
+        } else {
+            drop.style.zIndex = "-1";
+        }
+
+        rainContainer.appendChild(drop);
+        setTimeout(() => drop.remove(), duration * 1000);
+    }
+
+    setInterval(createRaindrop, 25);
+
+    // Global Local Time
+    function updateLocalTime() {
+        const timeBox = document.getElementById("local-time");
+        if (timeBox) {
+            const now = new Date();
+            // Format time dynamically for the user's specific timezone (country)
+            const timeString = now.toLocaleTimeString(undefined, {
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit',
+                hour12: true
+            });
+            timeBox.textContent = timeString;
+        }
+    }
     
-    <script src="config.js"></script>
-    <script src="admin.js"></script>
-</body>
-</html>
+    // Initial call
+    updateLocalTime();
+    // Update every second
+    setInterval(updateLocalTime, 1000);
+
+    // Mobile scroll animation for premium widgets
+    const premiumWidgets = document.querySelectorAll(".premium-spotify-box, .premium-apple-box");
+    if (premiumWidgets.length > 0) {
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add("in-view");
+                } else {
+                    entry.target.classList.remove("in-view");
+                }
+            });
+        }, {
+            threshold: 0.3 // Trigger when 30% of the widget is visible
+        });
+        
+        premiumWidgets.forEach(widget => observer.observe(widget));
+    }
+
+    // Scroll animation for Discord cards
+    const obscuraCards = document.querySelectorAll(".discord-profile-card");
+    if (obscuraCards.length > 0) {
+        const cardObserver = new IntersectionObserver((entries) => {
+            entries.forEach((entry, index) => {
+                if (entry.isIntersecting) {
+                    setTimeout(() => {
+                        entry.target.classList.add("in-view");
+                    }, index * 200); // Staggered reveal effect
+                }
+            });
+        }, {
+            threshold: 0.2
+        });
+        
+        obscuraCards.forEach(card => cardObserver.observe(card));
+    }
+
+    // Scroll animation for regular elements (Title, Desc, Button)
+    const scrollElements = document.querySelectorAll(".scroll-animate");
+    if (scrollElements.length > 0) {
+        const scrollObserver = new IntersectionObserver((entries) => {
+            entries.forEach((entry) => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add("in-view");
+                }
+            });
+        }, {
+            threshold: 0.1
+        });
+
+        scrollElements.forEach(el => scrollObserver.observe(el));
+    }
+
+    // Realistic Wind Effect for Enter Screen
+    function initWindEffect() {
+        const windContainer = document.getElementById("wind-container");
+        if (!windContainer) return;
+
+        let isRunning = true;
+
+        function createParticle(isDust) {
+            if (!isRunning) return;
+            const particle = document.createElement("div");
+            particle.classList.add(isDust ? "wind-dust" : "wind-streak");
+            
+            particle.style.top = Math.random() * 100 + "%";
+            
+            if (!isDust) {
+                particle.style.width = (Math.random() * 200 + 50) + "px";
+                particle.style.animationDuration = (Math.random() * 0.5 + 0.3) + "s";
+                particle.style.opacity = Math.random() * 0.3 + 0.1;
+            } else {
+                const size = (Math.random() * 3 + 2) + "px";
+                particle.style.width = size;
+                particle.style.height = size;
+                particle.style.setProperty("--drift-y", (Math.random() * 40 - 20) + "vh");
+                particle.style.animationDuration = (Math.random() * 1.5 + 0.5) + "s";
+                particle.style.opacity = Math.random() * 0.5 + 0.2;
+            }
+
+            windContainer.appendChild(particle);
+            
+            setTimeout(() => {
+                if (particle.parentNode) particle.remove();
+            }, parseInt(particle.style.animationDuration) * 1000); // Wait for animation to finish
+        }
+
+        // Generate particles occasionally
+        const streakInterval = setInterval(() => createParticle(false), 80);
+        const dustInterval = setInterval(() => createParticle(true), 40);
+
+        // Stop wind and clean up when entering site
+        const enterBtn = document.querySelector(".enter-btn");
+        if (enterBtn) {
+            enterBtn.addEventListener("click", () => {
+                isRunning = false;
+                clearInterval(streakInterval);
+                clearInterval(dustInterval);
+            });
+        }
+    }
+    
+    initWindEffect();
+});
