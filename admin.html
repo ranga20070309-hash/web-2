@@ -33,6 +33,12 @@
                 <a href="#socials" class="nav-item" data-tab="socials">
                     <i class="fa-solid fa-hashtag"></i> Social Links
                 </a>
+                <!-- New Tabs -->
+                <a href="#enter-screen" class="nav-item" data-tab="enter-screen"><i class="fa-solid fa-door-open"></i> Enter Screen</a>
+                <a href="#obscura" class="nav-item" data-tab="obscura"><i class="fa-solid fa-building"></i> Obscura Info</a>
+                <a href="#team" class="nav-item" data-tab="team"><i class="fa-solid fa-users"></i> Team Profiles</a>
+                <a href="#tape" class="nav-item" data-tab="tape"><i class="fa-solid fa-compact-disc"></i> Spotify Tape</a>
+                <a href="#bottom-social" class="nav-item" data-tab="bottom-social"><i class="fa-solid fa-share-nodes"></i> Bottom Socials</a>
             </nav>
 
             <div class="sidebar-footer">
@@ -156,6 +162,61 @@
                             <input type="text" id="config-apple" placeholder="https://music.apple.com/...">
                         </div>
                     </div>
+                </section>
+
+                <!-- Enter Screen -->
+                <section id="enter-screen" class="tab-content">
+                    <h2 class="section-title">Enter Screen</h2>
+                    <div class="card">
+                        <div class="form-group"><label>Enter Video URL</label><input type="text" id="cfg-enter-video"></div>
+                        <div class="form-group"><label>Enter Title</label><input type="text" id="cfg-enter-title"></div>
+                        <div class="form-group"><label>Enter Button Text</label><input type="text" id="cfg-enter-btn"></div>
+                    </div>
+                </section>
+
+                <!-- Obscura Info -->
+                <section id="obscura" class="tab-content">
+                    <h2 class="section-title">Obscura Records Data</h2>
+                    <div class="card">
+                        <div class="form-group"><label>Main Title</label><input type="text" id="cfg-obs-title"></div>
+                        <div class="form-group"><label>Main Description</label><textarea id="cfg-obs-desc" rows="3" style="background:rgba(0,0,0,0.3);color:#fff;border:1px solid var(--border);border-radius:10px;padding:10px;"></textarea></div>
+                        <div class="form-group"><label>Discord Invite URL</label><input type="text" id="cfg-obs-discord"></div>
+                        <hr style="border-color:var(--border);">
+                        <div class="form-group"><label>Footer Title</label><input type="text" id="cfg-obs-footer-title"></div>
+                        <div class="form-group"><label>Footer Description</label><input type="text" id="cfg-obs-footer-desc"></div>
+                        <div class="form-group"><label>Copyright Text</label><input type="text" id="cfg-obs-copyright"></div>
+                    </div>
+                </section>
+
+                <!-- Team -->
+                <section id="team" class="tab-content">
+                    <div style="display:flex; justify-content:space-between; align-items:center;">
+                        <h2 class="section-title">Team Profiles</h2>
+                        <button id="add-team-btn" class="btn-primary" style="width:auto; padding:8px 15px; font-size:0.9rem;">+ Add Member</button>
+                    </div>
+                    <div id="team-container" style="display:flex; flex-direction:column; gap:20px;"></div>
+                </section>
+
+                <!-- Tape -->
+                <section id="tape" class="tab-content">
+                    <div style="display:flex; justify-content:space-between; align-items:center;">
+                        <h2 class="section-title">Spotify Tape Albums</h2>
+                        <button id="add-tape-btn" class="btn-primary" style="width:auto; padding:8px 15px; font-size:0.9rem;">+ Add Album</button>
+                    </div>
+                    <div id="tape-container" style="display:flex; flex-direction:column; gap:20px;"></div>
+                </section>
+
+                <!-- Bottom Socials -->
+                <section id="bottom-social" class="tab-content">
+                    <h2 class="section-title">Bottom Social Media</h2>
+                    <div class="card" style="margin-bottom:20px;">
+                        <div class="form-group"><label>Section Title</label><input type="text" id="cfg-btm-soc-title"></div>
+                    </div>
+                    <div style="display:flex; justify-content:space-between; align-items:center;">
+                        <h3 class="section-title" style="font-size:1.1rem; border-bottom:none;">Social Links</h3>
+                        <button id="add-soc-btn" class="btn-primary" style="width:auto; padding:8px 15px; font-size:0.9rem;">+ Add Link</button>
+                    </div>
+                    <div id="soc-container" style="display:flex; flex-direction:column; gap:20px;"></div>
                 </section>
 
             </div>
