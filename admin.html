@@ -36,9 +36,7 @@
                 <!-- New Tabs -->
                 <a href="#enter-screen" class="nav-item" data-tab="enter-screen"><i class="fa-solid fa-door-open"></i> Enter Screen</a>
                 <a href="#obscura" class="nav-item" data-tab="obscura"><i class="fa-solid fa-building"></i> Obscura Info</a>
-                <a href="#team" class="nav-item" data-tab="team"><i class="fa-solid fa-users"></i> Team Profiles</a>
-                <a href="#tape" class="nav-item" data-tab="tape"><i class="fa-solid fa-compact-disc"></i> Spotify Tape</a>
-                <a href="#bottom-social" class="nav-item" data-tab="bottom-social"><i class="fa-solid fa-share-nodes"></i> Bottom Socials</a>
+                <a href="#latest-single" class="nav-item" data-tab="latest-single"><i class="fa-solid fa-music"></i> Latest Single</a>
             </nav>
 
             <div class="sidebar-footer">
@@ -188,35 +186,20 @@
                     </div>
                 </section>
 
-                <!-- Team -->
-                <section id="team" class="tab-content">
-                    <div style="display:flex; justify-content:space-between; align-items:center;">
-                        <h2 class="section-title">Team Profiles</h2>
-                        <button id="add-team-btn" class="btn-primary" style="width:auto; padding:8px 15px; font-size:0.9rem;">+ Add Member</button>
+                <!-- Latest Single Info -->
+                <section id="latest-single" class="tab-content">
+                    <h2 class="section-title">Latest Single Showcase</h2>
+                    <div class="card">
+                        <div class="form-group"><label>Cover Image URL</label><input type="text" id="cfg-ls-cover"></div>
+                        <div class="form-group"><label>Song Title</label><input type="text" id="cfg-ls-title"></div>
+                        <div class="form-group"><label>Stream Count Text (e.g. 142,500+)</label><input type="text" id="cfg-ls-streams"></div>
+                        <hr style="border-color:var(--border);">
+                        <div class="form-group"><label>Producer Name</label><input type="text" id="cfg-ls-prod"></div>
+                        <div class="form-group"><label>Mix & Master Name</label><input type="text" id="cfg-ls-mix"></div>
+                        <div class="form-group"><label>Co-Producer / Feat Name</label><input type="text" id="cfg-ls-coprod"></div>
+                        <hr style="border-color:var(--border);">
+                        <div class="form-group"><label><i class="fa-brands fa-spotify"></i> Spotify Listen URL</label><input type="text" id="cfg-ls-url"></div>
                     </div>
-                    <div id="team-container" style="display:flex; flex-direction:column; gap:20px;"></div>
-                </section>
-
-                <!-- Tape -->
-                <section id="tape" class="tab-content">
-                    <div style="display:flex; justify-content:space-between; align-items:center;">
-                        <h2 class="section-title">Spotify Tape Albums</h2>
-                        <button id="add-tape-btn" class="btn-primary" style="width:auto; padding:8px 15px; font-size:0.9rem;">+ Add Album</button>
-                    </div>
-                    <div id="tape-container" style="display:flex; flex-direction:column; gap:20px;"></div>
-                </section>
-
-                <!-- Bottom Socials -->
-                <section id="bottom-social" class="tab-content">
-                    <h2 class="section-title">Bottom Social Media</h2>
-                    <div class="card" style="margin-bottom:20px;">
-                        <div class="form-group"><label>Section Title</label><input type="text" id="cfg-btm-soc-title"></div>
-                    </div>
-                    <div style="display:flex; justify-content:space-between; align-items:center;">
-                        <h3 class="section-title" style="font-size:1.1rem; border-bottom:none;">Social Links</h3>
-                        <button id="add-soc-btn" class="btn-primary" style="width:auto; padding:8px 15px; font-size:0.9rem;">+ Add Link</button>
-                    </div>
-                    <div id="soc-container" style="display:flex; flex-direction:column; gap:20px;"></div>
                 </section>
 
             </div>
