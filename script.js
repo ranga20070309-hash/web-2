@@ -15,6 +15,31 @@ document.addEventListener("DOMContentLoaded", async () => {
                 if (dbData.socials) {
                     CONFIG.socials = { ...CONFIG.socials, ...dbData.socials };
                 }
+
+                // Inject Custom Data Dynamically
+                if (dbData.enterVideo) { const ev = document.querySelector('.enter-video'); if (ev) ev.src = dbData.enterVideo; }
+                if (dbData.enterTitle) { const et = document.querySelector('.enter-title'); if (et) { et.textContent = dbData.enterTitle; et.setAttribute('data-text', dbData.enterTitle); } }
+                if (dbData.enterButton) { const eb = document.querySelector('.enter-btn'); if (eb) { eb.textContent = dbData.enterButton; eb.setAttribute('data-text', dbData.enterButton); } }
+                if (dbData.obscuraTitle) { const ot = document.querySelector('.obscura-title'); if (ot) ot.textContent = dbData.obscuraTitle; }
+                if (dbData.obscuraDesc) { const od = document.querySelector('.obscura-description'); if (od) od.innerHTML = dbData.obscuraDesc; }
+                if (dbData.obscuraDiscord) { const oi = document.querySelector('.obscura-invite-btn'); if (oi) oi.href = dbData.obscuraDiscord; }
+                if (dbData.obscuraFooterTitle) { const ft = document.querySelector('.footer-title'); if (ft) ft.textContent = dbData.obscuraFooterTitle; }
+                if (dbData.obscuraFooterDesc) { const fd = document.querySelector('.footer-desc'); if (fd) fd.textContent = dbData.obscuraFooterDesc; }
+                if (dbData.copyrightText) { const ct = document.querySelector('.tape-copyright p'); if (ct) ct.textContent = dbData.copyrightText; }
+                if (dbData.bottomSocialTitle) { const bst = document.querySelector('.social-title'); if (bst) bst.textContent = dbData.bottomSocialTitle; }
+
+                if (dbData.team && dbData.team.length > 0) {
+                    const pc = document.querySelector('.profiles-container');
+                    if (pc) pc.innerHTML = dbData.team.map(t => `<div class="discord-profile-card"><div class="d-banner" style="background-image: linear-gradient(45deg, ${t.bg1}, ${t.bg2}); height: 80px;"></div><div class="d-card-content" style="padding-top: 25px; text-align: center;"><div class="role-badge" style="right: 50%; transform: translateX(50%); top: -15px;">${t.role}</div><h2 class="d-name title" style="font-size: 2rem; letter-spacing: 4px; margin-top: 0; color: ${t.color}; text-shadow: 0 0 10px ${t.color}, 0 0 40px ${t.color};">${t.name}</h2><div class="d-bio-box"><p>${t.bio}</p></div></div></div>`).join('');
+                }
+                if (dbData.tape && dbData.tape.length > 0) {
+                    const tapeHtml = dbData.tape.map((t, i) => `<a href="${t.url}" target="_blank" class="tape-link"><img src="${t.img}" class="tape-art" data-index="${i+1}"><span class="tape-artist">${t.artist}</span></a>`).join('');
+                    document.querySelectorAll('.tape-items').forEach(div => div.innerHTML = tapeHtml);
+                }
+                if (dbData.bottomSocials && dbData.bottomSocials.length > 0) {
+                    const bsl = document.querySelector('.bottom-social-links');
+                    if (bsl) bsl.innerHTML = dbData.bottomSocials.map(s => `<a href="${s.url}" target="_blank" class="b-social-btn flex-center"><i class="fa-brands fa-${s.icon}"></i><span>${s.text}</span></a>`).join('');
+                }
             }
         } catch (error) {
             console.error("Failed to load settings from Firebase:", error);
