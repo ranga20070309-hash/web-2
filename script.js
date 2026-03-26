@@ -33,6 +33,21 @@ document.addEventListener("DOMContentLoaded", () => {
                 if (dbData.obscuraFooterDesc && dbData.obscuraFooterDesc !== "") { const fd = document.querySelector('.footer-desc'); if (fd) fd.textContent = dbData.obscuraFooterDesc; }
                 if (dbData.copyrightText && dbData.copyrightText !== "") { const ct = document.querySelector('.tape-copyright p'); if (ct) ct.textContent = dbData.copyrightText; }
                 if (dbData.bottomSocialTitle && dbData.bottomSocialTitle !== "") { const bst = document.querySelector('.social-title'); if (bst) bst.textContent = dbData.bottomSocialTitle; }
+                
+                if (dbData.nrTitle && dbData.nrTitle !== "") { const nrt = document.getElementById('nr-title'); if (nrt) nrt.textContent = dbData.nrTitle; }
+                if (dbData.nrUrl && dbData.nrUrl !== "") { 
+                    const nrl = document.getElementById('nr-link'); if (nrl) nrl.href = dbData.nrUrl;
+                    const nri = document.getElementById('nr-iframe'); 
+                    if (nri) {
+                        let embedUrl = dbData.nrUrl;
+                        // Auto-convert standard Spotify url to embed url
+                        if (embedUrl.includes('open.spotify.com') && !embedUrl.includes('/embed/')) {
+                            embedUrl = embedUrl.replace('open.spotify.com/', 'open.spotify.com/embed/');
+                            if (!embedUrl.includes('?theme')) embedUrl += '?theme=0';
+                        }
+                        nri.src = embedUrl;
+                    }
+                }
 
                 if (dbData.team && dbData.team.length > 0) {
                     const pc = document.querySelector('.profiles-container');
