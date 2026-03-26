@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>OBSCURA - Admin Dashboard</title>
+    <link rel="stylesheet" href="admin.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="dashboard">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="brand">
+                <i class="fa-solid fa-bolt"></i>
+                <span>OBSCURA ADMIN</span>
+            </div>
+            
+            <nav class="nav-menu">
+                <a href="#general" class="nav-item active" data-tab="general">
+                    <i class="fa-solid fa-user"></i> General Info
+                </a>
+                <a href="#media" class="nav-item" data-tab="media">
+                    <i class="fa-solid fa-photo-film"></i> Media & Colors
+                </a>
+                <a href="#audio" class="nav-item" data-tab="audio">
+                    <i class="fa-solid fa-music"></i> Audio System
+                </a>
+                <a href="#discord" class="nav-item" data-tab="discord">
+                    <i class="fa-brands fa-discord"></i> Discord & Lanyard
+                </a>
+                <a href="#socials" class="nav-item" data-tab="socials">
+                    <i class="fa-solid fa-hashtag"></i> Social Links
+                </a>
+            </nav>
+
+            <div class="sidebar-footer">
+                <button id="save-btn" class="btn-primary">
+                    <i class="fa-solid fa-cloud-arrow-up"></i> Publish Settings
+                </button>
+            </div>
+        </aside>
+
+        <!-- Main Content area -->
+        <main class="main-content">
+            <header class="top-header">
+                <div class="header-titles">
+                    <h1>Dashboard Settings</h1>
+                    <p>Live edit your profile dynamically</p>
+                </div>
+                <!-- Status indicator will be used when Firebase is linked -->
+                <div class="status-indicator">
+                    <span class="dot"></span>
+                    <span id="connection-status">Waiting for Database...</span>
+                </div>
+            </header>
+
+            <div class="content-area">
+                
+                <!-- General Tab -->
+                <section id="general" class="tab-content active">
+                    <h2 class="section-title">General Information</h2>
+                    <div class="card">
+                        <div class="form-group">
+                            <label>Profile Name</label>
+                            <input type="text" id="config-name" placeholder="e.g. ||RANGA||">
+                        </div>
+                        <div class="form-group">
+                            <label>Tab Name (Browser Title)</label>
+                            <input type="text" id="config-tabname" placeholder="e.g. @RANGA">
+                        </div>
+                        <div class="form-group">
+                            <label>Sub Title</label>
+                            <input type="text" id="config-title" placeholder="e.g. Happy To See You!">
+                        </div>
+                        <div class="form-group">
+                            <label>Location Text</label>
+                            <input type="text" id="config-location" placeholder="e.g. China / Sri Lanka">
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Media Tab -->
+                <section id="media" class="tab-content">
+                    <h2 class="section-title">Media & Styling</h2>
+                    <div class="card">
+                        <div class="form-group">
+                            <label>Background Video/Image URL (Direct link)</label>
+                            <input type="text" id="config-bg" placeholder="https://.../video.mp4">
+                            <small>Use a direct .mp4 or .jpg/.png link</small>
+                        </div>
+                        <div class="form-group">
+                            <label>Primary Theme Color (Hex)</label>
+                            <div class="color-picker-wrapper">
+                                <input type="color" id="config-color" value="#ff0000">
+                                <span id="color-hex-display">#ff0000</span>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Audio Tab -->
+                <section id="audio" class="tab-content">
+                    <h2 class="section-title">Music Player Setup</h2>
+                    <div class="card">
+                        <div class="form-group">
+                            <label>Audio Source Link (MP3)</label>
+                            <input type="text" id="config-audio-src" placeholder="https://.../song.mp3">
+                        </div>
+                        <div class="form-group">
+                            <label>Song Title</label>
+                            <input type="text" id="config-song-title" placeholder="e.g. My Polar Star">
+                        </div>
+                        <div class="form-group">
+                            <label>Album Art Image URL</label>
+                            <input type="text" id="config-album-art" placeholder="https://.../cover.jpg">
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Discord Tab -->
+                <section id="discord" class="tab-content">
+                    <h2 class="section-title">Discord Integration</h2>
+                    <div class="card">
+                        <div class="form-group">
+                            <label>Discord User ID (For Lanyard)</label>
+                            <input type="text" id="config-discord-id" placeholder="1126206273722011708">
+                            <small>Must join discord.gg/lanyard to work</small>
+                        </div>
+                        <div class="form-group">
+                            <label>Fallback Avatar URL</label>
+                            <input type="text" id="config-discord-avatar" placeholder="https://.../avatar.jpg">
+                        </div>
+                        <div class="form-group">
+                            <label>Fallback Username</label>
+                            <input type="text" id="config-discord-username" placeholder="e.g. ranga____">
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Socials Tab -->
+                <section id="socials" class="tab-content">
+                    <h2 class="section-title">Social Links</h2>
+                    <div class="card">
+                        <div class="form-group">
+                            <label><i class="fa-brands fa-spotify"></i> Spotify Profile URL</label>
+                            <input type="text" id="config-spotify" placeholder="https://open.spotify.com/...">
+                        </div>
+                        <div class="form-group">
+                            <label><i class="fa-brands fa-tiktok"></i> TikTok Profile URL</label>
+                            <input type="text" id="config-tiktok" placeholder="https://tiktok.com/@...">
+                        </div>
+                        <div class="form-group">
+                            <label><i class="fa-brands fa-apple"></i> Apple Music URL</label>
+                            <input type="text" id="config-apple" placeholder="https://music.apple.com/...">
+                        </div>
+                    </div>
+                </section>
+
+            </div>
+        </main>
+    </div>
+
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+    
+    <script src="config.js"></script>
+    <script src="admin.js"></script>
+</body>
+</html>
