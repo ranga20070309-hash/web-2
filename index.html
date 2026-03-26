@@ -375,6 +375,22 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
     <script src="https://unpkg.com/@studio-freight/lenis@1.0.39/dist/lenis.min.js"></script>
 
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+    <script>
+      const firebaseConfig = {
+        apiKey: "AIzaSyBHVei7sBSauONN2s7Ecn9rGjDLw-EwfEU",
+        authDomain: "admin-site-ranga.firebaseapp.com",
+        projectId: "admin-site-ranga",
+        storageBucket: "admin-site-ranga.firebasestorage.app",
+        messagingSenderId: "308380589863",
+        appId: "1:308380589863:web:ea6a55d4674a35c0f1d302"
+      };
+      firebase.initializeApp(firebaseConfig);
+      const db = firebase.firestore();
+    </script>
+
     <script src="config.js"></script>
     <script src="script.js"></script>
 </body>
