@@ -38,7 +38,8 @@ document.addEventListener("DOMContentLoaded", () => {
                     const ls = dbData.latestSingle;
                     if (document.getElementById('ls-cover')) document.getElementById('ls-cover').src = ls.cover;
                     if (document.getElementById('ls-title')) document.getElementById('ls-title').textContent = ls.title;
-                    if (document.getElementById('ls-streams')) document.getElementById('ls-streams').textContent = ls.streams;
+                    if (document.getElementById('ls-artist')) document.getElementById('ls-artist').textContent = ls.artist;
+                    if (document.getElementById('ls-qty')) document.getElementById('ls-qty').textContent = ls.qty || ls.streams;
                     if (document.getElementById('ls-prod')) document.getElementById('ls-prod').textContent = ls.prod;
                     if (document.getElementById('ls-mix')) document.getElementById('ls-mix').textContent = ls.mix;
                     if (document.getElementById('ls-coprod')) document.getElementById('ls-coprod').textContent = ls.coprod;
@@ -73,6 +74,30 @@ document.addEventListener("DOMContentLoaded", () => {
         smoothTouch: false,
         touchMultiplier: 2,
     });
+
+    // Native Smooth fade out logic strictly tied to actual scroll containers
+    const handleScrollFade = () => {
+        const sidePanel = document.getElementById('side-music-panel');
+        const albumShowcase = document.getElementById('album-showcase');
+        
+        // Safety check: do not interfere if site entrance animation hasn't finished
+        if (sidePanel && sidePanel.classList.contains('hidden')) return;
+        
+        // Handle custom body scroll container format or native window scroll
+        const scrollDist = document.body.scrollTop || document.documentElement.scrollTop || window.scrollY || 0;
+        
+        if (scrollDist > 150) { // threshold indicating user is leaving top fold
+            if (sidePanel) { sidePanel.style.opacity = '0'; sidePanel.style.pointerEvents = 'none'; sidePanel.style.transform = 'translateY(20px)'; }
+            if (albumShowcase) { albumShowcase.style.opacity = '0'; albumShowcase.style.pointerEvents = 'none'; albumShowcase.style.transform = 'translateY(20px)'; }
+        } else {
+            if (sidePanel) { sidePanel.style.opacity = '1'; sidePanel.style.pointerEvents = 'all'; sidePanel.style.transform = 'translateY(-50%)'; }
+            if (albumShowcase) { albumShowcase.style.opacity = '1'; albumShowcase.style.pointerEvents = 'all'; albumShowcase.style.transform = 'none'; }
+        }
+    };
+
+    lenis.on('scroll', handleScrollFade);
+    document.body.addEventListener('scroll', handleScrollFade);
+    window.addEventListener('scroll', handleScrollFade);
 
     function raf(time) {
         lenis.raf(time);
@@ -837,3 +862,5 @@ window.closeModals = function() {
     if (typeof lenis !== "undefined") lenis.start();
     document.body.style.overflow = "";
 };
+
+
