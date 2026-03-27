@@ -75,7 +75,8 @@ document.addEventListener('DOMContentLoaded', () => {
             d.latestSingle = {
                 cover: "https://image-cdn-ak.spotifycdn.com/image/ab67616d00001e021e7234ca35ed22aa3b5d6bc4",
                 title: "Echoing Funk",
-                streams: "142,500+",
+                artist: "||RANGA||",
+                qty: "1 Song",
                 prod: "RANGA",
                 mix: "SVYUXU",
                 coprod: "FL4ME",
@@ -96,7 +97,8 @@ document.addEventListener('DOMContentLoaded', () => {
         setVal('cfg-btm-soc-title', d.bottomSocialTitle);
         
         if (d.latestSingle) {
-            setVal('cfg-ls-cover', d.latestSingle.cover); setVal('cfg-ls-title', d.latestSingle.title); setVal('cfg-ls-streams', d.latestSingle.streams);
+            setVal('cfg-ls-cover', d.latestSingle.cover); setVal('cfg-ls-title', d.latestSingle.title); 
+            setVal('cfg-ls-artist', d.latestSingle.artist); setVal('cfg-ls-qty', d.latestSingle.qty || d.latestSingle.streams);
             setVal('cfg-ls-prod', d.latestSingle.prod); setVal('cfg-ls-mix', d.latestSingle.mix); setVal('cfg-ls-coprod', d.latestSingle.coprod);
             setVal('cfg-ls-url', d.latestSingle.url);
         }
@@ -121,7 +123,7 @@ document.addEventListener('DOMContentLoaded', () => {
             obscuraFooterTitle:val('cfg-obs-footer-title'), obscuraFooterDesc:val('cfg-obs-footer-desc'), copyrightText:val('cfg-obs-copyright'),
             bottomSocialTitle:val('cfg-btm-soc-title'),
             latestSingle: {
-                cover: val('cfg-ls-cover'), title: val('cfg-ls-title'), streams: val('cfg-ls-streams'),
+                cover: val('cfg-ls-cover'), title: val('cfg-ls-title'), artist: val('cfg-ls-artist'), qty: val('cfg-ls-qty'),
                 prod: val('cfg-ls-prod'), mix: val('cfg-ls-mix'), coprod: val('cfg-ls-coprod'), url: val('cfg-ls-url')
             }
         };
@@ -130,4 +132,49 @@ document.addEventListener('DOMContentLoaded', () => {
             setTimeout(()=>{ saveBtn.innerHTML=orig; saveBtn.style.background=''; }, 2000);
         });
     });
+
+    // Handle Image Upload correctly with compression to save DB space natively
+    const coverFile = document.getElementById('cfg-ls-cover-file');
+    const coverUrlInput = document.getElementById('cfg-ls-cover');
+    const coverPreview = document.getElementById('cfg-ls-cover-preview');
+
+    if (coverFile) {
+        coverFile.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+            
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                const img = new Image();
+                img.onload = function() {
+                    const canvas = document.createElement('canvas');
+                    const MAX_SIZE = 400; // Optimal for small UI boxes
+                    let width = img.width;
+                    let height = img.height;
+
+                    if (width > height) {
+                        if (width > MAX_SIZE) { height *= MAX_SIZE / width; width = MAX_SIZE; }
+                    } else {
+                        if (height > MAX_SIZE) { width *= MAX_SIZE / height; height = MAX_SIZE; }
+                    }
+
+                    canvas.width = width;
+                    canvas.height = height;
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, width, height);
+                    
+                    // Convert to base64 jpeg for extremely small DB storage payload
+                    const compressedDataUrl = canvas.toDataURL('image/jpeg', 0.85);
+                    
+                    if (coverUrlInput) coverUrlInput.value = compressedDataUrl;
+                    if (coverPreview) {
+                        coverPreview.src = compressedDataUrl;
+                        coverPreview.style.display = 'block';
+                    }
+                };
+                img.src = event.target.result;
+            };
+            reader.readAsDataURL(file);
+        });
+    }
 });
