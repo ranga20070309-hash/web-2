@@ -190,9 +190,15 @@
                 <section id="latest-single" class="tab-content">
                     <h2 class="section-title">Latest Single Showcase</h2>
                     <div class="card">
-                        <div class="form-group"><label>Cover Image URL</label><input type="text" id="cfg-ls-cover"></div>
-                        <div class="form-group"><label>Song Title</label><input type="text" id="cfg-ls-title"></div>
-                        <div class="form-group"><label>Stream Count Text (e.g. 142,500+)</label><input type="text" id="cfg-ls-streams"></div>
+                        <div class="form-group">
+                            <label>Cover Image (Upload or Paste URL)</label>
+                            <input type="file" id="cfg-ls-cover-file" accept="image/*" style="margin-bottom: 5px;">
+                            <input type="text" id="cfg-ls-cover" placeholder="Or paste image URL here...">
+                            <img id="cfg-ls-cover-preview" src="" style="width: 100px; height: 100px; margin-top: 10px; object-fit: cover; border-radius: 8px; display: none;">
+                        </div>
+                        <div class="form-group"><label>Release Title</label><input type="text" id="cfg-ls-title"></div>
+                        <div class="form-group"><label>Artist Name</label><input type="text" id="cfg-ls-artist"></div>
+                        <div class="form-group"><label>Number of Songs / Tracks (e.g. 1 Song)</label><input type="text" id="cfg-ls-qty"></div>
                         <hr style="border-color:var(--border);">
                         <div class="form-group"><label>Producer Name</label><input type="text" id="cfg-ls-prod"></div>
                         <div class="form-group"><label>Mix & Master Name</label><input type="text" id="cfg-ls-mix"></div>
