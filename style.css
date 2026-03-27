@@ -715,10 +715,9 @@ body.scroll-enabled {
 #album-showcase {
     position: fixed;
     right: 30px;
-    top: 50%;
-    transform: translateY(-50%);
+    top: 15vh; /* Anchors it nicely in the top right box */
     width: 360px;
-    max-height: 80vh;
+    max-height: calc(100vh - 180px);
     z-index: 40;
     border-radius: 20px;
     background: rgba(15, 15, 15, 0.6);
