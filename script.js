@@ -36,6 +36,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 
                 if (dbData.latestSingle) {
                     const ls = dbData.latestSingle;
+                    if (document.getElementById('ls-type')) document.getElementById('ls-type').textContent = ls.type || "LATEST SINGLE";
                     if (document.getElementById('ls-cover')) document.getElementById('ls-cover').src = ls.cover;
                     if (document.getElementById('ls-title')) document.getElementById('ls-title').textContent = ls.title;
                     if (document.getElementById('ls-artist')) document.getElementById('ls-artist').textContent = ls.artist;
