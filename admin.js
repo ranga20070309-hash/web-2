@@ -100,7 +100,15 @@ document.addEventListener('DOMContentLoaded', () => {
             setVal('cfg-ls-cover', d.latestSingle.cover); setVal('cfg-ls-title', d.latestSingle.title); 
             setVal('cfg-ls-artist', d.latestSingle.artist); setVal('cfg-ls-qty', d.latestSingle.qty || d.latestSingle.streams);
             setVal('cfg-ls-prod', d.latestSingle.prod); setVal('cfg-ls-mix', d.latestSingle.mix); setVal('cfg-ls-coprod', d.latestSingle.coprod);
-            setVal('cfg-ls-url', d.latestSingle.url); setVal('cfg-ls-release', d.latestSingle.releaseDate);
+            setVal('cfg-ls-url', d.latestSingle.url);
+            if (d.latestSingle.releaseDate) {
+                const parts = d.latestSingle.releaseDate.split('T');
+                setVal('cfg-ls-release-date', parts[0]);
+                if (parts.length > 1) setVal('cfg-ls-release-time', parts[1]);
+            } else {
+                setVal('cfg-ls-release-date', '');
+                setVal('cfg-ls-release-time', '');
+            }
         }
 
         if(statusText){ statusText.textContent="Live Synced"; dot.style.background="#2ecc71"; }
@@ -111,6 +119,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const saveBtn = document.getElementById('save-btn');
     if(saveBtn) saveBtn.addEventListener('click', () => {
         const orig=saveBtn.innerHTML; saveBtn.innerHTML='Saving...';
+        
+        const rDate = val('cfg-ls-release-date');
+        const rTime = val('cfg-ls-release-time') || '00:00';
+        const finalReleaseDate = rDate ? `${rDate}T${rTime}` : '';
+
         const newData = {
             name:val('config-name'), tabName:val('config-tabname'), title:val('config-title'), location:val('config-location'),
             backgroundMedia:val('config-bg'), primaryColor:val('config-color'), audioSrc:val('config-audio-src'),
@@ -125,7 +138,7 @@ document.addEventListener('DOMContentLoaded', () => {
             latestSingle: {
                 cover: val('cfg-ls-cover'), title: val('cfg-ls-title'), artist: val('cfg-ls-artist'), qty: val('cfg-ls-qty'),
                 prod: val('cfg-ls-prod'), mix: val('cfg-ls-mix'), coprod: val('cfg-ls-coprod'), url: val('cfg-ls-url'),
-                releaseDate: val('cfg-ls-release')
+                releaseDate: finalReleaseDate
             }
         };
         db.collection('settings').doc('main').set(newData,{merge:true}).then(()=>{
