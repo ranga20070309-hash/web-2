@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title id="page-title">||RANGA||</title>
-    <link rel="stylesheet" href="style.css?v=11" />
+    <link rel="stylesheet" href="style.css?v=12" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
 </head>
 <body>
@@ -51,9 +51,21 @@
         </div>
 
         <!-- Custom Album / EP Right Window -->
-        <div id="album-showcase" class="album-showcase-panel hidden" style="top: 15vh !important;">
+        <div id="album-showcase" class="album-showcase-panel hidden" style="position: absolute !important; top: 48% !important; transform: translateY(-50%) !important;">
             <div class="album-box-glow"></div>
             <div class="album-showcase-content">
+                
+                <!-- Countdown Timer (Automatically hides and shows Stream button when 0) -->
+                <div id="ls-countdown-container" class="countdown-wrapper" style="display: none; align-items: center; justify-content: center; gap: 10px; padding: 10px; margin-bottom: 20px; background: rgba(0, 0, 0, 0.5); border-radius: 12px; border: 1px solid rgba(255, 255, 255, 0.1); box-shadow: 0 0 20px rgba(29, 185, 84, 0.2), inset 0 0 10px rgba(0, 0, 0, 0.5);">
+                    <div style="text-align: center;"><div id="cd-days" style="font-size: 1.5rem; font-weight: bold; color: #1DB954; text-shadow: 0 0 10px rgba(29,185,84,0.6);">00</div><div style="font-size: 0.6rem; color: #aaa; letter-spacing: 1px;">DAYS</div></div>
+                    <span style="font-size: 1.2rem; color: #555; position: relative; top: -5px;">:</span>
+                    <div style="text-align: center;"><div id="cd-hours" style="font-size: 1.5rem; font-weight: bold; color: #1DB954; text-shadow: 0 0 10px rgba(29,185,84,0.6);">00</div><div style="font-size: 0.6rem; color: #aaa; letter-spacing: 1px;">HRS</div></div>
+                    <span style="font-size: 1.2rem; color: #555; position: relative; top: -5px;">:</span>
+                    <div style="text-align: center;"><div id="cd-mins" style="font-size: 1.5rem; font-weight: bold; color: #1DB954; text-shadow: 0 0 10px rgba(29,185,84,0.6);">00</div><div style="font-size: 0.6rem; color: #aaa; letter-spacing: 1px;">MINS</div></div>
+                    <span style="font-size: 1.2rem; color: #555; position: relative; top: -5px;">:</span>
+                    <div style="text-align: center;"><div id="cd-secs" style="font-size: 1.5rem; font-weight: bold; color: #1DB954; text-shadow: 0 0 10px rgba(29,185,84,0.6);">00</div><div style="font-size: 0.6rem; color: #aaa; letter-spacing: 1px;">SECS</div></div>
+                </div>
+
                 <div class="album-header" style="flex-direction: column; text-align: center; border-bottom: none; margin-bottom: 10px; padding-bottom: 0;">
                     <!-- Replace the src with your actual Album Cover Image URL -->
                     <img id="ls-cover" src="https://image-cdn-ak.spotifycdn.com/image/ab67616d00001e021e7234ca35ed22aa3b5d6bc4" class="album-cover" alt="Single Cover" style="width: 140px; height: 140px; border-radius: 12px; margin-bottom: 15px;" />
@@ -451,7 +463,7 @@
       const db = firebase.firestore();
     </script>
 
-    <script src="config.js?v=13"></script>
-    <script src="script.js?v=13"></script>
+    <script src="config.js?v=16"></script>
+    <script src="script.js?v=16"></script>
 </body>
 </html>
