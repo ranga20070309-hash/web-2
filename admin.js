@@ -100,7 +100,7 @@ document.addEventListener('DOMContentLoaded', () => {
             setVal('cfg-ls-cover', d.latestSingle.cover); setVal('cfg-ls-title', d.latestSingle.title); 
             setVal('cfg-ls-artist', d.latestSingle.artist); setVal('cfg-ls-qty', d.latestSingle.qty || d.latestSingle.streams);
             setVal('cfg-ls-prod', d.latestSingle.prod); setVal('cfg-ls-mix', d.latestSingle.mix); setVal('cfg-ls-coprod', d.latestSingle.coprod);
-            setVal('cfg-ls-url', d.latestSingle.url);
+            setVal('cfg-ls-url', d.latestSingle.url); setVal('cfg-ls-release', d.latestSingle.releaseDate);
         }
 
         if(statusText){ statusText.textContent="Live Synced"; dot.style.background="#2ecc71"; }
@@ -124,7 +124,8 @@ document.addEventListener('DOMContentLoaded', () => {
             bottomSocialTitle:val('cfg-btm-soc-title'),
             latestSingle: {
                 cover: val('cfg-ls-cover'), title: val('cfg-ls-title'), artist: val('cfg-ls-artist'), qty: val('cfg-ls-qty'),
-                prod: val('cfg-ls-prod'), mix: val('cfg-ls-mix'), coprod: val('cfg-ls-coprod'), url: val('cfg-ls-url')
+                prod: val('cfg-ls-prod'), mix: val('cfg-ls-mix'), coprod: val('cfg-ls-coprod'), url: val('cfg-ls-url'),
+                releaseDate: val('cfg-ls-release')
             }
         };
         db.collection('settings').doc('main').set(newData,{merge:true}).then(()=>{
