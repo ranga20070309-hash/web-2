@@ -44,6 +44,54 @@ document.addEventListener("DOMContentLoaded", () => {
                     if (document.getElementById('ls-mix')) document.getElementById('ls-mix').textContent = ls.mix;
                     if (document.getElementById('ls-coprod')) document.getElementById('ls-coprod').textContent = ls.coprod;
                     if (document.getElementById('ls-url')) document.getElementById('ls-url').href = ls.url;
+                    
+                    // Release Countdown Logic
+                    const releaseDate = ls.releaseDate;
+                    const cdContainer = document.getElementById('ls-countdown-container');
+                    const streamBtn = document.getElementById('ls-url');
+                    
+                    if (releaseDate && cdContainer && streamBtn) {
+                        const targetTime = new Date(releaseDate).getTime();
+                        
+                        let timerInterval;
+                        const updateCountdown = () => {
+                            const now = new Date().getTime();
+                            const diff = targetTime - now;
+                            
+                            if (diff > 0) {
+                                // Still counting down
+                                cdContainer.style.display = 'flex';
+                                streamBtn.style.pointerEvents = 'none';
+                                streamBtn.style.opacity = '0.4';
+                                streamBtn.innerHTML = '<i class="fa-solid fa-lock" style="font-size: 1.1rem;"></i> RELEASING SOON';
+                                
+                                const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+                                const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                                const mins = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+                                const secs = Math.floor((diff % (1000 * 60)) / 1000);
+                                
+                                document.getElementById('cd-days').innerText = days.toString().padStart(2, '0');
+                                document.getElementById('cd-hours').innerText = hours.toString().padStart(2, '0');
+                                document.getElementById('cd-mins').innerText = mins.toString().padStart(2, '0');
+                                document.getElementById('cd-secs').innerText = secs.toString().padStart(2, '0');
+                            } else {
+                                // Countdown finished!
+                                cdContainer.style.display = 'none';
+                                streamBtn.style.pointerEvents = 'all';
+                                streamBtn.style.opacity = '1';
+                                streamBtn.innerHTML = '<i class="fa-brands fa-spotify" style="font-size: 1.1rem;"></i> STREAM SINGLE NOW';
+                                if (timerInterval) clearInterval(timerInterval);
+                            }
+                        };
+                        
+                        updateCountdown(); // Run immediately to avoid 1s flash
+                        timerInterval = setInterval(updateCountdown, 1000);
+                    } else if (cdContainer && streamBtn) {
+                        cdContainer.style.display = 'none';
+                        streamBtn.style.pointerEvents = 'all';
+                        streamBtn.style.opacity = '1';
+                        streamBtn.innerHTML = '<i class="fa-brands fa-spotify" style="font-size: 1.1rem;"></i> STREAM SINGLE NOW';
+                    }
                 }
 
                 // Removed team, tape, and bottomSocials injections to restore original hardcoded versions
@@ -74,30 +122,6 @@ document.addEventListener("DOMContentLoaded", () => {
         smoothTouch: false,
         touchMultiplier: 2,
     });
-
-    // Native Smooth fade out logic strictly tied to actual scroll containers
-    const handleScrollFade = () => {
-        const sidePanel = document.getElementById('side-music-panel');
-        const albumShowcase = document.getElementById('album-showcase');
-        
-        // Safety check: do not interfere if site entrance animation hasn't finished
-        if (sidePanel && sidePanel.classList.contains('hidden')) return;
-        
-        // Handle custom body scroll container format or native window scroll
-        const scrollDist = document.body.scrollTop || document.documentElement.scrollTop || window.scrollY || 0;
-        
-        if (scrollDist > 150) { // threshold indicating user is leaving top fold
-            if (sidePanel) { sidePanel.style.opacity = '0'; sidePanel.style.pointerEvents = 'none'; sidePanel.style.transform = 'translateY(20px)'; }
-            if (albumShowcase) { albumShowcase.style.opacity = '0'; albumShowcase.style.pointerEvents = 'none'; albumShowcase.style.transform = 'translateY(20px)'; }
-        } else {
-            if (sidePanel) { sidePanel.style.opacity = '1'; sidePanel.style.pointerEvents = 'all'; sidePanel.style.transform = 'translateY(-50%)'; }
-            if (albumShowcase) { albumShowcase.style.opacity = '1'; albumShowcase.style.pointerEvents = 'all'; albumShowcase.style.transform = 'none'; }
-        }
-    };
-
-    lenis.on('scroll', handleScrollFade);
-    document.body.addEventListener('scroll', handleScrollFade);
-    window.addEventListener('scroll', handleScrollFade);
 
     function raf(time) {
         lenis.raf(time);
