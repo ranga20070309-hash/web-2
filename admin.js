@@ -73,6 +73,7 @@ document.addEventListener('DOMContentLoaded', () => {
             d.obscuraFooterDesc = "Join to the server and make music with other producers"; d.copyrightText = "COPYRIGHTED BY OBSCURA RECORDS";
             d.bottomSocialTitle = "CONTACT WITH SOCIAL MEDIA";
             d.latestSingle = {
+                type: "LATEST SINGLE",
                 cover: "https://image-cdn-ak.spotifycdn.com/image/ab67616d00001e021e7234ca35ed22aa3b5d6bc4",
                 title: "Echoing Funk",
                 artist: "||RANGA||",
@@ -97,6 +98,7 @@ document.addEventListener('DOMContentLoaded', () => {
         setVal('cfg-btm-soc-title', d.bottomSocialTitle);
         
         if (d.latestSingle) {
+            setVal('cfg-ls-type', d.latestSingle.type || "LATEST SINGLE");
             setVal('cfg-ls-cover', d.latestSingle.cover); setVal('cfg-ls-title', d.latestSingle.title); 
             setVal('cfg-ls-artist', d.latestSingle.artist); setVal('cfg-ls-qty', d.latestSingle.qty || d.latestSingle.streams);
             setVal('cfg-ls-prod', d.latestSingle.prod); setVal('cfg-ls-mix', d.latestSingle.mix); setVal('cfg-ls-coprod', d.latestSingle.coprod);
@@ -136,7 +138,7 @@ document.addEventListener('DOMContentLoaded', () => {
             obscuraFooterTitle:val('cfg-obs-footer-title'), obscuraFooterDesc:val('cfg-obs-footer-desc'), copyrightText:val('cfg-obs-copyright'),
             bottomSocialTitle:val('cfg-btm-soc-title'),
             latestSingle: {
-                cover: val('cfg-ls-cover'), title: val('cfg-ls-title'), artist: val('cfg-ls-artist'), qty: val('cfg-ls-qty'),
+                type: val('cfg-ls-type'), cover: val('cfg-ls-cover'), title: val('cfg-ls-title'), artist: val('cfg-ls-artist'), qty: val('cfg-ls-qty'),
                 prod: val('cfg-ls-prod'), mix: val('cfg-ls-mix'), coprod: val('cfg-ls-coprod'), url: val('cfg-ls-url'),
                 releaseDate: finalReleaseDate
             }
