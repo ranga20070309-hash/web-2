@@ -46,46 +46,53 @@ document.addEventListener("DOMContentLoaded", () => {
                     if (document.getElementById('ls-url')) document.getElementById('ls-url').href = ls.url;
                     
                     // Release Countdown Logic
-                    const releaseDate = ls.releaseDate;
                     const cdContainer = document.getElementById('ls-countdown-container');
                     const streamBtn = document.getElementById('ls-url');
                     
-                    if (releaseDate && cdContainer && streamBtn) {
-                        const targetTime = new Date(releaseDate).getTime();
+                    if (ls.releaseDate && cdContainer && streamBtn) {
+                        const targetTime = new Date(ls.releaseDate).getTime();
                         
-                        let timerInterval;
-                        const updateCountdown = () => {
-                            const now = new Date().getTime();
-                            const diff = targetTime - now;
+                        if (!isNaN(targetTime)) {
+                            let timerInterval;
+                            const updateCountdown = () => {
+                                const now = new Date().getTime();
+                                const diff = targetTime - now;
+                                
+                                if (diff > 0) {
+                                    // Still counting down
+                                    cdContainer.style.display = 'flex';
+                                    streamBtn.style.pointerEvents = 'none';
+                                    streamBtn.style.opacity = '0.4';
+                                    streamBtn.innerHTML = '<i class="fa-solid fa-lock" style="font-size: 1.1rem;"></i> RELEASING SOON';
+                                    
+                                    const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+                                    const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                                    const mins = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+                                    const secs = Math.floor((diff % (1000 * 60)) / 1000);
+                                    
+                                    document.getElementById('cd-days').innerText = days.toString().padStart(2, '0');
+                                    document.getElementById('cd-hours').innerText = hours.toString().padStart(2, '0');
+                                    document.getElementById('cd-mins').innerText = mins.toString().padStart(2, '0');
+                                    document.getElementById('cd-secs').innerText = secs.toString().padStart(2, '0');
+                                } else {
+                                    // Countdown finished!
+                                    cdContainer.style.display = 'none';
+                                    streamBtn.style.pointerEvents = 'all';
+                                    streamBtn.style.opacity = '1';
+                                    streamBtn.innerHTML = '<i class="fa-brands fa-spotify" style="font-size: 1.1rem;"></i> STREAM SINGLE NOW';
+                                    if (timerInterval) clearInterval(timerInterval);
+                                }
+                            };
                             
-                            if (diff > 0) {
-                                // Still counting down
-                                cdContainer.style.display = 'flex';
-                                streamBtn.style.pointerEvents = 'none';
-                                streamBtn.style.opacity = '0.4';
-                                streamBtn.innerHTML = '<i class="fa-solid fa-lock" style="font-size: 1.1rem;"></i> RELEASING SOON';
-                                
-                                const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-                                const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-                                const mins = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-                                const secs = Math.floor((diff % (1000 * 60)) / 1000);
-                                
-                                document.getElementById('cd-days').innerText = days.toString().padStart(2, '0');
-                                document.getElementById('cd-hours').innerText = hours.toString().padStart(2, '0');
-                                document.getElementById('cd-mins').innerText = mins.toString().padStart(2, '0');
-                                document.getElementById('cd-secs').innerText = secs.toString().padStart(2, '0');
-                            } else {
-                                // Countdown finished!
-                                cdContainer.style.display = 'none';
-                                streamBtn.style.pointerEvents = 'all';
-                                streamBtn.style.opacity = '1';
-                                streamBtn.innerHTML = '<i class="fa-brands fa-spotify" style="font-size: 1.1rem;"></i> STREAM SINGLE NOW';
-                                if (timerInterval) clearInterval(timerInterval);
-                            }
-                        };
-                        
-                        updateCountdown(); // Run immediately to avoid 1s flash
-                        timerInterval = setInterval(updateCountdown, 1000);
+                            updateCountdown(); // Run immediately to avoid 1s flash
+                            timerInterval = setInterval(updateCountdown, 1000);
+                        } else {
+                            // Invalid date
+                            cdContainer.style.display = 'none';
+                            streamBtn.style.pointerEvents = 'all';
+                            streamBtn.style.opacity = '1';
+                            streamBtn.innerHTML = '<i class="fa-brands fa-spotify" style="font-size: 1.1rem;"></i> STREAM SINGLE NOW';
+                        }
                     } else if (cdContainer && streamBtn) {
                         cdContainer.style.display = 'none';
                         streamBtn.style.pointerEvents = 'all';
