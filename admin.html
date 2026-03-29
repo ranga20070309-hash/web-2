@@ -204,7 +204,19 @@
                         <div class="form-group"><label>Mix & Master Name</label><input type="text" id="cfg-ls-mix"></div>
                         <div class="form-group"><label>Co-Producer / Feat Name</label><input type="text" id="cfg-ls-coprod"></div>
                         <hr style="border-color:var(--border);">
-                        <div class="form-group"><label><i class="fa-solid fa-clock"></i> Targeted Release Date & Time (Countdown)</label><input type="datetime-local" id="cfg-ls-release" style="background: rgba(0,0,0,0.3); color: #fff; border: 1px solid var(--border); border-radius: 10px; padding: 10px;"></div>
+                        
+                        <!-- Fixed Split Date and Time Checkers for better Browser compatibility -->
+                        <div class="form-group" style="display: flex; gap: 15px;">
+                            <div style="flex: 1;">
+                                <label><i class="fa-regular fa-calendar-days"></i> Release Date</label>
+                                <input type="date" id="cfg-ls-release-date" style="background: rgba(0,0,0,0.3); color: #fff; border: 1px solid var(--border); border-radius: 10px; padding: 10px; width: 100%; box-sizing: border-box;">
+                            </div>
+                            <div style="flex: 1;">
+                                <label><i class="fa-regular fa-clock"></i> Release Time</label>
+                                <input type="time" id="cfg-ls-release-time" style="background: rgba(0,0,0,0.3); color: #fff; border: 1px solid var(--border); border-radius: 10px; padding: 10px; width: 100%; box-sizing: border-box;">
+                            </div>
+                        </div>
+
                         <div class="form-group"><label><i class="fa-brands fa-spotify"></i> Spotify Listen URL</label><input type="text" id="cfg-ls-url"></div>
                     </div>
                 </section>
