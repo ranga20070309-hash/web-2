@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title id="page-title">||RANGA||</title>
-    <link rel="stylesheet" href="style.css?v=15" />
+    <link rel="stylesheet" href="style.css?v=22" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
 </head>
 <body>
@@ -170,20 +170,16 @@
                         </div>
                     </div>
                 </div>
-            </div>
+            </div> <!-- Closes .music-player -->
+        </div> <!-- Closes .container -->
 
-            <!-- Custom Album / EP Right Window Moved Below .container for proper Mobile Stacking securely outside 3D Contexts -->
-        </div>
-
+        <!-- Elements below are strictly outside the 3D container context -->
         <div class="view-counter hidden" id="view-counter-box">
             <i class="fa-solid fa-clock"></i> <span id="local-time">00:00:00</span>
         </div>
 
-        </div>
-    </div> <!-- Closes .container -->
-
     <!-- Custom Album / EP Right Window (Rendered sequentially post-container to bypass 3D Desktop breakage) -->
-    <div id="album-showcase" class="album-showcase-panel hidden" style="position: absolute !important; top: 48% !important; transform: translateY(-50%) !important;">
+    <div id="album-showcase" class="album-showcase-panel hidden">
         <div class="album-box-glow"></div>
         <div class="album-showcase-content">
             
@@ -202,7 +198,7 @@
                 <!-- Replace the src with your actual Album Cover Image URL -->
                 <img id="ls-cover" src="https://image-cdn-ak.spotifycdn.com/image/ab67616d00001e021e7234ca35ed22aa3b5d6bc4" class="album-cover" alt="Single Cover" style="width: 140px; height: 140px; border-radius: 12px; margin-bottom: 15px;" />
                 <div class="album-info">
-                    <span class="album-type" style="font-size: 0.8rem; margin-bottom: 8px;">LATEST SINGLE</span>
+                    <span id="ls-type" class="album-type" style="font-size: 0.8rem; margin-bottom: 8px;">LATEST SINGLE</span>
                     <h3 id="ls-title" class="album-title" style="font-size: 1.6rem; margin-bottom: 8px;">Echoing Funk</h3>
                     <span id="ls-artist" class="album-artist" style="font-size: 1rem; color: #ccc;">||RANGA||</span>
                 </div>
