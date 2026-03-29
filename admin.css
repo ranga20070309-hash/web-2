@@ -273,3 +273,49 @@ body {
     font-weight: bold;
     color: #fff;
 }
+
+/* Login Overlay */
+#login-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: #000;
+    z-index: 10000;
+    display: none; /* Controlled by JS */
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(20px);
+}
+
+.login-card {
+    background: #111;
+    padding: 60px 40px;
+    border-radius: 30px;
+    width: 400px;
+    max-width: 90%;
+    border: 1px solid #222;
+    box-shadow: 0 0 100px rgba(255, 0, 68, 0.1);
+    text-align: center;
+    animation: slideUp 0.5s ease;
+}
+
+.login-card .brand {
+    justify-content: center;
+    margin-bottom: 20px;
+}
+
+@keyframes slideUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+body.logged-in .dashboard {
+    display: flex;
+}
+
+body:not(.logged-in) .dashboard {
+    display: none !important;
+}
+
