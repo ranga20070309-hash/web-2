@@ -613,7 +613,7 @@ body.scroll-enabled {
 
 /* Side Music Panel */
 .side-music-panel {
-    position: fixed;
+    position: absolute;
     left: 20px;
     top: 50%;
     transform: translateY(-50%);
@@ -621,7 +621,14 @@ body.scroll-enabled {
     flex-direction: column;
     gap: 20px;
     z-index: 50;
-    transition: opacity 0.5s ease;
+    transition: opacity 0.5s ease, transform 0.5s ease;
+}
+
+/* Scroll Hide Override Class */
+.scrolled-hide {
+    opacity: 0 !important;
+    pointer-events: none !important;
+    transform: translateY(20px) !important;
 }
 
 .side-music-btn {
@@ -713,7 +720,7 @@ body.scroll-enabled {
 
 /* Album Showcase Panel */
 #album-showcase {
-    position: fixed;
+    position: absolute;
     right: 30px;
     top: 15vh; /* Anchors it nicely in the top right box */
     width: 360px;
