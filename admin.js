@@ -6,8 +6,66 @@ const firebaseConfig = {
 };
 try{ firebase.initializeApp(firebaseConfig); } catch(e){}
 const db = firebase.firestore();
+const auth = firebase.auth();
 
 document.addEventListener('DOMContentLoaded', () => {
+    // Check Auth State
+    auth.onAuthStateChanged(user => {
+        const overlay = document.getElementById('login-overlay');
+        if (user) {
+            document.body.classList.add('logged-in');
+            if(overlay) overlay.style.display = 'none';
+        } else {
+            document.body.classList.remove('logged-in');
+            if(overlay) overlay.style.display = 'flex';
+        }
+    });
+
+    // Login Logic
+    const loginBtn = document.getElementById('login-btn');
+    if(loginBtn) loginBtn.addEventListener('click', () => {
+        const email = document.getElementById('login-email').value;
+        const pass = document.getElementById('login-password').value;
+        const errDiv = document.getElementById('login-error');
+        if(!email || !pass) { errDiv.textContent="Enter both email/password"; errDiv.style.display='block'; return;}
+        
+        loginBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Logging in...';
+        auth.signInWithEmailAndPassword(email, pass).catch(err => {
+            errDiv.textContent = err.message;
+            errDiv.style.display = 'block';
+            loginBtn.innerHTML = 'Login To Dashboard';
+        });
+    });
+
+    // Logout Logic
+    const logoutBtn = document.getElementById('logout-btn');
+    if(logoutBtn) logoutBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        auth.signOut();
+    });
+
+    // Credentials Update Logic
+    const updateEmailBtn = document.getElementById('update-email-btn');
+    if(updateEmailBtn) updateEmailBtn.addEventListener('click', () => {
+        const newEmail = document.getElementById('sec-new-email').value;
+        if(!newEmail) return alert("Enter a new email");
+        auth.currentUser.updateEmail(newEmail).then(() => {
+            alert("Username (Email) Updated Successfully!");
+        }).catch(e => alert("Error: " + e.message));
+    });
+
+    const updatePassBtn = document.getElementById('update-pass-btn');
+    if(updatePassBtn) updatePassBtn.addEventListener('click', () => {
+        const newPass = document.getElementById('sec-new-pass').value;
+        const confPass = document.getElementById('sec-confirm-pass').value;
+        if(!newPass) return alert("Enter a new password");
+        if(newPass !== confPass) return alert("Passwords do not match");
+        
+        auth.currentUser.updatePassword(newPass).then(() => {
+            alert("Password Updated Successfully!");
+        }).catch(e => alert("Error: " + e.message));
+    });
+
     // Tabs
     const tabs = document.querySelectorAll('.nav-item'), contents = document.querySelectorAll('.tab-content');
     tabs.forEach(t => t.addEventListener('click', e => {
