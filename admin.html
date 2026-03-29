@@ -1,13 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>OBSCURA - Admin Dashboard</title>
     <link rel="stylesheet" href="admin.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&display=swap" rel="stylesheet">
 </head>
+
 <body>
     <div class="dashboard">
         <!-- Sidebar -->
@@ -16,7 +18,7 @@
                 <i class="fa-solid fa-bolt"></i>
                 <span>OBSCURA ADMIN</span>
             </div>
-            
+
             <nav class="nav-menu">
                 <a href="#general" class="nav-item active" data-tab="general">
                     <i class="fa-solid fa-user"></i> General Info
@@ -34,18 +36,25 @@
                     <i class="fa-solid fa-hashtag"></i> Social Links
                 </a>
                 <!-- New Tabs -->
-                <a href="#enter-screen" class="nav-item" data-tab="enter-screen"><i class="fa-solid fa-door-open"></i> Enter Screen</a>
-                <a href="#obscura" class="nav-item" data-tab="obscura"><i class="fa-solid fa-building"></i> Obscura Info</a>
-                <a href="#latest-single" class="nav-item" data-tab="latest-single"><i class="fa-solid fa-music"></i> Latest Single</a>
+                <a href="#enter-screen" class="nav-item" data-tab="enter-screen"><i class="fa-solid fa-door-open"></i>
+                    Enter Screen</a>
+                <a href="#obscura" class="nav-item" data-tab="obscura"><i class="fa-solid fa-building"></i> Obscura
+                    Info</a>
+                <a href="#latest-single" class="nav-item" data-tab="latest-single"><i class="fa-solid fa-music"></i>
+                    Latest Single</a>
+                <a href="#security" class="nav-item" data-tab="security"><i class="fa-solid fa-shield-halved"></i>
+                    Security</a>
             </nav>
-
             <div class="sidebar-footer">
                 <button id="save-btn" class="btn-primary">
                     <i class="fa-solid fa-cloud-arrow-up"></i> Publish Settings
                 </button>
+                <button id="logout-btn" class="btn-secondary"
+                    style="margin-top: 10px; width: 100%; color: #ff6b6b; border: 1px solid #ff6b6b33; background: transparent; padding: 10px; border-radius: 12px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px;">
+                    <i class="fa-solid fa-right-from-bracket"></i> Logout
+                </button>
             </div>
         </aside>
-
         <!-- Main Content area -->
         <main class="main-content">
             <header class="top-header">
@@ -53,15 +62,14 @@
                     <h1>Dashboard Settings</h1>
                     <p>Live edit your profile dynamically</p>
                 </div>
-                <!-- Status indicator will be used when Firebase is linked -->
+                <!-- Status indicator -->
                 <div class="status-indicator">
                     <span class="dot"></span>
                     <span id="connection-status">Waiting for Database...</span>
                 </div>
             </header>
-
             <div class="content-area">
-                
+
                 <!-- General Tab -->
                 <section id="general" class="tab-content active">
                     <h2 class="section-title">General Information</h2>
@@ -84,7 +92,6 @@
                         </div>
                     </div>
                 </section>
-
                 <!-- Media Tab -->
                 <section id="media" class="tab-content">
                     <h2 class="section-title">Media & Styling</h2>
@@ -92,7 +99,6 @@
                         <div class="form-group">
                             <label>Background Video/Image URL (Direct link)</label>
                             <input type="text" id="config-bg" placeholder="https://.../video.mp4">
-                            <small>Use a direct .mp4 or .jpg/.png link</small>
                         </div>
                         <div class="form-group">
                             <label>Primary Theme Color (Hex)</label>
@@ -103,26 +109,18 @@
                         </div>
                     </div>
                 </section>
-
                 <!-- Audio Tab -->
                 <section id="audio" class="tab-content">
                     <h2 class="section-title">Music Player Setup</h2>
                     <div class="card">
-                        <div class="form-group">
-                            <label>Audio Source Link (MP3)</label>
-                            <input type="text" id="config-audio-src" placeholder="https://.../song.mp3">
-                        </div>
-                        <div class="form-group">
-                            <label>Song Title</label>
-                            <input type="text" id="config-song-title" placeholder="e.g. My Polar Star">
-                        </div>
-                        <div class="form-group">
-                            <label>Album Art Image URL</label>
-                            <input type="text" id="config-album-art" placeholder="https://.../cover.jpg">
-                        </div>
+                        <div class="form-group"><label>Audio Source Link (MP3)</label><input type="text"
+                                id="config-audio-src" placeholder="https://.../song.mp3"></div>
+                        <div class="form-group"><label>Song Title</label><input type="text" id="config-song-title"
+                                placeholder="e.g. My Polar Star"></div>
+                        <div class="form-group"><label>Album Art Image URL</label><input type="text"
+                                id="config-album-art" placeholder="https://.../cover.jpg"></div>
                     </div>
                 </section>
-
                 <!-- Discord Tab -->
                 <section id="discord" class="tab-content">
                     <h2 class="section-title">Discord Integration</h2>
@@ -130,19 +128,13 @@
                         <div class="form-group">
                             <label>Discord User ID (For Lanyard)</label>
                             <input type="text" id="config-discord-id" placeholder="1126206273722011708">
-                            <small>Must join discord.gg/lanyard to work</small>
                         </div>
-                        <div class="form-group">
-                            <label>Fallback Avatar URL</label>
-                            <input type="text" id="config-discord-avatar" placeholder="https://.../avatar.jpg">
-                        </div>
-                        <div class="form-group">
-                            <label>Fallback Username</label>
-                            <input type="text" id="config-discord-username" placeholder="e.g. ranga____">
-                        </div>
+                        <div class="form-group"><label>Fallback Avatar URL</label><input type="text"
+                                id="config-discord-avatar" placeholder="https://.../avatar.jpg"></div>
+                        <div class="form-group"><label>Fallback Username</label><input type="text"
+                                id="config-discord-username" placeholder="e.g. ranga____"></div>
                     </div>
                 </section>
-
                 <!-- Socials Tab -->
                 <section id="socials" class="tab-content">
                     <h2 class="section-title">Social Links</h2>
@@ -161,76 +153,118 @@
                         </div>
                     </div>
                 </section>
-
                 <!-- Enter Screen -->
                 <section id="enter-screen" class="tab-content">
                     <h2 class="section-title">Enter Screen</h2>
                     <div class="card">
-                        <div class="form-group"><label>Enter Video URL</label><input type="text" id="cfg-enter-video"></div>
+                        <div class="form-group"><label>Enter Video URL</label><input type="text" id="cfg-enter-video">
+                        </div>
                         <div class="form-group"><label>Enter Title</label><input type="text" id="cfg-enter-title"></div>
-                        <div class="form-group"><label>Enter Button Text</label><input type="text" id="cfg-enter-btn"></div>
+                        <div class="form-group"><label>Enter Button Text</label><input type="text" id="cfg-enter-btn">
+                        </div>
                     </div>
                 </section>
-
                 <!-- Obscura Info -->
                 <section id="obscura" class="tab-content">
                     <h2 class="section-title">Obscura Records Data</h2>
                     <div class="card">
                         <div class="form-group"><label>Main Title</label><input type="text" id="cfg-obs-title"></div>
-                        <div class="form-group"><label>Main Description</label><textarea id="cfg-obs-desc" rows="3" style="background:rgba(0,0,0,0.3);color:#fff;border:1px solid var(--border);border-radius:10px;padding:10px;"></textarea></div>
-                        <div class="form-group"><label>Discord Invite URL</label><input type="text" id="cfg-obs-discord"></div>
-                        <hr style="border-color:var(--border);">
-                        <div class="form-group"><label>Footer Title</label><input type="text" id="cfg-obs-footer-title"></div>
-                        <div class="form-group"><label>Footer Description</label><input type="text" id="cfg-obs-footer-desc"></div>
-                        <div class="form-group"><label>Copyright Text</label><input type="text" id="cfg-obs-copyright"></div>
+                        <div class="form-group"><label>Main Description</label><textarea id="cfg-obs-desc" rows="3"
+                                style="background:rgba(0,0,0,0.3);color:#fff;border:1px solid var(--border);border-radius:10px;padding:10px;"></textarea>
+                        </div>
+                        <div class="form-group"><label>Discord Invite URL</label><input type="text"
+                                id="cfg-obs-discord"></div>
+                        <div class="form-group"><label>Footer Title</label><input type="text" id="cfg-obs-footer-title">
+                        </div>
+                        <div class="form-group"><label>Footer Description</label><input type="text"
+                                id="cfg-obs-footer-desc"></div>
+                        <div class="form-group"><label>Copyright Text</label><input type="text" id="cfg-obs-copyright">
+                        </div>
+                        <div class="form-group"><label>Bottom Social Title</label><input type="text"
+                                id="cfg-btm-soc-title"></div>
                     </div>
                 </section>
-
                 <!-- Latest Single Info -->
                 <section id="latest-single" class="tab-content">
                     <h2 class="section-title">Latest Single Showcase</h2>
                     <div class="card">
                         <div class="form-group">
-                            <label>Cover Image (Upload or Paste URL)</label>
+                            <label>Cover Image</label>
                             <input type="file" id="cfg-ls-cover-file" accept="image/*" style="margin-bottom: 5px;">
                             <input type="text" id="cfg-ls-cover" placeholder="Or paste image URL here...">
-                            <img id="cfg-ls-cover-preview" src="" style="width: 100px; height: 100px; margin-top: 10px; object-fit: cover; border-radius: 8px; display: none;">
+                            <img id="cfg-ls-cover-preview" src=""
+                                style="width: 100px; height: 100px; margin-top: 10px; object-fit: cover; border-radius: 8px; display: none;">
                         </div>
-                        <div class="form-group"><label>Release Type Badge</label><input type="text" id="cfg-ls-type" placeholder="e.g. LATEST SINGLE, NEW EP..."></div>
+                        <div class="form-group"><label>Release Type Badge</label><input type="text" id="cfg-ls-type"
+                                placeholder="e.g. LATEST SINGLE"></div>
                         <div class="form-group"><label>Release Title</label><input type="text" id="cfg-ls-title"></div>
                         <div class="form-group"><label>Artist Name</label><input type="text" id="cfg-ls-artist"></div>
-                        <div class="form-group"><label>Number of Songs / Tracks (e.g. 1 Song)</label><input type="text" id="cfg-ls-qty"></div>
+                        <div class="form-group"><label>Tracks Qty</label><input type="text" id="cfg-ls-qty"></div>
                         <hr style="border-color:var(--border);">
-                        <div class="form-group"><label>Producer Name</label><input type="text" id="cfg-ls-prod"></div>
-                        <div class="form-group"><label>Mix & Master Name</label><input type="text" id="cfg-ls-mix"></div>
-                        <div class="form-group"><label>Co-Producer / Feat Name</label><input type="text" id="cfg-ls-coprod"></div>
+                        <div class="form-group"><label>Producer</label><input type="text" id="cfg-ls-prod"></div>
+                        <div class="form-group"><label>Mix & Master</label><input type="text" id="cfg-ls-mix"></div>
+                        <div class="form-group"><label>Co-Producer</label><input type="text" id="cfg-ls-coprod"></div>
                         <hr style="border-color:var(--border);">
-                        
-                        <!-- Fixed Split Date and Time Checkers for better Browser compatibility -->
                         <div class="form-group" style="display: flex; gap: 15px;">
-                            <div style="flex: 1;">
-                                <label><i class="fa-regular fa-calendar-days"></i> Release Date</label>
-                                <input type="date" id="cfg-ls-release-date" style="background: rgba(0,0,0,0.3); color: #fff; border: 1px solid var(--border); border-radius: 10px; padding: 10px; width: 100%; box-sizing: border-box;">
+                            <div style="flex: 1;"><label>Release Date</label><input type="date" id="cfg-ls-release-date"
+                                    style="background: rgba(0,0,0,0.3); color: #fff; border: 1px solid var(--border); border-radius: 10px; padding: 10px; width: 100%;">
                             </div>
-                            <div style="flex: 1;">
-                                <label><i class="fa-regular fa-clock"></i> Release Time</label>
-                                <input type="time" id="cfg-ls-release-time" style="background: rgba(0,0,0,0.3); color: #fff; border: 1px solid var(--border); border-radius: 10px; padding: 10px; width: 100%; box-sizing: border-box;">
+                            <div style="flex: 1;"><label>Release Time</label><input type="time" id="cfg-ls-release-time"
+                                    style="background: rgba(0,0,0,0.3); color: #fff; border: 1px solid var(--border); border-radius: 10px; padding: 10px; width: 100%;">
                             </div>
                         </div>
-
                         <div class="form-group"><label><i class="fa-brands fa-spotify"></i> Spotify Listen URL</label><input type="text" id="cfg-ls-url"></div>
                     </div>
                 </section>
-
+                <!-- Security Tab -->
+                <section id="security" class="tab-content">
+                    <h2 class="section-title">Security Settings</h2>
+                    <p style="color: #888; margin-bottom: 20px;">Change your login username (email) and password</p>
+                    <div class="card">
+                        <div class="form-group">
+                            <label>New Username (Email)</label>
+                            <input type="email" id="sec-new-email" placeholder="Enter new email" style="background:rgba(0,0,0,0.3);color:#fff;border:1px solid var(--border);border-radius:10px;padding:16px 20px;">
+                        </div>
+                        <button id="update-email-btn" class="btn-primary"
+                            style="background: #3498db; margin-bottom: 25px;">Update Username</button>
+                        <hr style="border: 0; border-top: 1px solid var(--border); margin: 25px 0;">
+                        <div class="form-group"><label>New Password</label><input type="password" id="sec-new-pass" style="background:rgba(0,0,0,0.3);color:#fff;border:1px solid var(--border);border-radius:10px;padding:16px 20px;">
+                        </div>
+                        <div class="form-group"><label>Confirm New Password</label><input type="password"
+                                id="sec-confirm-pass" style="background:rgba(0,0,0,0.3);color:#fff;border:1px solid var(--border);border-radius:10px;padding:16px 20px;"></div>
+                        <button id="update-pass-btn" class="btn-primary" style="background: #27ae60;">Update
+                            Password</button>
+                    </div>
+                </section>
             </div>
         </main>
+    </div>
+
+    <!-- Login Overlay -->
+    <div id="login-overlay">
+        <div class="login-card">
+            <div class="login-brand"><i class="fa-solid fa-bolt"></i><span>ADMIN LOGIN</span></div>
+            <p style="color: #888; margin-bottom: 20px;">Welcome back! Please login to continue.</p>
+            <div class="form-group" style="margin-bottom: 15px;">
+                <label>Username (Email)</label>
+                <input type="email" id="login-email" placeholder="admin@example.com" style="background:rgba(0,0,0,0.3);color:#fff;border:1px solid var(--border);border-radius:10px;padding:16px 20px; width: 100%;">
+            </div>
+            <div class="form-group" style="margin-bottom: 20px;">
+                <label>Password</label>
+                <input type="password" id="login-password" placeholder="••••••••" style="background:rgba(0,0,0,0.3);color:#fff;border:1px solid var(--border);border-radius:10px;padding:16px 20px; width: 100%;">
+            </div>
+            <button id="login-btn" class="btn-primary" style="width: 100%; margin-top: 10px; background: var(--accent);">Login To Dashboard</button>
+            <div id="login-error" style="color: #ff6b6b; margin-top: 15px; font-size: 0.9em; display: none; text-align: center;"></div>
+        </div>
     </div>
 
     <!-- Firebase SDKs -->
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
-    
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+
     <script src="config.js"></script>
     <script src="admin.js"></script>
 </body>
+
 </html>
