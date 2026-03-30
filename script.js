@@ -138,12 +138,45 @@ document.addEventListener("DOMContentLoaded", () => {
     requestAnimationFrame(raf);
 
     // Load CONFIG
+    let baseVolume = 0.5;
+    let isVolumeLowered = false;
+    let volumeInterval = null;
+
+    function fadeVolume(targetVol) {
+        if (volumeInterval) clearInterval(volumeInterval);
+        const step = (targetVol - audio.volume) / 20;
+        let count = 0;
+        volumeInterval = setInterval(() => {
+            const newVol = audio.volume + step;
+            if (newVol >= 0 && newVol <= 1) audio.volume = newVol;
+            count++;
+            if (count >= 20) {
+                audio.volume = targetVol;
+                clearInterval(volumeInterval);
+            }
+        }, 25);
+    }
+
+    lenis.on('scroll', () => {
+        const obscuraTitle = document.querySelector(".obscura-title");
+        if (!obscuraTitle) return;
+        
+        const rect = obscuraTitle.getBoundingClientRect();
+        const triggerPoint = window.innerHeight * 0.9; // Trigger slightly before it fully shows for smoothness
+        
+        if (rect.top < triggerPoint && !isVolumeLowered) {
+            isVolumeLowered = true;
+            fadeVolume(baseVolume * 0.2); 
+        } else if (rect.top >= triggerPoint && isVolumeLowered) {
+            isVolumeLowered = false;
+            fadeVolume(baseVolume); 
+        }
+    });
     document.getElementById("page-title").textContent = CONFIG.name;
 
-    const profileNameEl = document.getElementById("profile-name");
-    profileNameEl.innerHTML = CONFIG.name;
-    profileNameEl.setAttribute("data-text", CONFIG.name);
-
+    // Dynamically update page title from CONFIG
+    document.getElementById("profile-name").textContent = CONFIG.name;
+    document.title = CONFIG.tabName;
     document.getElementById("profile-title").textContent = CONFIG.title;
     document.getElementById("profile-location").textContent = CONFIG.location;
 
@@ -367,15 +400,10 @@ document.addEventListener("DOMContentLoaded", () => {
                             document.getElementById("d-avatar").src = fallbackAvatar;
                         }
 
-                        document.getElementById("d-username").textContent = "ranga____";
+                        // Use global_name (Display Name) instead of username
+                        document.getElementById("d-username").textContent = data.discord_user.global_name || data.discord_user.username;
 
-                        document.getElementById("d-badges").innerHTML = `
-                            <span style="font-size: 1rem; margin-right: 4px;">🔥</span>
-                            <span style="color: red; font-weight: bold; font-size: 0.85rem; letter-spacing: 1px;">KONG</span>
-                            <div style="background: rgba(255, 0, 0, 0.7); border-radius: 50%; width: 16px; height: 16px; display: inline-flex; align-items: center; justify-content: center; margin-left: 5px;">
-                                <i class="fa-solid fa-chevron-down" style="color: black; font-size: 0.6rem;"></i>
-                            </div>
-                        `;
+                        document.getElementById("d-badges").innerHTML = ``;
 
                         const statusColors = {
                             online: "#43b581",
@@ -410,9 +438,13 @@ document.addEventListener("DOMContentLoaded", () => {
                             document.getElementById("d-status-text").textContent =
                                 text || (data.discord_status === "offline" ? "Offline" : "Online");
                         } else {
-                            document.getElementById("d-status-icon").style.display = "none";
-                            document.getElementById("d-status-text").textContent =
-                                data.discord_status === "offline" ? "Offline" : "Online";
+                            // Updated: Added fallback for when there is NO custom status set
+                            const icon = document.getElementById("d-status-icon");
+                            if (icon) icon.style.display = "none";
+                            
+                            const statusValue = data.discord_status || "offline";
+                            const formattedStatus = statusValue === "dnd" ? "Do Not Disturb" : statusValue.charAt(0).toUpperCase() + statusValue.slice(1);
+                            document.getElementById("d-status-text").textContent = formattedStatus;
                         }
                     }
                 }
@@ -428,6 +460,7 @@ document.addEventListener("DOMContentLoaded", () => {
         document.getElementById("d-status-text").textContent = "Please add your Discord ID in config.js";
     }
 
+    // Update social links
     document.getElementById("link-spotify").href = CONFIG.socials.spotify;
     document.getElementById("link-tiktok").href = CONFIG.socials.tiktok;
     document.getElementById("link-apple").href = CONFIG.socials.apple;
@@ -606,6 +639,13 @@ document.addEventListener("DOMContentLoaded", () => {
             document.body.classList.add("scroll-enabled");
             mainContent.classList.remove("hidden");
             
+            // Remove hidden classes early so animations are visible
+            const obscuraSection = document.getElementById("obscura-section");
+            if (obscuraSection) obscuraSection.classList.remove("hidden");
+
+            const albumShowcase = document.getElementById("album-showcase");
+            if (albumShowcase) albumShowcase.classList.remove("hidden");
+
             // Apply staggering entry animation to main content blocks
             const blocksToAnimate = [
                 document.querySelector(".container"),
@@ -620,21 +660,15 @@ document.addEventListener("DOMContentLoaded", () => {
             
             blocksToAnimate.forEach((block, index) => {
                 if (block) {
+                    block.classList.remove("hidden"); // Force remove hidden if present
                     block.style.opacity = "0";
+                    block.style.visibility = "visible"; // Ensure it's visible for the animation
                     block.style.animation = `mainEntrance 1.2s cubic-bezier(0.25, 0.1, 0.25, 1) ${0.2 + (index * 0.15)}s forwards`;
                 }
             });
-            const obscuraSection = document.getElementById("obscura-section");
-            if (obscuraSection) obscuraSection.classList.remove("hidden");
 
-            const viewCounterBox = document.getElementById("view-counter-box");
-            if (viewCounterBox) viewCounterBox.classList.remove("hidden");
-            
-            const sidePanel = document.getElementById("side-music-panel");
-            if (sidePanel) sidePanel.classList.remove("hidden");
-            
-            const albumShowcase = document.getElementById("album-showcase");
-            if (albumShowcase) albumShowcase.classList.remove("hidden");
+            // Start Danmaku Background Comments
+            setTimeout(startDanmaku, 2000); 
         }, 1100); // Wait for the 1.2s exit animation to almost finish before showing new content
     });
 
@@ -656,7 +690,12 @@ document.addEventListener("DOMContentLoaded", () => {
     if (volumeSlider) {
         volumeSlider.addEventListener("input", (e) => {
             const vol = e.target.value / 100;
-            audio.volume = vol;
+            baseVolume = vol; // Store user preference
+            if (!isVolumeLowered) {
+                audio.volume = vol;
+            } else {
+                audio.volume = vol * 0.2; // Keep at lowered state if scrolled down
+            }
 
             if (vol === 0) {
                 audio.muted = true;
@@ -765,10 +804,85 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
     
-    // Initial call
+    // Initialize local time
     updateLocalTime();
-    // Update every second
     setInterval(updateLocalTime, 1000);
+
+    // --- DANMAKU BACKGROUND COMMENTS ---
+    const danmakuContainer = document.getElementById("danmaku-container");
+    const DANMAKU_PHRASES = [
+        "你好呀～今天也要开心哦 💕", "来啦来啦！这里好可爱 🥺", "你的风格真的好特别 ✨", "好喜欢这里的感觉 💖",
+        "太温柔了吧这个页面 🫶", "夜晚的感觉好适合这里 🌙", "有种霓虹梦境的感觉 ✨", "这里像一场安静的梦 💤",
+        "氛围感拉满了 💫", "好像在未来城市里 🚶‍♀️", "这也太酷了吧 😭🔥", "谁设计的？太会了吧 👀",
+        "我直接爱住了 💀💖", "怎么可以这么好看 😩", "我不走了 我住这里 🏠", "嘿嘿 我来踩一脚 👣",
+        "路过打个卡 📍", "抱走这个页面了 🥺", "偷偷喜欢一下 🤫💗", "给你一个小心心 ❤️",
+        "夜色刚刚好 节奏刚刚响 🎧", "这氛围像一首歌 in the loop 🎶", "低音一来我就上头了 🔊", "霓虹在闪 心跳在加速 💓",
+        "这感觉很月石风 😏", "Just dropped by and stayed 🥺", "Leaving my vibe here ✨", "Okay but this is kinda perfect 😭",
+        "I’m keeping this forever 💖", "This is my new comfort place 🏠", "I love this 💕", "So pretty ✨",
+        "This is cute 🥺", "I’m obsessed 💖", "Perfect vibe 💫"
+    ];
+
+    function createDanmaku(text) {
+        if (!danmakuContainer) return;
+        const item = document.createElement("div");
+        item.className = "danmaku-item";
+        
+        // Random Horizontal Distribution
+        const left = 10 + Math.random() * 80;
+        item.style.left = `${left}%`;
+        
+        // Random Speed (Variety)
+        const duration = 18 + Math.random() * 12; // 18s to 30s
+        item.style.animation = `danmakuFloat ${duration}s linear forwards`;
+        
+        // Visual Variety (Scale)
+        const scale = 0.8 + Math.random() * 0.4; // 0.8 to 1.2
+        item.style.setProperty('--scale', scale);
+        
+        // Random horizontal drift during rising
+        const horizontalDrift = (Math.random() - 0.5) * 60; // +/- 30px
+        item.style.setProperty('--drift', `${horizontalDrift}px`);
+
+        const avatarSeed = Math.floor(Math.random() * 1000);
+        item.innerHTML = `
+            <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=${avatarSeed}" class="danmaku-avatar">
+            <span class="danmaku-text">${text}</span>
+        `;
+        
+        danmakuContainer.appendChild(item);
+        
+        // Remove after animation
+        setTimeout(() => {
+            item.remove();
+        }, duration * 1000);
+    }
+
+    // Spawn with random timing
+    let spawnTimeout = null;
+    function spawnLoop() {
+        if (!danmakuContainer) return;
+        const randomText = DANMAKU_PHRASES[Math.floor(Math.random() * DANMAKU_PHRASES.length)];
+        createDanmaku(randomText);
+        
+        const nextSpawn = 2000 + Math.random() * 3000; // Every 2-5 seconds
+        spawnTimeout = setTimeout(spawnLoop, nextSpawn);
+    }
+
+    function startDanmaku() {
+        if (spawnTimeout) return;
+        spawnLoop();
+    }
+
+    // Connect to Firebase if available for live updates
+    if (typeof db !== 'undefined') {
+        db.collection('live_comments').onSnapshot(snapshot => {
+            snapshot.docChanges().forEach(change => {
+                if (change.type === "added") {
+                    createDanmaku(change.doc.data().text);
+                }
+            });
+        });
+    }
 
     // Mobile scroll animation for premium widgets
     const premiumWidgets = document.querySelectorAll(".premium-spotify-box, .premium-apple-box");
@@ -800,11 +914,90 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
             });
         }, {
-            threshold: 0.2
+            threshold: 0.3
         });
         
         obscuraCards.forEach(card => cardObserver.observe(card));
     }
+
+    // Weather Fetching (Visitor-specific via IP Geolocation)
+    async function fetchWeather() {
+        try {
+            const geoRes = await fetch('https://ipapi.co/json/');
+            const geoData = await geoRes.json();
+            const city = geoData.city || "Colombo";
+            
+            const weatherRes = await fetch(`https://wttr.in/${city}?format=j1`);
+            const data = await weatherRes.json();
+            
+            const current = data.current_condition[0];
+            const temp = current.temp_C;
+            const desc = current.weatherDesc[0].value;
+            
+            document.getElementById('weather-temp').textContent = `${temp}°C`;
+            document.getElementById('weather-city').textContent = city;
+            document.getElementById('weather-desc').textContent = desc;
+            
+        } catch (error) {
+            console.warn("Weather sync error:", error);
+            // Fallback to auto-detect if precise geo fails
+            try {
+                const res = await fetch('https://wttr.in/?format=j1');
+                const data = await res.json();
+                document.getElementById('weather-temp').textContent = `${data.current_condition[0].temp_C}°C`;
+                document.getElementById('weather-city').textContent = data.nearest_area[0].areaName[0].value;
+                document.getElementById('weather-desc').textContent = data.current_condition[0].weatherDesc[0].value;
+            } catch (e) {}
+        }
+    }
+    
+    fetchWeather();
+    setInterval(fetchWeather, 600000); // Update every 10 mins
+
+    // Persistent & Real-Time Visitor Counter (Firestore)
+    function trackLiveVisitors() {
+        if (typeof db === 'undefined') return;
+
+        // 1. Live Presence (Who's online right now)
+        const visitorId = localStorage.getItem('visitor_id') || Math.random().toString(36).substring(7);
+        localStorage.setItem('visitor_id', visitorId);
+        const presenceRef = db.collection('presence').doc(visitorId);
+        const updatePresence = () => { presenceRef.set({ lastActive: firebase.firestore.FieldValue.serverTimestamp() }, { merge: true }); };
+        updatePresence(); setInterval(updatePresence, 30000);
+
+        db.collection('presence')
+            .where('lastActive', '>', new Date(Date.now() - 300000)) // Active in last 5 minutes (wider range for better reliability)
+            .onSnapshot(snapshot => {
+                const count = snapshot.size;
+                const el = document.getElementById('live-visitors-mini');
+                if (el) el.textContent = count;
+            });
+
+        // 2. Global Total Count (Increments on access)
+        const statsRef = db.collection('analytics').doc('visitor_stats');
+        
+        // Session-based increment to prevent spam
+        if (!sessionStorage.getItem('counted')) {
+            sessionStorage.setItem('counted', 'true');
+            statsRef.set({ 
+                total_count: firebase.firestore.FieldValue.increment(1) 
+            }, { merge: true }).catch(() => {
+                // If doc doesn't exist, create it
+                statsRef.set({ total_count: 1 });
+            });
+        }
+
+        // Live update for everyone's screen
+        statsRef.onSnapshot(doc => {
+            if (doc.exists) {
+                const total = doc.data().total_count;
+                const el = document.getElementById('total-visitors');
+                if (el) el.textContent = total;
+            }
+        });
+    }
+
+    trackLiveVisitors();
 
     // Scroll animation for regular elements (Title, Desc, Button)
     const scrollElements = document.querySelectorAll(".scroll-animate");
