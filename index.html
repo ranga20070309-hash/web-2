@@ -41,7 +41,7 @@
             </div>
         </div>
 
-        <div class="side-music-panel hidden" id="side-music-panel">
+        <div class="side-music-panel" id="side-music-panel">
             <div class="side-music-btn spotify" onclick="openModal('spotify-modal')">
                 <i class="fa-brands fa-spotify"></i>
             </div>
@@ -49,6 +49,8 @@
                 <i class="fa-brands fa-apple"></i>
             </div>
         </div>
+        
+        <!-- Floating Comments Background Moved to #obscura-section for scrolling sync -->
 
         <!-- Custom Album / EP Right Window Moved Below to .container for proper Mobile Stacking -->
 
@@ -123,25 +125,48 @@
             </div>
 
             <div class="discord-card">
-                <div class="avatar-container">
-                    <img src="" alt="Avatar" class="avatar" id="d-avatar" />
-                    <div class="status-indicator" id="d-status-indicator"></div>
-                </div>
-                <div class="discord-info">
-                    <div class="username-wrapper">
-                        <span class="d-username" id="d-username">Loading...</span>
-                        <div class="badges" id="d-badges">
-                            <span style="margin-right: 4px; font-size: 1rem;">🔥</span>
-                            <span style="color: red; font-weight: bold; font-size: 0.85rem; letter-spacing: 1px;">KONG</span>
-                            <div style="background: rgba(255, 0, 0, 0.7); border-radius: 50%; width: 16px; height: 16px; display: inline-flex; align-items: center; justify-content: center; margin-left: 5px;">
-                                <i class="fa-solid fa-chevron-down" style="color: black; font-size: 0.6rem;"></i>
+                <div class="card-top-info">
+                    <div class="top-left-group">
+                        <div id="weather-widget" class="weather-widget">
+                            <i class="fa-solid fa-cloud-sun weather-main-icon"></i>
+                            <div class="weather-combined">
+                                <span id="weather-temp" class="weather-temp-val">--°C</span>
+                                <span id="weather-city" class="weather-city-val">Loading...</span>
                             </div>
                         </div>
+                        <span class="top-sep">|</span>
+                        <span id="weather-desc" class="top-desc">Weather</span>
                     </div>
-                    <div class="status-wrapper" style="display: flex; align-items: center; gap: 6px; margin-top: 5px;">
-                        <img src="" id="d-status-icon" style="width: 20px; height: 20px; border-radius: 3px; display: none;" />
-                        <span class="d-status-text" id="d-status-text" style="color: red !important;">Loading...</span>
+                    <div class="top-right-group">
+                        <div class="visitor-mini">
+                            <i class="fa-solid fa-users red-icon"></i>
+                            <span id="live-visitors-mini">1</span> Online
+                        </div>
+                        <span class="top-sep">|</span>
+                        <div class="visitor-total-mini">
+                            <span id="total-visitors">--</span> Total
+                        </div>
                     </div>
+                </div>
+                <div class="discord-profile-row">
+                    <div class="avatar-container">
+                        <img src="" alt="Avatar" class="avatar" id="d-avatar" />
+                        <div class="status-indicator" id="d-status-indicator"></div>
+                    </div>
+                    <div class="discord-info">
+                        <div class="username-wrapper">
+                            <span class="d-username" id="d-username">Loading...</span>
+                            <div class="verified-badge" id="verified-badge">
+                                <i class="fa-solid fa-circle-check"></i>
+                            </div>
+                            <div class="badges" id="d-badges"></div>
+                        </div>
+                        <div class="status-wrapper" style="display: flex; align-items: center; gap: 6px; margin-top: 5px;">
+                            <img src="" id="d-status-icon" style="width: 20px; height: 20px; border-radius: 3px; display: none;" />
+                            <span class="d-status-text" id="d-status-text" style="color: red !important;">Loading...</span>
+                        </div>
+                    </div>
+                    <div class="chinese-phrase">我在等你</div>
                 </div>
             </div>
 
@@ -173,9 +198,10 @@
             </div> <!-- Closes .music-player -->
         </div> <!-- Closes .container -->
 
-        <!-- Elements below are strictly outside the 3D container context -->
-        <div class="view-counter hidden" id="view-counter-box">
-            <i class="fa-solid fa-clock"></i> <span id="local-time">00:00:00</span>
+        <div id="view-counter-box" class="view-counter">
+            <div class="pill-clock">
+                <i class="fa-solid fa-clock"></i> <span id="local-time">00:00:00</span>
+            </div>
         </div>
 
     <!-- Custom Album / EP Right Window (Rendered sequentially post-container to bypass 3D Desktop breakage) -->
@@ -234,6 +260,8 @@
     </div>
 
     <div id="obscura-section" class="hidden">
+        <!-- Floating Comments Background (Background Layer for this section) -->
+        <div id="danmaku-container"></div>
         <h1 class="obscura-title scroll-animate">OBSCURA RECORDS</h1>
         
         <p class="obscura-description neon-desc scroll-animate">
