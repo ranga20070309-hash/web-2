@@ -16,12 +16,17 @@
     padding: 0;
     box-sizing: border-box;
     cursor: none !important;
+    -webkit-tap-highlight-color: transparent;
+    -webkit-user-select: none;
+    user-select: none;
+    outline: none;
 }
 
 html {
     width: 100%;
     height: 100%;
 }
+
 body {
     width: 100%;
     height: 100%;
@@ -405,68 +410,227 @@ body.scroll-enabled {
 
 /* Keyframes for Main Title Glitch */
 @keyframes glitch-skew {
-    0% { transform: skew(0deg); }
-    10% { transform: skew(0deg); }
-    11% { transform: skew(-5deg) translate(-2px, 0); }
-    12% { transform: skew(5deg) translate(2px, 0); }
-    13% { transform: skew(0deg) translate(0, 0); }
-    50% { transform: skew(0deg); }
-    51% { transform: skew(3deg) translate(1px, 2px); }
-    52% { transform: skew(-3deg) translate(-1px, -2px); }
-    53% { transform: skew(0deg); }
+    0% {
+        transform: skew(0deg);
+    }
+
+    10% {
+        transform: skew(0deg);
+    }
+
+    11% {
+        transform: skew(-5deg) translate(-2px, 0);
+    }
+
+    12% {
+        transform: skew(5deg) translate(2px, 0);
+    }
+
+    13% {
+        transform: skew(0deg) translate(0, 0);
+    }
+
+    50% {
+        transform: skew(0deg);
+    }
+
+    51% {
+        transform: skew(3deg) translate(1px, 2px);
+    }
+
+    52% {
+        transform: skew(-3deg) translate(-1px, -2px);
+    }
+
+    53% {
+        transform: skew(0deg);
+    }
 }
 
 @keyframes glitch-anim-1 {
-    0% { clip-path: inset(20% -20px 80% -20px); transform: translate(-2px, 2px); }
-    10% { clip-path: inset(50% -20px 30% -20px); transform: translate(2px, -2px); }
-    20% { clip-path: inset(10% -20px 70% -20px); transform: translate(-2px, -2px); }
-    30% { clip-path: inset(80% -20px 5% -20px); transform: translate(2px, 2px); }
-    40% { clip-path: inset(30% -20px 50% -20px); transform: translate(-2px, -2px); }
-    50% { clip-path: inset(60% -20px 20% -20px); transform: translate(2px, 2px); }
-    60% { clip-path: inset(5% -20px 80% -20px); transform: translate(-2px, 2px); }
-    70% { clip-path: inset(70% -20px 10% -20px); transform: translate(2px, -2px); }
-    80% { clip-path: inset(15% -20px 60% -20px); transform: translate(-2px, -2px); }
-    90% { clip-path: inset(45% -20px 40% -20px); transform: translate(2px, 2px); }
-    100% { clip-path: inset(25% -20px 55% -20px); transform: translate(-2px, 2px); }
+    0% {
+        clip-path: inset(20% -20px 80% -20px);
+        transform: translate(-2px, 2px);
+    }
+
+    10% {
+        clip-path: inset(50% -20px 30% -20px);
+        transform: translate(2px, -2px);
+    }
+
+    20% {
+        clip-path: inset(10% -20px 70% -20px);
+        transform: translate(-2px, -2px);
+    }
+
+    30% {
+        clip-path: inset(80% -20px 5% -20px);
+        transform: translate(2px, 2px);
+    }
+
+    40% {
+        clip-path: inset(30% -20px 50% -20px);
+        transform: translate(-2px, -2px);
+    }
+
+    50% {
+        clip-path: inset(60% -20px 20% -20px);
+        transform: translate(2px, 2px);
+    }
+
+    60% {
+        clip-path: inset(5% -20px 80% -20px);
+        transform: translate(-2px, 2px);
+    }
+
+    70% {
+        clip-path: inset(70% -20px 10% -20px);
+        transform: translate(2px, -2px);
+    }
+
+    80% {
+        clip-path: inset(15% -20px 60% -20px);
+        transform: translate(-2px, -2px);
+    }
+
+    90% {
+        clip-path: inset(45% -20px 40% -20px);
+        transform: translate(2px, 2px);
+    }
+
+    100% {
+        clip-path: inset(25% -20px 55% -20px);
+        transform: translate(-2px, 2px);
+    }
 }
 
 @keyframes glitch-anim-2 {
-    0% { clip-path: inset(15% -20px 60% -20px); transform: translate(2px, -2px); }
-    10% { clip-path: inset(30% -20px 20% -20px); transform: translate(-2px, 2px); }
-    20% { clip-path: inset(70% -20px 10% -20px); transform: translate(2px, 2px); }
-    30% { clip-path: inset(20% -20px 50% -20px); transform: translate(-2px, -2px); }
-    40% { clip-path: inset(50% -20px 30% -20px); transform: translate(2px, 2px); }
-    50% { clip-path: inset(8% -20px 80% -20px); transform: translate(-2px, -2px); }
-    60% { clip-path: inset(60% -20px 15% -20px); transform: translate(2px, -2px); }
-    70% { clip-path: inset(40% -20px 45% -20px); transform: translate(-2px, 2px); }
-    80% { clip-path: inset(25% -20px 50% -20px); transform: translate(2px, 2px); }
-    90% { clip-path: inset(10% -20px 75% -20px); transform: translate(-2px, -2px); }
-    100% { clip-path: inset(35% -20px 35% -20px); transform: translate(2px, -2px); }
+    0% {
+        clip-path: inset(15% -20px 60% -20px);
+        transform: translate(2px, -2px);
+    }
+
+    10% {
+        clip-path: inset(30% -20px 20% -20px);
+        transform: translate(-2px, 2px);
+    }
+
+    20% {
+        clip-path: inset(70% -20px 10% -20px);
+        transform: translate(2px, 2px);
+    }
+
+    30% {
+        clip-path: inset(20% -20px 50% -20px);
+        transform: translate(-2px, -2px);
+    }
+
+    40% {
+        clip-path: inset(50% -20px 30% -20px);
+        transform: translate(2px, 2px);
+    }
+
+    50% {
+        clip-path: inset(8% -20px 80% -20px);
+        transform: translate(-2px, -2px);
+    }
+
+    60% {
+        clip-path: inset(60% -20px 15% -20px);
+        transform: translate(2px, -2px);
+    }
+
+    70% {
+        clip-path: inset(40% -20px 45% -20px);
+        transform: translate(-2px, 2px);
+    }
+
+    80% {
+        clip-path: inset(25% -20px 50% -20px);
+        transform: translate(2px, 2px);
+    }
+
+    90% {
+        clip-path: inset(10% -20px 75% -20px);
+        transform: translate(-2px, -2px);
+    }
+
+    100% {
+        clip-path: inset(35% -20px 35% -20px);
+        transform: translate(2px, -2px);
+    }
 }
 
 @keyframes glitch-anim-btn-1 {
-    0% { clip-path: inset(10% -10px 40% -10px); }
-    20% { clip-path: inset(80% -10px 5% -10px); }
-    40% { clip-path: inset(30% -10px 60% -10px); }
-    60% { clip-path: inset(70% -10px 10% -10px); }
-    80% { clip-path: inset(20% -10px 50% -10px); }
-    100% { clip-path: inset(40% -10px 30% -10px); }
+    0% {
+        clip-path: inset(10% -10px 40% -10px);
+    }
+
+    20% {
+        clip-path: inset(80% -10px 5% -10px);
+    }
+
+    40% {
+        clip-path: inset(30% -10px 60% -10px);
+    }
+
+    60% {
+        clip-path: inset(70% -10px 10% -10px);
+    }
+
+    80% {
+        clip-path: inset(20% -10px 50% -10px);
+    }
+
+    100% {
+        clip-path: inset(40% -10px 30% -10px);
+    }
 }
 
 @keyframes glitch-anim-btn-2 {
-    0% { clip-path: inset(40% -10px 10% -10px); }
-    20% { clip-path: inset(15% -10px 70% -10px); }
-    40% { clip-path: inset(60% -10px 30% -10px); }
-    60% { clip-path: inset(10% -10px 60% -10px); }
-    80% { clip-path: inset(50% -10px 20% -10px); }
-    100% { clip-path: inset(30% -10px 40% -10px); }
+    0% {
+        clip-path: inset(40% -10px 10% -10px);
+    }
+
+    20% {
+        clip-path: inset(15% -10px 70% -10px);
+    }
+
+    40% {
+        clip-path: inset(60% -10px 30% -10px);
+    }
+
+    60% {
+        clip-path: inset(10% -10px 60% -10px);
+    }
+
+    80% {
+        clip-path: inset(50% -10px 20% -10px);
+    }
+
+    100% {
+        clip-path: inset(30% -10px 40% -10px);
+    }
 }
 
 @keyframes glitch-shake {
-    0%, 100% { transform: scale(1.05) translate(0, 0); }
-    25% { transform: scale(1.05) translate(-2px, 2px); }
-    50% { transform: scale(1.05) translate(2px, -2px); }
-    75% { transform: scale(1.05) translate(-2px, -2px); }
+
+    0%,
+    100% {
+        transform: scale(1.05) translate(0, 0);
+    }
+
+    25% {
+        transform: scale(1.05) translate(-2px, 2px);
+    }
+
+    50% {
+        transform: scale(1.05) translate(2px, -2px);
+    }
+
+    75% {
+        transform: scale(1.05) translate(-2px, -2px);
+    }
 }
 
 @media (max-width: 768px) {
@@ -498,6 +662,7 @@ body.scroll-enabled {
         opacity: 1;
         transform: translateY(0) scale(1);
         filter: blur(0px);
+        visibility: visible;
     }
 }
 
@@ -542,10 +707,12 @@ body.scroll-enabled {
 
 /* Propagate 3D Parallax Environment to all independent upper-viewport objects (Desktop only to prevent mobile scaling override conflicts) */
 @media (min-width: 951px) {
+
     .side-music-panel,
     #audio-control-wrapper,
     #album-showcase,
-    .view-counter {
+    .view-counter,
+    .comment-sidebar-box {
         will-change: transform;
         transform: translate3d(calc(var(--mx) * -0.6px), calc(var(--my) * -0.6px), 10px) rotateX(calc(var(--rx) * 1.2deg)) rotateY(calc(var(--ry) * 1.2deg)) !important;
         transform-style: preserve-3d;
@@ -602,6 +769,16 @@ body.scroll-enabled {
     animation: neon-flicker 2s infinite alternate;
 }
 
+.greeting {
+    font-family: 'Courier Prime', monospace;
+    font-size: 1.2rem;
+    color: var(--primary-color);
+    text-transform: uppercase;
+    letter-spacing: 5px;
+    margin-bottom: 25px;
+    opacity: 0.85;
+}
+
 @keyframes color-flow {
     0% {
         filter: hue-rotate(0deg);
@@ -629,7 +806,8 @@ body.scroll-enabled {
 .side-music-panel {
     position: absolute;
     left: 20px;
-    top: 90px; /* Re-anchored to sit securely underneath the audio-control-wrapper top-corner */
+    top: 90px;
+    /* Re-anchored to sit securely underneath the audio-control-wrapper top-corner */
     transform: none;
     display: flex;
     flex-direction: column;
@@ -736,8 +914,7 @@ body.scroll-enabled {
 #album-showcase {
     position: absolute;
     right: 30px;
-    top: 160px; /* Relaxed further downwards from the View-Counter per aesthetic iteration */
-    transform: none;
+    top: 160px;
     width: 360px;
     max-height: calc(100vh - 180px);
     z-index: 40;
@@ -746,7 +923,7 @@ body.scroll-enabled {
     border: 1px solid rgba(255, 255, 255, 0.1);
     backdrop-filter: blur(20px);
     padding: 2px;
-    box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
     transition: all 0.5s ease;
     animation: float-premium-translate 6s ease-in-out infinite alternate;
 }
@@ -782,7 +959,7 @@ body.scroll-enabled {
     align-items: center;
     gap: 15px;
     margin-bottom: 20px;
-    border-bottom: 1px solid rgba(255,255,255,0.1);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
     padding-bottom: 20px;
 }
 
@@ -790,7 +967,7 @@ body.scroll-enabled {
     width: 80px;
     height: 80px;
     border-radius: 10px;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
     object-fit: cover;
 }
 
@@ -811,7 +988,7 @@ body.scroll-enabled {
     font-size: 1.2rem;
     color: #fff;
     margin: 0 0 5px 0;
-    text-shadow: 0 0 10px rgba(255,255,255,0.3);
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
 }
 
 .album-artist {
@@ -832,8 +1009,9 @@ body.scroll-enabled {
 .tracklist-container::-webkit-scrollbar {
     width: 4px;
 }
+
 .tracklist-container::-webkit-scrollbar-thumb {
-    background: rgba(255,255,255,0.2);
+    background: rgba(255, 255, 255, 0.2);
     border-radius: 4px;
 }
 
@@ -1049,16 +1227,26 @@ input[type=range]::-webkit-slider-runnable-track {
 /* Discord card */
 .discord-card {
     display: flex;
+    flex-direction: column;
     align-items: center;
     background: rgba(10, 10, 10, 0.6);
-    padding: 12px 25px;
-    border-radius: 50px;
-    gap: 15px;
+    padding: 15px 20px;
+    border-radius: 20px;
+    gap: 0;
     border: 1px solid rgba(255, 255, 255, 0.05);
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
     margin: 15px 0;
     transition: all 0.3s ease;
+    width: 100%;
+}
+
+.discord-profile-row {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    width: 100%;
+    margin-top: 5px;
 }
 
 .discord-card:hover {
@@ -1094,6 +1282,43 @@ input[type=range]::-webkit-slider-runnable-track {
 .discord-info {
     display: flex;
     flex-direction: column;
+    flex: 1;
+    min-width: 0;
+}
+
+.chinese-phrase {
+    font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;
+    font-size: 1.1rem;
+    color: #fff;
+    margin-left: 20px;
+    letter-spacing: 2px;
+    font-weight: 500;
+    text-shadow: 
+        0 0 5px #ff00ff,
+        0 0 10px #ff00ff,
+        0 0 20px #800080,
+        0 0 40px #800080;
+    animation: neon-float 3s ease-in-out infinite alternate;
+    white-space: nowrap;
+    opacity: 0.9;
+}
+
+@keyframes neon-float {
+    0% {
+        transform: translateY(0);
+        text-shadow: 
+            0 0 5px #ff00ff,
+            0 0 10px #ff00ff,
+            0 0 20px #800080;
+    }
+    100% {
+        transform: translateY(-5px);
+        text-shadow: 
+            0 0 10px #ff00ff,
+            0 0 20px #ff00ff,
+            0 0 40px #800080,
+            0 0 60px #800080;
+    }
 }
 
 .username-wrapper {
@@ -1349,7 +1574,8 @@ input[type=range]::-webkit-slider-runnable-track {
         display: flex !important;
         flex-direction: row !important;
         position: absolute !important;
-        top: 80px !important; /* Ducked securely below mobile audio knob */
+        top: 80px !important;
+        /* Ducked securely below mobile audio knob */
         left: 20px !important;
         transform: scale(0.8) !important;
         transform-origin: top left !important;
@@ -2062,21 +2288,32 @@ input[type=range]::-webkit-slider-runnable-track {
  * 61%-100%: Normal
  */
 @keyframes neon-card-break {
-    0%, 9%, 11%, 19%, 21%, 59%, 61%, 100% {
+
+    0%,
+    9%,
+    11%,
+    19%,
+    21%,
+    59%,
+    61%,
+    100% {
         transform: translateY(-10px) scale(1.02) skewX(0);
         box-shadow: 0 0 20px var(--primary-glow), 0 0 0 1px rgba(255, 255, 255, 0.05);
         filter: none;
     }
+
     10% {
         transform: translateY(-10px) scale(1.02) skewX(-10deg) translate(-10px, 0);
         box-shadow: -15px 0 25px rgba(0, 255, 255, 0.8), 15px 0 25px rgba(255, 0, 255, 0.8);
         filter: hue-rotate(90deg) contrast(1.5);
     }
+
     20% {
         transform: translateY(-10px) scale(1.02) skewX(8deg) translate(8px, 0);
         box-shadow: -10px 0 20px rgba(255, 0, 255, 0.8), 10px 0 20px rgba(0, 255, 255, 0.8);
         filter: hue-rotate(-90deg) contrast(1.2);
     }
+
     60% {
         transform: translateY(-10px) scale(1.02) skewX(-5deg) translate(-5px, 0);
         box-shadow: -15px 0 30px rgba(255, 0, 0, 0.9);
@@ -2086,19 +2323,33 @@ input[type=range]::-webkit-slider-runnable-track {
 
 /* Slice lines overlaying to fake the screen tearing */
 @keyframes neon-card-slice-1 {
-    0%, 9%, 11%, 19%, 21%, 59%, 61%, 100% { opacity: 0; box-shadow: none; }
+
+    0%,
+    9%,
+    11%,
+    19%,
+    21%,
+    59%,
+    61%,
+    100% {
+        opacity: 0;
+        box-shadow: none;
+    }
+
     10% {
         opacity: 1;
         box-shadow: inset 0 0 20px rgba(0, 255, 255, 0.8);
         clip-path: inset(20% 0 70% 0);
         background: rgba(0, 255, 255, 0.1);
     }
+
     20% {
         opacity: 1;
         box-shadow: inset 0 0 20px rgba(255, 0, 255, 0.8);
         clip-path: inset(50% 0 40% 0);
         background: rgba(255, 0, 255, 0.1);
     }
+
     60% {
         opacity: 1;
         box-shadow: inset 0 0 20px rgba(255, 0, 0, 0.8);
@@ -2108,19 +2359,33 @@ input[type=range]::-webkit-slider-runnable-track {
 }
 
 @keyframes neon-card-slice-2 {
-    0%, 9%, 11%, 19%, 21%, 59%, 61%, 100% { opacity: 0; box-shadow: none; }
+
+    0%,
+    9%,
+    11%,
+    19%,
+    21%,
+    59%,
+    61%,
+    100% {
+        opacity: 0;
+        box-shadow: none;
+    }
+
     10% {
         opacity: 1;
         box-shadow: inset 0 0 20px rgba(255, 0, 255, 0.8);
         clip-path: inset(70% 0 20% 0);
         background: rgba(255, 0, 255, 0.1);
     }
+
     20% {
         opacity: 1;
         box-shadow: inset 0 0 20px rgba(0, 255, 255, 0.8);
         clip-path: inset(40% 0 50% 0);
         background: rgba(0, 255, 255, 0.1);
     }
+
     60% {
         opacity: 1;
         box-shadow: inset 0 0 20px rgba(255, 0, 0, 0.8);
@@ -2709,16 +2974,290 @@ input[type=range]::-webkit-slider-runnable-track {
 }
 
 @keyframes wind-blow {
-    0% { transform: translateX(0); opacity: 0; }
-    10% { opacity: 1; }
-    90% { opacity: 1; }
-    100% { transform: translateX(-150vw); opacity: 0; }
+    0% {
+        transform: translateX(0);
+        opacity: 0;
+    }
+
+    10% {
+        opacity: 1;
+    }
+
+    90% {
+        opacity: 1;
+    }
+
+    100% {
+        transform: translateX(-150vw);
+        opacity: 0;
+    }
 }
 
 @keyframes wind-dust-blow {
-    0% { transform: translate(0, 0) scale(1.5) rotate(0deg); opacity: 0; }
-    10% { opacity: 1; }
-    90% { opacity: 1; }
-    100% { transform: translate(-120vw, var(--drift-y, 20vh)) scale(0.5) rotate(360deg); opacity: 0; }
+    0% {
+        transform: translate(0, 0) scale(1.5) rotate(0deg);
+        opacity: 0;
+    }
+
+    10% {
+        opacity: 1;
+    }
+
+    90% {
+        opacity: 1;
+    }
+
+    100% {
+        transform: translate(-120vw, var(--drift-y, 20vh)) scale(0.5) rotate(360deg);
+        opacity: 0;
+    }
 }
 
+
+/* New Widgets Styles */
+.card-top-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    margin-bottom: 8px;
+    padding: 0 5px;
+    font-size: 0.72rem;
+    white-space: nowrap;
+}
+
+.top-left-group {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    min-width: 0;
+    flex: 1;
+}
+
+.top-right-group {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
+    margin-left: 10px;
+}
+
+.weather-widget {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #ddd;
+}
+
+.weather-main-icon {
+    font-size: 1.1rem;
+    color: #ffaa00;
+}
+
+.weather-combined {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.weather-temp-val {
+    font-weight: 700;
+}
+
+.weather-city-val {
+    font-weight: 400;
+    opacity: 0.9;
+    max-width: 70px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.top-desc {
+    max-width: 80px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    opacity: 0.8;
+}
+
+.top-sep {
+    opacity: 0.4;
+    font-weight: 300;
+}
+
+.visitor-mini, .visitor-total-mini {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    color: #ddd;
+}
+
+.red-icon {
+    color: #cc0000 !important;
+    text-shadow: 0 0 5px rgba(204, 0, 0, 0.4);
+}
+
+.visitor-mini i {
+    font-size: 0.9rem;
+    color: var(--primary-color);
+    text-shadow: 0 0 5px var(--primary-glow);
+}
+
+.weather-widget i {
+    font-size: 1rem;
+    color: #ffcc00;
+    text-shadow: 0 0 8px rgba(255, 204, 0, 0.4);
+}
+
+#weather-temp {
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: #fff;
+}
+
+#weather-desc {
+    font-size: 0.7rem;
+    opacity: 0.7;
+    text-transform: capitalize;
+}
+
+/* Red Pill Clock */
+.view-counter {
+    position: fixed;
+    top: 30px;
+    right: 30px;
+    background: transparent !important;
+    border: none !important;
+    backdrop-filter: none !important;
+    padding: 0 !important;
+    min-width: auto !important;
+    z-index: 100;
+}
+
+.pill-clock {
+    background: rgba(10, 10, 10, 0.8);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 0, 0, 0.15);
+    border-radius: 50px;
+    padding: 10px 22px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: #ff0000;
+    font-family: 'Inter', sans-serif;
+    font-weight: 600;
+    font-size: 1rem;
+    letter-spacing: 0.5px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+    text-shadow: 0 0 5px rgba(255, 0, 0, 0.3);
+    transition: all 0.3s ease;
+}
+
+.pill-clock i {
+    font-size: 1.1rem;
+    color: #ff0000;
+    opacity: 0.9;
+}
+
+
+@keyframes blinker {
+    50% {
+        opacity: 0.7;
+    }
+}
+
+
+
+/* Verified Badge */
+.verified-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: #3897f0;
+    font-size: 0.95rem;
+    margin-left: 5px;
+    vertical-align: middle;
+    filter: drop-shadow(0 0 5px rgba(56, 151, 240, 0.5));
+}
+
+.username-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.d-username {
+    font-weight: 700;
+    font-size: 1.25rem;
+}
+
+#obscura-section {
+    position: relative; /* Anchor for absolute Danmaku */
+    padding: 100px 20px;
+    z-index: 10;
+}
+
+/* --- DANMAKU SCROLLING BACKGROUND COMMENTS --- */
+#danmaku-container {
+    position: absolute;
+    left: 0;
+    width: 100%;
+    bottom: 98%; /* Restricted to the area ABOVE the title */
+    height: 1200px;
+    z-index: -1; /* Behind the section's content */
+    pointer-events: none;
+    overflow: hidden;
+    mask-image: linear-gradient(to bottom, transparent 0%, white 40%, white 80%, transparent 100%);
+    -webkit-mask-image: linear-gradient(to bottom, transparent 0%, white 40%, white 80%, transparent 100%);
+}
+
+.danmaku-item {
+    position: absolute;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 18px;
+    background: rgba(255, 255, 255, 0.03);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 50px;
+    white-space: nowrap;
+    opacity: 0;
+    transform: translateY(100%);
+    transition: opacity 1s ease;
+}
+
+.danmaku-avatar {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    border: 1px solid rgba(255, 0, 0, 0.3);
+}
+
+.danmaku-text {
+    font-size: 0.85rem;
+    color: rgba(255, 255, 255, 0.6);
+    font-weight: 400;
+}
+
+@keyframes danmakuFloat {
+    0% { transform: translateY(1200px) translateX(0) scale(var(--scale, 1)); opacity: 0; }
+    10% { opacity: 0.6; }
+    80% { opacity: 0.6; }
+    100% { transform: translateY(-50px) translateX(var(--drift, 0px)) scale(var(--scale, 1)); opacity: 0; }
+}
+
+@media (max-width: 1200px) {
+    #album-showcase {
+        position: relative;
+        left: auto;
+        top: auto;
+        width: 100%;
+        max-width: 450px;
+        margin: 20px auto;
+        height: 350px;
+        animation: fadeInUp 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards !important;
+    }
+}
