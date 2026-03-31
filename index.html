@@ -2,24 +2,54 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <meta name="description" content="Explore the official portal of !RANGA - A cinematic underground experience." />
+    <meta name="theme-color" content="#000000" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
     <title id="page-title">||RANGA||</title>
-    <link rel="stylesheet" href="style.css?v=22" />
+    <link rel="stylesheet" href="style.css?v=23" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@100;300;400&family=Orbitron:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="enter.css?v=2" />
 </head>
 <body>
     <div id="cursor"></div>
+    <div id="cursor-glow" class="cursor-glow"></div>
     <canvas id="water-tail"></canvas>
 
     <div id="enter-screen">
-        <video class="enter-video" src="https://image2url.com/r2/default/videos/1773178239885-4fc6156d-03bd-4dd6-ae95-ba022f2a9959.mp4" autoplay loop muted playsinline></video>
-        <div class="enter-video-overlay"></div>
-        <div id="wind-container"></div>
-        <div class="enter-content">
-            <h1 class="enter-title glitched" data-text="Welcome To My Site Buddy">Welcome To My Site Buddy</h1>
-            <button class="enter-btn glitch-hover" data-text="I'm Here To Look Your Site">I'm Here To Look Your Site</button>
+        <video class="enter-video" autoplay loop muted playsinline>
+            <source src="https://videotourl.com/videos/1774976277876-b4cbd383-a636-450c-8c3a-228363ea780e.mp4" type="video/mp4">
+        </video>
+        <div class="scanlines"></div>
+        <div class="fog-container" id="fog-container">
+            <div class="fog-img"></div>
         </div>
+        <div class="enter-content">
+            <div class="loading-box">
+                <div class="text-group" id="loading-text">
+                    <span class="cn">系统加载中...</span>
+                    <span class="en">SYSTEM LOADING...</span>
+                </div>
+            </div>
+            <div class="status-box">
+                <div class="text-group" id="status-text-el">
+                    <span class="cn">用户：访客</span>
+                    <span class="en">STATUS: UNAUTHORIZED</span>
+                </div>
+            </div>
+            <button class="grant-access-btn enter-btn" id="grant-access">
+                <span class="cn">授权访问</span>
+                <span class="en">GRANT ACCESS</span>
+            </button>
+            <div class="random-line" id="random-chinese"></div>
+        </div>
+        <!-- Audio for Hum & Click (Simple placeholders as requested in previous steps) -->
+        <audio id="ambient-hum" loop preload="auto">
+            <source src="https://image2url.com/r2/default/videos/1773178239885-4fc6156d-03bd-4dd6-ae95-ba022f2a9959.mp4" type="audio/mpeg">
+        </audio>
     </div>
+
 
     <div id="background-container">
         <div id="bg-motion-layer">
