@@ -22,10 +22,63 @@ document.addEventListener("DOMContentLoaded", () => {
                     }
                 });
 
-                // Inject Custom Data Dynamically only if valid
-                if (dbData.enterVideo && dbData.enterVideo !== "") { const ev = document.querySelector('.enter-video'); if (ev) ev.src = dbData.enterVideo; }
-                if (dbData.enterTitle && dbData.enterTitle !== "") { const et = document.querySelector('.enter-title'); if (et) { et.textContent = dbData.enterTitle; et.setAttribute('data-text', dbData.enterTitle); } }
-                if (dbData.enterButton && dbData.enterButton !== "") { const eb = document.querySelector('.enter-btn'); if (eb) { eb.textContent = dbData.enterButton; eb.setAttribute('data-text', dbData.enterButton); } }
+                // Inject Custom Data Dynamically only if valid (Temporarily disabled for premium enter screen redesign)
+                // if (dbData.enterVideo && dbData.enterVideo !== "") { const ev = document.querySelector('.enter-video'); if (ev) ev.src = dbData.enterVideo; }
+                
+                // Randomized Wallpaper Engine (Refresh Rotation)
+                const cinematicPool = [
+                    "https://videotourl.com/videos/1774973827309-e1cdfbb5-8624-4fb6-a917-9a584266b8cd.mp4",
+                    "https://videotourl.com/videos/1774973950526-e4bd6a76-8171-4a22-a371-443fe941b7eb.mp4",
+                    "https://videotourl.com/videos/1774973971708-5a99ab97-9985-4a7f-b649-a78eb3528305.mp4",
+                    "https://videotourl.com/videos/1774973997025-cda5ff0c-7c94-4e0c-b339-a65cc0e65a63.mp4",
+                    "https://videotourl.com/videos/1774974905871-84cceda0-4dfe-43f8-815d-8fbae1496a01.mp4",
+                    "https://videotourl.com/videos/1774974930765-3040c057-d303-4138-8bb8-10d526441b65.mp4",
+                    "https://videotourl.com/videos/1774974957226-e89c2a7c-8cfe-4fe2-95e0-68a3aef4ab45.mp4",
+                    "https://videotourl.com/videos/1774974990569-79f68385-cb02-4d70-80c3-beb8f954a650.mp4"
+                ];
+
+                let finalPool = [...cinematicPool];
+                if (dbData.dynamicWallpapers && Array.isArray(dbData.dynamicWallpapers) && dbData.dynamicWallpapers.length > 0) {
+                    const validDBWP = dbData.dynamicWallpapers.filter(w => w.url && w.url !== "");
+                    if (validDBWP.length > 0) finalPool = [...cinematicPool, ...validDBWP.map(w => w.url)];
+                }
+
+                // Smarter Randomization: Ensure we cycle through the pool
+                let lastWP = sessionStorage.getItem('lastWallpaper');
+                let poolCopy = [...finalPool];
+                if (poolCopy.length > 1) poolCopy = poolCopy.filter(u => u !== lastWP);
+                
+                const finalWP = poolCopy[Math.floor(Math.random() * poolCopy.length)];
+                sessionStorage.setItem('lastWallpaper', finalWP);
+
+                const bgv = document.getElementById('bg-video');
+                const bgi = document.getElementById('background-img');
+                if (bgv) {
+                    bgv.src = finalWP;
+                    bgv.load();
+                    bgv.play().catch(e => console.warn("Cinematic backdrop autoplay triggered."));
+                }
+                if (bgi) bgi.style.backgroundImage = `url(${finalWP})`;
+                
+                // Entrance Sequence Dynamic Strings
+                const setLangText = (sel, cn, en) => {
+                    const el = document.querySelector(sel);
+                    if (el) {
+                        const cnEl = el.querySelector('.cn'), enEl = el.querySelector('.en');
+                        if (cnEl && cn) cnEl.textContent = cn;
+                        if (enEl && en) enEl.textContent = en;
+                    }
+                };
+                setLangText('#loading-text', dbData.loadingTextCN, dbData.loadingTextEN);
+                setLangText('#status-text-el', dbData.statusTextCN, dbData.statusTextEN);
+                setLangText('#grant-access', dbData.btnTextCN, dbData.btnTextEN);
+
+                // Discord Custom Phrase
+                if (dbData.discordChinesePhrase && dbData.discordChinesePhrase !== "") {
+                    const dcp = document.querySelector('.discord-card .chinese-phrase');
+                    if (dcp) dcp.textContent = dbData.discordChinesePhrase;
+                }
+
                 if (dbData.obscuraTitle && dbData.obscuraTitle !== "") { const ot = document.querySelector('.obscura-title'); if (ot) ot.textContent = dbData.obscuraTitle; }
                 if (dbData.obscuraDesc && dbData.obscuraDesc !== "") { const od = document.querySelector('.obscura-description'); if (od) od.innerHTML = dbData.obscuraDesc; }
                 if (dbData.obscuraDiscord && dbData.obscuraDiscord !== "") { const oi = document.querySelector('.obscura-invite-btn'); if (oi) oi.href = dbData.obscuraDiscord; }
@@ -114,6 +167,9 @@ document.addEventListener("DOMContentLoaded", () => {
                 if (pLoc) pLoc.textContent = CONFIG.location;
                 document.documentElement.style.setProperty("--primary-color", CONFIG.primaryColor);
                 document.documentElement.style.setProperty("--primary-glow", CONFIG.primaryColor + "B3");
+                
+                // Store enter audio url globally for button click
+                window.enterAudioURL = dbData.enterAudio || "";
             }
         }).catch(error => {
             console.error("Failed to load settings from Firebase:", error);
@@ -211,6 +267,7 @@ document.addEventListener("DOMContentLoaded", () => {
     document.documentElement.style.setProperty("--primary-color", CONFIG.primaryColor);
     document.documentElement.style.setProperty("--primary-glow", CONFIG.primaryColor + "B3");
 
+    // Background media
     // Background media
     const mediaUrl = CONFIG.backgroundMedia;
     const bgVideo = document.getElementById("bg-video");
@@ -593,84 +650,250 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
+    // --- PREMIUM CHINESE CYBER ENTER SCREEN LOGIC ---
     const enterScreen = document.getElementById("enter-screen");
-    const enterBtn = document.querySelector(".enter-btn");
+    const enterBtn = document.getElementById("grant-access");
     const mainContent = document.getElementById("main-content");
+    const hum = document.getElementById("ambient-hum");
+    const cursorGlow = document.getElementById("cursor-glow");
+    
+    // Restore missing UI control variables
     const audioToggle = document.getElementById("audio-toggle");
     const playPauseBtn = document.getElementById("play-pause-btn");
+    const progressBarBg = document.getElementById("progress-bar-bg");
+    const progressBarFill = document.getElementById("progress-bar-fill");
+    const currentTimeEl = document.getElementById("current-time");
+    const totalTimeEl = document.getElementById("total-time");
 
-    let isPlaying = false;
-
-    enterBtn.addEventListener("click", () => {
-        // Request Device Orientation Permission for iOS 13+
-        if (typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function') {
-            DeviceOrientationEvent.requestPermission()
-                .then(permissionState => {
-                    if (permissionState === 'granted') {
-                        window.addEventListener('deviceorientation', handleOrientation);
-                    }
-                })
-                .catch(console.error);
-        } else {
-            // For other mobile devices
-            window.addEventListener('deviceorientation', handleOrientation);
+    // Cursor Glow Follow
+    document.addEventListener("mousemove", (e) => {
+        if (cursorGlow) {
+            cursorGlow.style.left = e.clientX + "px";
+            cursorGlow.style.top = e.clientY + "px";
+            cursorGlow.style.opacity = "1";
         }
-
-        // Play audio and video strictly on user gesture matching (fixes iOS and Safari pausing)
-        audio.volume = 0.5;
-        const playPromise = audio.play();
-        if (playPromise !== undefined) {
-            playPromise.then(() => {
-                isPlaying = true;
-                updatePlayPauseIcon();
-            }).catch(() => {
-                console.log("Audio permission denied.");
-            });
-        }
-
-        if (isVideo) {
-            bgVideo.play().catch(() => console.log("Background video play skipped."));
-        }
-
-        enterScreen.classList.add("enter-leaving");
-
-        setTimeout(() => {
-            enterScreen.style.display = "none";
-            document.body.classList.add("scroll-enabled");
-            mainContent.classList.remove("hidden");
-            
-            // Remove hidden classes early so animations are visible
-            const obscuraSection = document.getElementById("obscura-section");
-            if (obscuraSection) obscuraSection.classList.remove("hidden");
-
-            const albumShowcase = document.getElementById("album-showcase");
-            if (albumShowcase) albumShowcase.classList.remove("hidden");
-
-            // Apply staggering entry animation to main content blocks
-            const blocksToAnimate = [
-                document.querySelector(".container"),
-                document.getElementById("view-counter-box"),
-                document.getElementById("side-music-panel"),
-                document.getElementById("album-showcase"),
-                document.getElementById("obscura-section"),
-                document.querySelector(".spotify-tape-container"),
-                document.querySelector(".bottom-social-section"),
-                document.querySelector(".tape-copyright")
-            ];
-            
-            blocksToAnimate.forEach((block, index) => {
-                if (block) {
-                    block.classList.remove("hidden"); // Force remove hidden if present
-                    block.style.opacity = "0";
-                    block.style.visibility = "visible"; // Ensure it's visible for the animation
-                    block.style.animation = `mainEntrance 1.2s cubic-bezier(0.25, 0.1, 0.25, 1) ${0.2 + (index * 0.15)}s forwards`;
-                }
-            });
-
-            // Start Danmaku Background Comments
-            setTimeout(startDanmaku, 2000); 
-        }, 1100); // Wait for the 1.2s exit animation to almost finish before showing new content
     });
+
+    // Helper: Typewriter Effect
+    function typeEffect(element, text, speed = 80) {
+        return new Promise((resolve) => {
+            let i = 0;
+            element.innerHTML = "";
+            function type() {
+                if (i < text.length) {
+                    element.innerHTML += text.charAt(i);
+                    i++;
+                    setTimeout(type, speed);
+                } else {
+                    resolve();
+                }
+            }
+            type();
+        });
+    }
+
+    // Ambient Audio Handler (Autoplay bypass)
+    const playAmbience = () => {
+        if (hum && hum.paused) {
+            hum.volume = 0;
+            hum.play().catch(() => {});
+            let vol = 0;
+            const fadeIn = setInterval(() => {
+                if (vol < 0.3) { vol += 0.02; hum.volume = vol; }
+                else { clearInterval(fadeIn); }
+            }, 100);
+        }
+    };
+
+    // Sequential Cinematic Load
+    const initEnterSequence = async () => {
+        const loadingCN = document.querySelector("#loading-text .cn");
+        const loadingEN = document.querySelector("#loading-text .en");
+        const statusBox = document.querySelector(".status-box");
+        const fogContainer = document.getElementById("fog-container");
+
+        // Start Fog & Try Audio
+        setTimeout(() => { if (fogContainer) fogContainer.classList.add("active"); }, 500);
+        document.addEventListener('mousemove', playAmbience, { once: true });
+        document.addEventListener('click', playAmbience, { once: true });
+
+        // Phase 1: Typing Loading
+        await typeEffect(loadingCN, "系统加载中...", 80);
+        loadingCN.innerHTML += '<span class="typing-cursor"></span>';
+        
+        await new Promise(r => setTimeout(r, 400));
+        loadingEN.style.opacity = "1";
+        loadingEN.style.transition = "opacity 2s ease";
+
+        // Phase 2: Status Reveal (Unauthorized)
+        setTimeout(() => {
+            if (statusBox) {
+                statusBox.classList.add("active");
+                statusBox.classList.add("glitch");
+            }
+        }, 1000);
+
+        // Phase 3: Exclusive Access Trigger
+        setTimeout(() => {
+            if (enterBtn) enterBtn.classList.add("active");
+        }, 2200);
+    };
+
+    initEnterSequence();
+
+    if (enterBtn) {
+        enterBtn.addEventListener("click", () => {
+            // Play Transition Audio if available
+            if (window.enterAudioURL) {
+                const trAudio = new Audio(window.enterAudioURL);
+                trAudio.volume = 0.35; // Comfortable low volume
+                trAudio.play().catch(() => {});
+            }
+                 // ZERO LATENCY SYSTEM SCAN: 5.0s Glide + Glow
+            const enterScreen = document.getElementById("enter-screen");
+            const enterContent = document.querySelector(".enter-content");
+
+            if (enterContent) enterContent.classList.add("combo-content-fade");
+
+            const columnCount = 20;
+            const columns = [];
+            const cLines = [];
+            
+            // EXACT 20 CHARACTERS FOR 20 COLUMNS
+            // Mapping: "WELCOME" (cols 2-8), "欢迎" (cols 17-18)
+            // DYNAMIC 20 CHARACTERS FROM ADMIN CONFIG
+            // Padding logic ensures cinematic grid remains 100% aligned
+            const rawTop = CONFIG.transTop || "  WELCOME       欢迎  ";
+            const rawMid = CONFIG.transMid || " ACCESS GRANTED 授权通过";
+            
+            // Force exactly 20 chars by padding or slicing
+            const topStr = rawTop.padEnd(20, " ").slice(0, 20);
+            const midStr = rawMid.padEnd(20, " ").slice(0, 20);
+
+            if (enterScreen) {
+                for (let i = 0; i < columnCount; i++) {
+                    const col = document.createElement("div");
+                    col.className = "pixel-column";
+                    col.style.left = (i * (100 / columnCount)) + "%";
+                    
+                    const welcomeChar = document.createElement("div");
+                    welcomeChar.className = "welcome-msg";
+                    welcomeChar.innerText = topStr[i] || " ";
+                    col.appendChild(welcomeChar);
+
+                    const accessChar = document.createElement("div");
+                    accessChar.className = "access-msg";
+                    accessChar.innerText = midStr[i] || " ";
+                    col.appendChild(accessChar);
+
+                    enterScreen.appendChild(col);
+                    columns.push(col);
+                }
+
+                for (let i = 0; i < 20; i++) {
+                    const line = document.createElement("div");
+                    line.className = "constellation-line";
+                    line.style.top = Math.random() * 100 + "vh";
+                    line.style.left = Math.random() * 100 + "vw";
+                    line.style.transform = `rotate(${Math.random() * 360}deg)`;
+                    enterScreen.appendChild(line);
+                    cLines.push(line);
+                }
+
+                setTimeout(() => {
+                    columns.forEach((col, idx) => {
+                        // Stage 1: Glow (Scan)
+                        setTimeout(() => {
+                            col.classList.add("column-select-glow");
+                        }, idx * 150); 
+
+                        // Stage 2: Ultra-Slow Glide
+                        setTimeout(() => {
+                            col.classList.add("pixel-active");
+                        }, idx * 150 + 600); 
+                    });
+
+                    setTimeout(() => {
+                        cLines.forEach((line, idx) => {
+                            setTimeout(() => {
+                                line.classList.add("constellation-active");
+                            }, idx * 90); 
+                        });
+                        
+                        // Apply High-End Glitch Fade Out to the Background Video
+                        const env = enterScreen.querySelector('.enter-video');
+                        if (env) env.classList.add('glitch-out');
+
+                        enterScreen.style.background = "transparent";
+                        enterScreen.style.transition = "opacity 2.5s ease 1s";
+                        enterScreen.style.opacity = "0";
+                    }, 1500);
+
+                }, 500);
+
+                enterScreen.style.pointerEvents = "none";
+            }
+            const humFade = setInterval(() => {
+                if (hum && hum.volume > 0.02) hum.volume -= 0.02;
+                else { if(hum) hum.pause(); clearInterval(humFade); }
+            }, 50);
+
+            // Sync with existing audio engine
+            if (audio) {
+                audio.volume = 0.5;
+                audio.play().then(() => {
+                    isPlaying = true;
+                    if (typeof updatePlayPauseIcon === 'function') updatePlayPauseIcon();
+                }).catch(() => {});
+            }
+
+            if (isVideo && typeof bgVideo !== 'undefined') {
+                bgVideo.play().catch(() => {});
+            }
+
+            // SHATTERED ASSEMBLE GLITCH - Site constructs behind the columns
+            setTimeout(() => {
+                if (mainContent) {
+                    mainContent.classList.remove("hidden");
+                    mainContent.classList.add("main-glitch-active");
+                    
+                    const blocksToAnimate = [
+                        document.querySelector(".container"),
+                        document.getElementById("view-counter-box"),
+                        document.getElementById("side-music-panel"),
+                        document.getElementById("album-showcase"),
+                        document.getElementById("obscura-section"),
+                        document.querySelector(".spotify-tape-container"),
+                        document.querySelector(".bottom-social-section"),
+                        document.querySelector(".tape-copyright")
+                    ];
+                    
+                    blocksToAnimate.forEach((block, index) => {
+                        if (block) {
+                            block.classList.remove("hidden");
+                            block.style.display = (block.id === 'album-showcase') ? 'block' : '';
+                            block.style.opacity = "0";
+                            block.style.visibility = "visible";
+                            // High-end Shattered Assemble
+                            block.style.animation = `glitchEntrance 1.2s cubic-bezier(0.19, 1, 0.22, 1) ${index * 0.12}s forwards`;
+                        }
+                    });
+                }
+            }, 3000);
+
+            // Final Enter Screen Cleanup - After the assemble sequence
+            setTimeout(() => {
+                enterScreen.style.display = "none";
+                document.body.style.overflowY = "auto";
+                document.body.classList.add("scroll-enabled");
+
+                // Post-reveal Start Initializations
+                setTimeout(() => {
+                    if (typeof startDanmaku === 'function') startDanmaku();
+                }, 1000);
+            }, 6500);
+        });
+    }
 
     // Enforce video playback continuously
     setInterval(() => {
@@ -707,12 +930,7 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    // Player math
-    const progressBarBg = document.getElementById("progress-bar-bg");
-    const progressBarFill = document.getElementById("progress-bar-fill");
-    const currentTimeEl = document.getElementById("current-time");
-    const totalTimeEl = document.getElementById("total-time");
-
+    // Player math (Variables consolidated at the top)
     function formatTime(seconds) {
         if (isNaN(seconds)) return "0:00";
         const mins = Math.floor(seconds / 60);
@@ -923,31 +1141,53 @@ document.addEventListener("DOMContentLoaded", () => {
     // Weather Fetching (Visitor-specific via IP Geolocation)
     async function fetchWeather() {
         try {
-            const geoRes = await fetch('https://ipapi.co/json/');
-            const geoData = await geoRes.json();
-            const city = geoData.city || "Colombo";
+            let lat, lon, city;
             
-            const weatherRes = await fetch(`https://wttr.in/${city}?format=j1`);
-            const data = await weatherRes.json();
-            
-            const current = data.current_condition[0];
-            const temp = current.temp_C;
-            const desc = current.weatherDesc[0].value;
-            
-            document.getElementById('weather-temp').textContent = `${temp}°C`;
-            document.getElementById('weather-city').textContent = city;
-            document.getElementById('weather-desc').textContent = desc;
+            // 1. Try Multiple Geolocation Services (Multi-Layer Failover)
+            try {
+                const geoRes = await fetch('https://ipapi.co/json/');
+                const geoData = await geoRes.json();
+                if (geoData.city) {
+                    lat = geoData.latitude;
+                    lon = geoData.longitude;
+                    city = geoData.city;
+                }
+            } catch (e) {
+                try {
+                    const geoRes = await fetch('https://ipinfo.io/json?token=6f24d7768f76e3'); // Public key fallback
+                    const geoData = await geoRes.json();
+                    const loc = geoData.loc.split(',');
+                    lat = loc[0]; lon = loc[1];
+                    city = geoData.city;
+                } catch (e2) {
+                    // Final automatic fallback on API level
+                }
+            }
+
+            // 2. Fetch High Accuracy weather
+            if (lat && lon) {
+                const weatherRes = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current_weather=true`);
+                const data = await weatherRes.json();
+                
+                if (data.current_weather) {
+                    document.getElementById('weather-temp').textContent = `${Math.round(data.current_weather.temperature)}°C`;
+                    document.getElementById('weather-city').textContent = (city || "COLOMBO").toUpperCase();
+                    const codeMap = { 0: "Clear", 1: "Mainly Clear", 2: "Partly Cloudy", 3: "Overcast", 45: "Fog", 48: "Fog", 51: "Drizzle", 61: "Rain", 71: "Snow", 95: "Thunderstorm" };
+                    document.getElementById('weather-desc').textContent = codeMap[data.current_weather.weathercode] || "Clear";
+                    return; // Success
+                }
+            }
+
+            // 3. Fallback to wttr.in (Reliable auto-IP detection)
+            const res = await fetch('https://wttr.in/?format=j1');
+            const data = await res.json();
+            document.getElementById('weather-temp').textContent = `${data.current_condition[0].temp_C}°C`;
+            document.getElementById('weather-city').textContent = (data.nearest_area[0].areaName[0].value).toUpperCase();
+            document.getElementById('weather-desc').textContent = data.current_condition[0].weatherDesc[0].value;
             
         } catch (error) {
-            console.warn("Weather sync error:", error);
-            // Fallback to auto-detect if precise geo fails
-            try {
-                const res = await fetch('https://wttr.in/?format=j1');
-                const data = await res.json();
-                document.getElementById('weather-temp').textContent = `${data.current_condition[0].temp_C}°C`;
-                document.getElementById('weather-city').textContent = data.nearest_area[0].areaName[0].value;
-                document.getElementById('weather-desc').textContent = data.current_condition[0].weatherDesc[0].value;
-            } catch (e) {}
+            console.error("Critical Weather Failure:", error);
+            document.getElementById('weather-temp').textContent = "ERROR";
         }
     }
     
