@@ -1,0 +1,492 @@
+/* --- PREMIUM UNDERGROUND CHINESE CYBER ENTER SCREEN --- */
+:root {
+    --cyber-red: #ff1a1a;
+    --dark-red: #4d0000;
+    --bg-black: #000000;
+    --text-shadow-red: 0 0 10px rgba(255, 26, 26, 0.4);
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+#enter-screen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: var(--bg-black);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 999999;
+    overflow: hidden;
+    font-family: 'Orbitron', 'Noto Sans SC', sans-serif;
+    color: #fff;
+    cursor: auto; /* Restored cursor visibility */
+}
+
+.enter-video {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: 1;
+    opacity: 0.7;
+    filter: brightness(0.6) contrast(1.1) saturate(1.3) sepia(0.2) hue-rotate(-10deg);
+    pointer-events: none;
+}
+
+/* --- ATMOSPHERIC LAYERS --- */
+
+/* Subtle Scanlines */
+.scanlines {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+        to bottom,
+        transparent 50%,
+        rgba(255, 26, 26, 0.03) 50%
+    );
+    background-size: 100% 4px;
+    z-index: 10;
+    pointer-events: none;
+    opacity: 0.5;
+}
+
+/* Vignette / Light Falloff with Dark Red Tone for Chinese Vibe */
+#enter-screen::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at center, transparent 25%, rgba(40, 0, 0, 0.85) 100%);
+    z-index: 15;
+    pointer-events: none;
+}
+
+/* Layered Fog Effect */
+.fog-container {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    z-index: 5;
+    opacity: 0;
+    transition: opacity 3s ease;
+}
+
+.fog-container.active {
+    opacity: 0.6;
+}
+
+.fog-img {
+    width: 300%;
+    height: 100%;
+    /* Wallpaper removed as requested - using transparent fog base if needed */
+    background: transparent;
+    animation: drift 60s linear infinite;
+    mix-blend-mode: screen;
+}
+
+@keyframes drift {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+}
+
+/* --- CENTER CONTENT --- */
+.enter-content {
+    position: relative;
+    z-index: 100;
+    text-align: center;
+    width: 100%;
+    max-width: 600px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2rem;
+}
+
+/* Text Hierarchy */
+.loading-box, .status-box {
+    overflow: hidden;
+}
+
+.loading-box .cn {
+    display: block;
+    font-size: 0.8rem;
+    letter-spacing: 0.5rem;
+    color: var(--cyber-red);
+    text-shadow: 0 0 15px var(--cyber-red);
+    margin-bottom: 0.5rem;
+    font-weight: 300;
+    opacity: 0.8;
+}
+
+.loading-box .en {
+    display: block;
+    font-size: 0.6rem;
+    letter-spacing: 0.3rem;
+    color: #444;
+}
+
+.status-box {
+    margin-top: 1rem;
+    opacity: 0;
+    transition: opacity 2s ease, transform 1.5s ease;
+    transform: translateY(20px);
+}
+
+.status-box.active {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.status-box .cn {
+    display: block;
+    font-size: 1.1rem;
+    letter-spacing: 0.1rem;
+    margin-bottom: 0.3rem;
+    font-weight: 400;
+}
+
+.status-box .en {
+    display: block;
+    font-size: 0.65rem;
+    letter-spacing: 0.2rem;
+    color: #888;
+}
+
+/* --- PREMIUM BUTTON DESIGN --- */
+.enter-btn {
+    margin-top: 2rem;
+    background: transparent;
+    border: 1px solid rgba(255, 26, 26, 0.4);
+    color: #fff;
+    cursor: crosshair !important;
+    position: relative;
+    transition: all 0.5s cubic-bezier(0.19, 1, 0.22, 1);
+    opacity: 0;
+    pointer-events: none;
+    z-index: 500;
+    font-family: inherit;
+    padding: 1rem 3rem;
+    font-size: 1.1rem;
+    letter-spacing: 0.2rem;
+    outline: none;
+}
+
+.enter-btn.active {
+    opacity: 1;
+    pointer-events: auto;
+    animation: btnPulse 2s infinite alternate ease-in-out;
+}
+
+@keyframes btnPulse {
+    0% { 
+        box-shadow: 0 0 10px rgba(255, 26, 26, 0.1); 
+        border-color: rgba(255, 26, 26, 0.2);
+    }
+    100% { 
+        box-shadow: 0 0 25px rgba(255, 26, 26, 0.4); 
+        border-color: rgba(255, 26, 26, 0.8);
+    }
+}
+
+
+
+.enter-btn:hover {
+    border-color: var(--cyber-red);
+    box-shadow: 0 0 35px rgba(255, 26, 26, 0.4);
+    letter-spacing: 0.3rem;
+    background: rgba(255, 26, 26, 0.05);
+}
+
+.enter-btn .cn {
+    display: block;
+    font-size: 1.2rem;
+    letter-spacing: 0.4rem;
+    margin-bottom: 0.4rem;
+    font-weight: 400;
+    transition: text-shadow 0.3s;
+}
+
+.enter-btn .en {
+    display: block;
+    font-size: 0.6rem;
+    letter-spacing: 0.2rem;
+    color: #aaa;
+}
+
+.enter-btn:hover .cn {
+    text-shadow: 0 0 10px var(--cyber-red);
+    color: #fff;
+}
+
+/* --- SPECIAL EFFECTS --- */
+
+/* Random Chinese Line (Subtle bottom watermark feel) */
+.random-line {
+    position: absolute;
+    bottom: -150px;
+    font-size: 0.7rem;
+    letter-spacing: 0.5rem;
+    color: rgba(255, 255, 255, 0.05);
+    white-space: nowrap;
+    pointer-events: none;
+}
+
+/* Glitch Flicker (Subtle) */
+@keyframes glitchFlicker {
+    0% { opacity: 1; }
+    92% { opacity: 1; }
+    93% { opacity: 0.7; }
+    94% { opacity: 1; }
+    96% { opacity: 0.8; }
+    97% { opacity: 1; }
+    100% { opacity: 1; }
+}
+
+.status-box.glitch {
+    animation: glitchFlicker 4s infinite linear alternate-reverse;
+}
+
+/* --- THE SHATTERED ASSEMBLE GLITCH --- */
+@keyframes glitchEntrance {
+    0% { 
+        opacity: 0; 
+        transform: translateY(100px) scale(0.5) rotate(15deg); 
+        filter: blur(20px) brightness(5) hue-rotate(90deg);
+    }
+    15% { 
+        opacity: 0.8; 
+        transform: translateY(-20px) scale(1.1) rotate(-8deg);
+        filter: blur(5px) brightness(2);
+        text-shadow: 3px 0 #ff1a1a, -3px 0 #00ffff;
+    }
+    25% { 
+        opacity: 0.3; 
+        transform: translateY(10px) scale(0.9) rotate(5deg);
+        filter: brightness(1);
+    }
+    35% { 
+        opacity: 1; 
+        transform: translateY(-5px) scale(1.05) rotate(-2deg);
+        text-shadow: -2px 0 #ff1a1a, 2px 0 #00ffff;
+    }
+    100% { 
+        opacity: 1; 
+        transform: translateY(0) scale(1) rotate(0deg); 
+        filter: none;
+        text-shadow: none;
+        visibility: visible;
+    }
+}
+
+/* Typing Cursor Effect */
+.typing-cursor {
+    display: inline-block;
+    width: 8px;
+    height: 1.2rem;
+    background: var(--cyber-red);
+    margin-left: 5px;
+    animation: blink 0.8s infinite;
+    vertical-align: middle;
+}
+
+@keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0; }
+}
+
+/* Custom Cursor Glow */
+.cursor-glow {
+    position: fixed;
+    width: 250px;
+    height: 250px;
+    background: radial-gradient(circle, rgba(255, 26, 26, 0.1) 0%, transparent 70%);
+    pointer-events: none;
+    z-index: 10000001; /* Higher than enter screen */
+    transform: translate(-50%, -50%);
+    mix-blend-mode: screen;
+}
+
+/* Ultimate Combo: Pixel-Wave + Star-Map (One Char per Column) */
+.pixel-column {
+    position: absolute;
+    top: 0;
+    width: 5%;
+    height: 100%;
+    background: #000;
+    z-index: 150;
+    transition: transform 5s cubic-bezier(0.19, 1, 0.22, 1), background 1s ease, box-shadow 1s ease;
+    pointer-events: none;
+    border-right: 0.1px solid rgba(255, 26, 26, 0.1);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    overflow: hidden;
+}
+
+.column-select-glow {
+    background: rgba(255, 26, 26, 0.15) !important;
+    box-shadow: inset 0 0 30px rgba(255, 26, 26, 0.6), 0 0 10px rgba(255, 26, 26, 0.3);
+}
+
+.welcome-msg {
+    margin-top: 15vh;
+    font-size: 1.8rem;
+    color: var(--cyber-red);
+    text-shadow: 0 0 10px var(--cyber-red);
+    font-weight: 800;
+    font-family: 'Outfit', sans-serif;
+}
+
+.access-msg {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    font-family: 'Outfit', sans-serif;
+    font-weight: 800;
+    font-size: 1.4rem;
+    color: #fff;
+    text-shadow: 0 0 10px var(--cyber-red);
+}
+
+.pixel-active {
+    transform: translateY(110%);
+}
+
+.constellation-line {
+    position: absolute;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--cyber-red), transparent);
+    z-index: 151;
+    pointer-events: none;
+    opacity: 0;
+    box-shadow: 0 0 10px var(--cyber-red);
+    transform-origin: left center;
+}
+
+.constellation-active {
+    animation: drawLine 0.7s cubic-bezier(0.19, 1, 0.22, 1) forwards;
+}
+
+@keyframes drawLine {
+    0% { width: 0; opacity: 1; }
+    100% { width: 140vmax; opacity: 0; }
+}
+
+.combo-content-fade {
+    animation: comboFade 0.6s ease forwards;
+}
+
+@keyframes comboFade {
+    0% { opacity: 1; filter: brightness(1) contrast(1); }
+    100% { opacity: 0; filter: brightness(2) contrast(1.5) blur(10px); }
+}
+
+/* --- ULTIMATE GLITCH FADE OUT --- */
+.glitch-out {
+    animation: glitchOutAnim 1.4s cubic-bezier(0.19, 1, 0.22, 1) forwards;
+    pointer-events: none;
+}
+
+@keyframes glitchOutAnim {
+    0% { 
+        transform: scale(1) translate(0); 
+        filter: brightness(1) contrast(1) hue-rotate(0deg); 
+        opacity: 0.7; 
+    }
+    10% { 
+        transform: scale(1.05) translate(-10px, 5px); 
+        filter: brightness(2) contrast(1.5) hue-rotate(90deg); 
+        opacity: 0.9;
+    }
+    20% { 
+        transform: scale(0.95) translate(10px, -5px); 
+        filter: brightness(1) contrast(1) hue-rotate(0deg); 
+        clip-path: inset(10% 0 80% 0);
+    }
+    30% { 
+        transform: scale(1.1) translate(-15px, 0); 
+        filter: brightness(1.5) contrast(1.2) hue-rotate(-45deg); 
+        clip-path: inset(80% 0 5% 0);
+        opacity: 0.6;
+    }
+    45% { 
+        transform: scale(1.2) translate(15px, 0);
+        filter: brightness(0.5) contrast(2) saturate(3);
+        opacity: 0.4;
+    }
+    60% { 
+        transform: scale(1.3) translate(0, 5px);
+        filter: brightness(2) contrast(3);
+        opacity: 0.2;
+    }
+    100% { 
+        transform: scale(1.6) translate(0, 0); 
+        filter: brightness(0) contrast(1); 
+        opacity: 0;
+        visibility: hidden;
+    }
+}
+
+@keyframes masterGlitch {
+    0% { transform: scale(1) translate(0); filter: contrast(1) brightness(1); }
+    10% { transform: scale(1.02) translate(5px, -2px); filter: contrast(2) brightness(1.5); }
+    20% { transform: scale(1) translate(-5px, 2px); filter: contrast(1); }
+    30% { transform: scale(1.05) translate(0); filter: hue-rotate(90deg); }
+    100% { transform: scale(1.2); filter: brightness(0); opacity: 0; }
+}
+
+/* High-End Shattered Assemble Fade-In */
+@keyframes glitchEntrance {
+    0% { 
+        transform: scale(1.2) translateY(50px) skewX(20deg); 
+        filter: brightness(5) contrast(2) blur(20px); 
+        opacity: 0; 
+    }
+    10% { 
+        transform: scale(1) translateY(0) skewX(0); 
+        filter: hue-rotate(90deg) brightness(2); 
+        opacity: 0.3; 
+    }
+    20% { 
+        clip-path: inset(20% 0 70% 0); 
+        transform: translateX(20px); 
+    }
+    30% { 
+        clip-path: inset(70% 0 10% 0); 
+        transform: translateX(-20px); 
+        opacity: 0.6; 
+    }
+    45% { 
+        filter: brightness(1.5) contrast(1.5); 
+        text-shadow: 3px 0 var(--cyber-red), -3px 0 #00ffff;
+        opacity: 0.8; 
+    }
+    60% { 
+        transform: scale(1.05); 
+        opacity: 1; 
+    }
+    100% { 
+        transform: scale(1); 
+        filter: brightness(1) blur(0); 
+        opacity: 1; 
+        text-shadow: none;
+    }
+}
+
+.main-glitch-active {
+    animation: mainScreenGlitch 1.2s cubic-bezier(0.19, 1, 0.22, 1) forwards;
+}
+
+@keyframes mainScreenGlitch {
+    0% { filter: brightness(3) hue-rotate(90deg) blur(10px); }
+    30% { filter: contrast(2) saturate(0) invert(0.1); }
+    60% { filter: contrast(1.2) hue-rotate(-45deg); }
+    100% { filter: brightness(1) hue-rotate(0deg) blur(0); }
+}
