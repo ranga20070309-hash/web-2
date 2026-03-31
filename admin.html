@@ -97,16 +97,25 @@
                     <h2 class="section-title">Media & Styling</h2>
                     <div class="card">
                         <div class="form-group">
-                            <label>Background Video/Image URL (Direct link)</label>
-                            <input type="text" id="config-bg" placeholder="https://.../video.mp4">
+                            <label>Main Background (Select Video/Image)</label>
+                            <input type="file" id="config-bg-file" accept="video/*,image/*" style="margin-bottom: 5px;">
+                            <input type="text" id="config-bg" placeholder="Or paste direct media URL here...">
                         </div>
                         <div class="form-group">
                             <label>Primary Theme Color (Hex)</label>
                             <div class="color-picker-wrapper">
                                 <input type="color" id="config-color" value="#ff0000">
                                 <span id="color-hex-display">#ff0000</span>
-                            </div>
                         </div>
+                        <hr style="border-color:var(--border); margin: 20px 0;">
+                        <h3 style="margin-bottom: 15px; font-size: 1rem; color: #888;">Tape Gallery (Spotify Tapes)</h3>
+                        <div id="tape-container"></div>
+                        <div id="tape-container"></div>
+                        <button onclick="tapeData.push({artist:'',url:'',img:''}); renderTape()" class="btn-secondary" style="width:100%; margin-top:10px;">+ Add New Tape To Gallery</button>
+                        <hr style="border-color:var(--border); margin: 20px 0;">
+                        <h3 style="margin-bottom: 15px; font-size: 1rem; color: #888;">Dynamic Randomized Wallpapers (Refresh Rotation)</h3>
+                        <div id="wallpaper-container" style="display: flex; flex-direction: column; gap: 20px; margin-top: 15px;"></div>
+                        <button onclick="wallpaperData.push({url:''}); renderWallpaper()" style="width:100%; margin-top:15px; background: #2ecc71; color: #fff; border: none; padding: 12px; border-radius: 8px; cursor: pointer; font-weight: 600; box-shadow: 0 4px 10px rgba(46, 204, 113, 0.2); transition: transform 0.2s;">+ Add New Dynamic Wallpaper Link</button>
                     </div>
                 </section>
                 <!-- Audio Tab -->
@@ -133,6 +142,8 @@
                                 id="config-discord-avatar" placeholder="https://.../avatar.jpg"></div>
                         <div class="form-group"><label>Fallback Username</label><input type="text"
                                 id="config-discord-username" placeholder="e.g. ranga____"></div>
+                        <div class="form-group"><label>Profile Chinese Phrase (Lanyard)</label><input type="text"
+                                id="config-discord-phrase" placeholder="e.g. 我在等你"></div>
                     </div>
                 </section>
                 <!-- Socials Tab -->
@@ -151,17 +162,41 @@
                             <label><i class="fa-brands fa-apple"></i> Apple Music URL</label>
                             <input type="text" id="config-apple" placeholder="https://music.apple.com/...">
                         </div>
+                        <hr style="border-color:var(--border); margin: 20px 0;">
+                        <h3 style="margin-bottom: 15px; font-size: 1rem; color: #888;">Custom Social Icons List</h3>
+                        <div id="soc-container"></div>
+                        <button onclick="socData.push({icon:'',text:'',url:''}); renderSoc()" class="btn-secondary" style="width:100%; margin-top:10px;">+ Add Custom Social Icon</button>
                     </div>
                 </section>
-                <!-- Enter Screen -->
                 <section id="enter-screen" class="tab-content">
-                    <h2 class="section-title">Enter Screen</h2>
+                    <h2 class="section-title">Enter Screen Settings</h2>
                     <div class="card">
                         <div class="form-group"><label>Enter Video URL</label><input type="text" id="cfg-enter-video">
                         </div>
-                        <div class="form-group"><label>Enter Title</label><input type="text" id="cfg-enter-title"></div>
-                        <div class="form-group"><label>Enter Button Text</label><input type="text" id="cfg-enter-btn">
+                        <div class="form-group"><label>Enter Audio (Brows for File)</label>
+                            <input type="file" id="cfg-enter-audio-file" accept="audio/*" style="margin-bottom: 5px;">
+                            <input type="text" id="cfg-enter-audio" placeholder="Or paste audio URL here...">
+                            <p style="font-size: 0.8rem; color: #888; margin-top: 5px;">(MP3 recommended for best compatibility)</p>
                         </div>
+                        <div class="form-group"><label>Enter Title</label><input type="text" id="cfg-enter-title"></div>
+                        <div class="form-group"><label>Enter Button Text (EN)</label><input type="text" id="cfg-enter-btn"></div>
+                        <hr style="border-color:var(--border); margin:15px 0;">
+                        <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                            <div class="form-group"><label>Loading Text (CN)</label><input type="text" id="cfg-loading-cn"></div>
+                            <div class="form-group"><label>Loading Text (EN)</label><input type="text" id="cfg-loading-en"></div>
+                        </div>
+                        <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                            <div class="form-group"><label>Status Text (CN)</label><input type="text" id="cfg-status-cn"></div>
+                            <div class="form-group"><label>Status Text (EN)</label><input type="text" id="cfg-status-en"></div>
+                        </div>
+                        <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                            <div class="form-group"><label>Button Text (CN)</label><input type="text" id="cfg-btn-cn"></div>
+                            <div class="form-group"><label>Button Text (EN)</label><input type="text" id="cfg-btn-en"></div>
+                        </div>
+                        <hr style="border-color:var(--border); margin:15px 0;">
+                        <h3 style="font-size: 0.9rem; color: #888; margin-bottom: 10px;">Cinematic Scan Strings (Exactly 20 chars recommended)</h3>
+                        <div class="form-group"><label>Transition Top Row</label><input type="text" id="cfg-trans-top" placeholder="e.g. WELCOME 欢迎"></div>
+                        <div class="form-group"><label>Transition Mid Row</label><input type="text" id="cfg-trans-mid" placeholder="e.g. ACCESS GRANTED 授权通过"></div>
                     </div>
                 </section>
                 <!-- Obscura Info -->
@@ -182,6 +217,10 @@
                         </div>
                         <div class="form-group"><label>Bottom Social Title</label><input type="text"
                                 id="cfg-btm-soc-title"></div>
+                        <hr style="border-color:var(--border); margin: 20px 0;">
+                        <h3 style="margin-bottom: 15px; font-size: 1rem; color: #888;">Team Members List</h3>
+                        <div id="team-container"></div>
+                        <button onclick="teamData.push({name:'',role:'',bio:'',color:'#fff',bg1:'#222',bg2:'#111'}); renderTeam()" class="btn-secondary" style="width:100%; margin-top:10px;">+ Add New Member To Team</button>
                     </div>
                 </section>
                 <!-- Latest Single Info -->
@@ -262,6 +301,7 @@
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-storage-compat.js"></script>
 
     <script src="config.js"></script>
     <script src="admin.js"></script>
