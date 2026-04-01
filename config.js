@@ -12,7 +12,7 @@ const CONFIG = {
 
     // Audio Link (Note: Direct MP3 link is required here. YouTube links don't play in standard HTML audio players. I've set the album art!)
     audioSrc: "https://files.catbox.moe/uw2mj5.mp3",
-    songTitle: "My Polar Star",
+    songTitle: "CYBER VIBE",
     albumArt: "https://img.youtube.com/vi/0qAzfVyp08E/mqdefault.jpg",
 
     // Discord Integration (Using Lanyard API)
