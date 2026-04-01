@@ -154,7 +154,7 @@ document.addEventListener('DOMContentLoaded', () => {
         setVal('config-name', d.name); setVal('config-tabname', d.tabName); setVal('config-title', d.title);
         setVal('config-location', d.location); setVal('config-bg', d.backgroundMedia);
         if(d.primaryColor) { setVal('config-color', d.primaryColor); if(document.getElementById('color-hex-display')) document.getElementById('color-hex-display').textContent=d.primaryColor; }
-        setVal('config-audio-src', d.audioSrc); setVal('config-song-title', d.songTitle); setVal('config-album-art', d.albumArt);
+
         setVal('config-discord-id', d.discordUserId); setVal('config-discord-avatar', d.fallbackDiscordAvatarUrl); 
         setVal('config-discord-username', d.fallbackDiscordUsername); setVal('config-discord-phrase', d.discordChinesePhrase || "我在等你");
         if(d.socials) { setVal('config-spotify', d.socials.spotify); setVal('config-tiktok', d.socials.tiktok); setVal('config-apple', d.socials.apple); }
@@ -217,8 +217,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const newData = {
             name:val('config-name'), tabName:val('config-tabname'), title:val('config-title'), location:val('config-location'),
-            backgroundMedia:val('config-bg'), primaryColor:val('config-color'), audioSrc:val('config-audio-src'),
-            songTitle:val('config-song-title'), albumArt:val('config-album-art'), discordUserId:val('config-discord-id'),
+            backgroundMedia:val('config-bg'), primaryColor:val('config-color'), discordUserId:val('config-discord-id'),
             fallbackDiscordAvatarUrl:val('config-discord-avatar'), fallbackDiscordUsername:val('config-discord-username'),
             discordChinesePhrase: val('config-discord-phrase'),
             socials: { spotify:val('config-spotify'), tiktok:val('config-tiktok'), apple:val('config-apple') },
