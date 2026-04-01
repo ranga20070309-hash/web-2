@@ -16,6 +16,8 @@ document.addEventListener("DOMContentLoaded", () => {
                     if (dbData[key] && dbData[key] !== "") {
                         if (key === 'socials' && typeof dbData[key] === 'object') {
                             CONFIG.socials = { ...CONFIG.socials, ...dbData.socials };
+                        } else if (key === 'songTitle') {
+                            // Player name is locked to local config — skip Firestore override
                         } else {
                             CONFIG[key] = dbData[key];
                         }
@@ -133,7 +135,7 @@ document.addEventListener("DOMContentLoaded", () => {
                                     cdContainer.style.display = 'none';
                                     streamBtn.style.pointerEvents = 'all';
                                     streamBtn.style.opacity = '1';
-                                    streamBtn.innerHTML = '<i class="fa-brands fa-spotify" style="font-size: 1.1rem;"></i> STREAM SINGLE NOW';
+                                    streamBtn.innerHTML = '<i class="fa-brands fa-spotify" style="font-size: 1.1rem;"></i> STREAM NOW';
                                     if (timerInterval) clearInterval(timerInterval);
                                 }
                             };
@@ -145,13 +147,13 @@ document.addEventListener("DOMContentLoaded", () => {
                             cdContainer.style.display = 'none';
                             streamBtn.style.pointerEvents = 'all';
                             streamBtn.style.opacity = '1';
-                            streamBtn.innerHTML = '<i class="fa-brands fa-spotify" style="font-size: 1.1rem;"></i> STREAM SINGLE NOW';
+                            streamBtn.innerHTML = '<i class="fa-brands fa-spotify" style="font-size: 1.1rem;"></i> STREAM NOW';
                         }
                     } else if (cdContainer && streamBtn) {
                         cdContainer.style.display = 'none';
                         streamBtn.style.pointerEvents = 'all';
                         streamBtn.style.opacity = '1';
-                        streamBtn.innerHTML = '<i class="fa-brands fa-spotify" style="font-size: 1.1rem;"></i> STREAM SINGLE NOW';
+                        streamBtn.innerHTML = '<i class="fa-brands fa-spotify" style="font-size: 1.1rem;"></i> STREAM NOW';
                     }
                 }
 
@@ -1304,7 +1306,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     streamBtn.style.display = "flex";
                     streamBtn.style.pointerEvents = "all";
                     streamBtn.style.opacity = "1";
-                    streamBtn.innerHTML = '<i class="fa-brands fa-spotify" style="font-size: 1.1rem;"></i> STREAM SINGLE NOW';
+                    streamBtn.innerHTML = '<i class="fa-brands fa-spotify" style="font-size: 1.1rem;"></i> STREAM NOW';
                 }
                 return;
             }
