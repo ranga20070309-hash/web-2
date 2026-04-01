@@ -11,6 +11,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@100;300;400&family=Orbitron:wght@400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="enter.css?v=2" />
+    <script type="module" src="https://unpkg.com/@splinetool/viewer@1.9.71/build/spline-viewer.js"></script>
 </head>
 <body>
     <div id="cursor"></div>
@@ -62,88 +63,15 @@
     <div id="rain-container"></div>
 
     <div id="main-content" class="hidden">
-        <div id="audio-control-wrapper">
-            <button id="audio-toggle">
-                <i class="fa-solid fa-volume-high"></i>
-            </button>
-            <div class="volume-slider-container">
-                <input type="range" id="volume-slider" min="0" max="100" value="50" />
-            </div>
-        </div>
 
-        <div class="side-music-panel" id="side-music-panel">
-            <div class="side-music-btn spotify" onclick="openModal('spotify-modal')">
-                <i class="fa-brands fa-spotify"></i>
-            </div>
-            <div class="side-music-btn apple" onclick="openModal('apple-modal')">
-                <i class="fa-brands fa-apple"></i>
-            </div>
-        </div>
+
+        <!-- Sidebar Buttons Removed -->
         
         <!-- Floating Comments Background Moved to #obscura-section for scrolling sync -->
 
         <!-- Custom Album / EP Right Window Moved Below to .container for proper Mobile Stacking -->
 
-        <!-- Modals -->
-        <div id="spotify-modal" class="music-modal" onclick="if(event.target===this) closeModals()">
-            <div class="modal-content-box" style="position: relative;">
-                <i class="fa-solid fa-xmark close-modal-btn" onclick="closeModals()"></i>
-                <div class="premium-spotify-box">
-                    <div class="spotify-box-glow"></div>
-                    <div class="spotify-box-content">
-                        <div class="spotify-header">
-                            <div class="spotify-title">
-                                <i class="fa-brands fa-spotify"></i>
-                                <span>LIVE ARTIST PROFILE</span>
-                            </div>
-                            <div class="spotify-live-indicator">
-                                <span class="live-dot"></span>
-                                <span class="live-text">ONLINE</span>
-                            </div>
-                        </div>
-                        <div class="spotify-iframe-wrapper">
-                            <iframe src="https://open.spotify.com/embed/artist/4qzgHdPtzT0UJgcV9Bbc5O?utm_source=generator&theme=0" width="100%" height="100%" frameBorder="0" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
-                        </div>
-                        <div class="spotify-footer">
-                            <a href="https://open.spotify.com/artist/4qzgHdPtzT0UJgcV9Bbc5O" target="_blank" class="spotify-action-btn">
-                                <span>OPEN IN SPOTIFY APP</span>
-                                <i class="fa-solid fa-arrow-up-right-from-square"></i>
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div id="apple-modal" class="music-modal" onclick="if(event.target===this) closeModals()">
-            <div class="modal-content-box" style="position: relative;">
-                <i class="fa-solid fa-xmark close-modal-btn" onclick="closeModals()"></i>
-                <div class="premium-apple-box">
-                    <div class="apple-box-glow"></div>
-                    <div class="apple-box-content">
-                        <div class="apple-header">
-                            <div class="apple-title">
-                                <i class="fa-brands fa-apple"></i>
-                                <span>APPLE MUSIC PROFILE</span>
-                            </div>
-                            <div class="apple-live-indicator">
-                                <span class="live-dot"></span>
-                                <span class="live-text">ONLINE</span>
-                            </div>
-                        </div>
-                        <div class="apple-iframe-wrapper">
-                            <iframe lang="zh-CN" allow="autoplay *; encrypted-media *; fullscreen *; clipboard-write" frameborder="0" height="100%" style="width:100%;max-width:660px;overflow:hidden;background:transparent;" sandbox="allow-forms allow-popups allow-same-origin allow-scripts allow-storage-access-by-user-activation allow-top-navigation-by-user-activation" src="https://embed.music.apple.com/us/album/midu-echoing-funk-single/1879504219?theme=dark&l=zh-CN"></iframe>
-                        </div>
-                        <div class="apple-footer">
-                            <a href="https://music.apple.com/us/artist/ph%C3%B8nixwave/1838299671" target="_blank" class="apple-action-btn">
-                                <span>OPEN IN APPLE MUSIC</span>
-                                <i class="fa-solid fa-arrow-up-right-from-square"></i>
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+        <!-- Modals moved to bottom of body -->
 
         <div class="container">
             <h1 class="title glow" id="profile-name">||RANGA||</h1>
@@ -206,26 +134,35 @@
                 <a href="#" target="_blank" class="social-icon" id="link-apple"><i class="fa-brands fa-apple"></i></a>
             </div>
 
-            <div class="music-player">
-                <div class="album-art">
-                    <img src="https://ui-avatars.com/api/?name=Music&background=222&color=f00" alt="Album View" id="player-album-art" />
+            <div class="vibe-player" id="vibe-player">
+                <div class="vibe-visual-box">
+                    <div class="vibe-bars">
+                        <div class="vbar"></div>
+                        <div class="vbar"></div>
+                        <div class="vbar"></div>
+                        <div class="vbar"></div>
+                        <div class="vbar"></div>
+                    </div>
                 </div>
-                <div class="player-info">
-                    <div class="song-title glow" id="song-title-text">Loading...</div>
-                    <div class="progress-row">
-                        <span id="current-time">0:00</span>
-                        <div class="progress-bar-bg" id="progress-bar-bg">
-                            <div class="progress-bar-fill" id="progress-bar-fill"></div>
+                <div class="vibe-main-content">
+                    <div class="vibe-info-row">
+                        <div class="vibe-title glow" id="vibe-song-title">CYBER VIBE</div>
+                        <div class="vibe-time-display">
+                            <span id="vibe-current-time">0:00</span> / <span id="vibe-duration">0:00</span>
                         </div>
-                        <span id="total-time">0:00</span>
-                        <div class="player-buttons">
-                            <i class="fa-solid fa-backward-step"></i>
-                            <i class="fa-solid fa-pause" id="play-pause-btn"></i>
-                            <i class="fa-solid fa-forward-step"></i>
+                    </div>
+                    <div class="vibe-controls-row">
+                        <button id="vibe-play-pause" title="Play/Pause"><i class="fa-solid fa-play"></i></button>
+                        <div class="vibe-progress-container" id="vibe-progress-bg">
+                            <div class="vibe-progress-fill" id="vibe-progress-fill"></div>
+                        </div>
+                        <div class="vibe-volume-wrapper">
+                            <i class="fa-solid fa-volume-low"></i>
+                            <input type="range" id="vibe-volume-slider" min="0" max="100" value="50">
                         </div>
                     </div>
                 </div>
-            </div> <!-- Closes .music-player -->
+            </div>
         </div> <!-- Closes .container -->
 
         <div id="view-counter-box" class="view-counter">
@@ -496,9 +433,7 @@
         </div>
     </div>
 
-    <audio id="bg-music" loop>
-        <source src="" type="audio/mpeg" id="audio-source" />
-    </audio>
+
 
     <!-- Buttery Smooth Scrolling & JS Animations -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
@@ -520,6 +455,13 @@
       firebase.initializeApp(firebaseConfig);
       const db = firebase.firestore();
     </script>
+
+
+    <audio id="vibe-audio" loop>
+        <source src="vibe.mp3" type="audio/mpeg" id="vibe-source" />
+    </audio>
+
+    <!-- Modals Removed -->
 
     <script src="config.js?v=17"></script>
     <script src="script.js?v=17"></script>
