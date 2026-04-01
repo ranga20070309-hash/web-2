@@ -177,7 +177,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     // Initialize Lenis for Buttery Smooth Scrolling
-    const lenis = new Lenis({
+    window.lenis = new Lenis({
         duration: 1.2,
         easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)), 
         direction: 'vertical',
@@ -188,46 +188,14 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     function raf(time) {
-        lenis.raf(time);
+        if (window.lenis) window.lenis.raf(time);
         requestAnimationFrame(raf);
     }
     requestAnimationFrame(raf);
 
-    // Load CONFIG
-    let baseVolume = 0.5;
-    let isVolumeLowered = false;
-    let volumeInterval = null;
 
-    function fadeVolume(targetVol) {
-        if (volumeInterval) clearInterval(volumeInterval);
-        const step = (targetVol - audio.volume) / 20;
-        let count = 0;
-        volumeInterval = setInterval(() => {
-            const newVol = audio.volume + step;
-            if (newVol >= 0 && newVol <= 1) audio.volume = newVol;
-            count++;
-            if (count >= 20) {
-                audio.volume = targetVol;
-                clearInterval(volumeInterval);
-            }
-        }, 25);
-    }
 
-    lenis.on('scroll', () => {
-        const obscuraTitle = document.querySelector(".obscura-title");
-        if (!obscuraTitle) return;
-        
-        const rect = obscuraTitle.getBoundingClientRect();
-        const triggerPoint = window.innerHeight * 0.9; // Trigger slightly before it fully shows for smoothness
-        
-        if (rect.top < triggerPoint && !isVolumeLowered) {
-            isVolumeLowered = true;
-            fadeVolume(baseVolume * 0.2); 
-        } else if (rect.top >= triggerPoint && isVolumeLowered) {
-            isVolumeLowered = false;
-            fadeVolume(baseVolume); 
-        }
-    });
+
     document.getElementById("page-title").textContent = CONFIG.name;
 
     // Dynamically update page title from CONFIG
@@ -522,17 +490,7 @@ document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("link-tiktok").href = CONFIG.socials.tiktok;
     document.getElementById("link-apple").href = CONFIG.socials.apple;
 
-    // Music
-    document.getElementById("song-title-text").textContent = CONFIG.songTitle;
-    document.getElementById("audio-source").src = CONFIG.audioSrc;
 
-    const albumArtEl = document.getElementById("player-album-art");
-    if (albumArtEl && CONFIG.albumArt) {
-        albumArtEl.src = CONFIG.albumArt;
-    }
-
-    const audio = document.getElementById("bg-music");
-    audio.load();
 
     // Custom cursor and water tail
     const cursor = document.getElementById("cursor");
@@ -631,23 +589,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
         animateCursor();
 
-        const clickables = document.querySelectorAll("a, button, .discord-card, .progress-bar-bg, .player-buttons i, input, .social-icon");
+        const clickables = document.querySelectorAll("a, button, .discord-card, input, .social-icon");
         clickables.forEach((el) => {
             el.addEventListener("mouseenter", () => cursor.classList.add("cursor-hover"));
             el.addEventListener("mouseleave", () => cursor.classList.remove("cursor-hover"));
         });
 
-        const spotifyBox = document.querySelector(".premium-spotify-box");
-        if (spotifyBox) {
-            spotifyBox.addEventListener("mouseenter", () => cursor.classList.add("hide-cursor"));
-            spotifyBox.addEventListener("mouseleave", () => cursor.classList.remove("hide-cursor"));
-        }
-
-        const appleBox = document.querySelector(".premium-apple-box");
-        if (appleBox) {
-            appleBox.addEventListener("mouseenter", () => cursor.classList.add("hide-cursor"));
-            appleBox.addEventListener("mouseleave", () => cursor.classList.remove("hide-cursor"));
-        }
+        // Custom cursor remains visible everywhere
     }
 
     // --- PREMIUM CHINESE CYBER ENTER SCREEN LOGIC ---
@@ -657,13 +605,15 @@ document.addEventListener("DOMContentLoaded", () => {
     const hum = document.getElementById("ambient-hum");
     const cursorGlow = document.getElementById("cursor-glow");
     
-    // Restore missing UI control variables
-    const audioToggle = document.getElementById("audio-toggle");
-    const playPauseBtn = document.getElementById("play-pause-btn");
-    const progressBarBg = document.getElementById("progress-bar-bg");
-    const progressBarFill = document.getElementById("progress-bar-fill");
-    const currentTimeEl = document.getElementById("current-time");
-    const totalTimeEl = document.getElementById("total-time");
+    // Vibe Audio Player Globals for Enter Access
+    const vibeAudio = document.getElementById("vibe-audio");
+    const vibePlayPause = document.getElementById("vibe-play-pause");
+    const vibeProgressBg = document.getElementById("vibe-progress-bg");
+    const vibeProgressFill = document.getElementById("vibe-progress-fill");
+    const vibeVolumeSlider = document.getElementById("vibe-volume-slider");
+    const vibeSongTitle = document.getElementById("vibe-song-title");
+    const vibePlayer = document.getElementById("vibe-player");
+
 
     // Cursor Glow Follow
     document.addEventListener("mousemove", (e) => {
@@ -705,11 +655,22 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     };
 
-    // Sequential Cinematic Load
+    // Status Text Rotation Logic
+    const statusPhrases = [
+        { cn: "[ 身份验证 ]", en: "[ AUTHENTICATING ]" },
+        { cn: "[ 正在连接 ]", en: "[ CONNECTING ]" },
+        { cn: "[ 建立链接 ]", en: "[ ESTABLISHING CONNECTION ]" },
+        { cn: "[ 正在加载 ]", en: "[ LOADING SYSTEM ]" },
+        { cn: "[ 授权未通 ]", en: "[ STATUS: UNAUTHORIZED ]" }
+    ];
+    let phraseIdx = 0;
+
     const initEnterSequence = async () => {
         const loadingCN = document.querySelector("#loading-text .cn");
         const loadingEN = document.querySelector("#loading-text .en");
         const statusBox = document.querySelector(".status-box");
+        const statusCN = document.querySelector("#status-text-el .cn");
+        const statusEN = document.querySelector("#status-text-el .en");
         const fogContainer = document.getElementById("fog-container");
 
         // Start Fog & Try Audio
@@ -723,20 +684,27 @@ document.addEventListener("DOMContentLoaded", () => {
         
         await new Promise(r => setTimeout(r, 400));
         loadingEN.style.opacity = "1";
-        loadingEN.style.transition = "opacity 2s ease";
+        loadingEN.style.transition = "opacity 2.5s ease";
 
-        // Phase 2: Status Reveal (Unauthorized)
+        // Phase 2: Status Reveal & Rotate
         setTimeout(() => {
             if (statusBox) {
                 statusBox.classList.add("active");
                 statusBox.classList.add("glitch");
+                
+                // Rotation Loop
+                setInterval(() => {
+                    phraseIdx = (phraseIdx + 1) % statusPhrases.length;
+                    if (statusCN) statusCN.textContent = statusPhrases[phraseIdx].cn;
+                    if (statusEN) statusEN.textContent = statusPhrases[phraseIdx].en;
+                }, 1800);
             }
-        }, 1000);
+        }, 1200);
 
         // Phase 3: Exclusive Access Trigger
         setTimeout(() => {
             if (enterBtn) enterBtn.classList.add("active");
-        }, 2200);
+        }, 3000);
     };
 
     initEnterSequence();
@@ -748,6 +716,14 @@ document.addEventListener("DOMContentLoaded", () => {
                 const trAudio = new Audio(window.enterAudioURL);
                 trAudio.volume = 0.35; // Comfortable low volume
                 trAudio.play().catch(() => {});
+            }
+
+            // --- AUTOPLAY MUSIC ON ENTER ---
+            if (vibeAudio) {
+                vibeAudio.play().then(() => {
+                    if (vibePlayPause) vibePlayPause.innerHTML = '<i class="fa-solid fa-pause"></i>';
+                    if (vibePlayer) vibePlayer.classList.add("playing");
+                }).catch(e => console.warn("Autoplay prevented:", e));
             }
                  // ZERO LATENCY SYSTEM SCAN: 5.0s Glide + Glow
             const enterScreen = document.getElementById("enter-screen");
@@ -838,15 +814,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 else { if(hum) hum.pause(); clearInterval(humFade); }
             }, 50);
 
-            // Sync with existing audio engine
-            if (audio) {
-                audio.volume = 0.5;
-                audio.play().then(() => {
-                    isPlaying = true;
-                    if (typeof updatePlayPauseIcon === 'function') updatePlayPauseIcon();
-                }).catch(() => {});
-            }
-
+            // Final Video Stabilization
             if (isVideo && typeof bgVideo !== 'undefined') {
                 bgVideo.play().catch(() => {});
             }
@@ -902,75 +870,19 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }, 1000);
 
-    audioToggle.addEventListener("click", () => {
-        audio.muted = !audio.muted;
-        audioToggle.innerHTML = audio.muted
-            ? '<i class="fa-solid fa-volume-xmark"></i>'
-            : '<i class="fa-solid fa-volume-high"></i>';
-    });
 
-    const volumeSlider = document.getElementById("volume-slider");
-    if (volumeSlider) {
-        volumeSlider.addEventListener("input", (e) => {
-            const vol = e.target.value / 100;
-            baseVolume = vol; // Store user preference
-            if (!isVolumeLowered) {
-                audio.volume = vol;
-            } else {
-                audio.volume = vol * 0.2; // Keep at lowered state if scrolled down
-            }
 
-            if (vol === 0) {
-                audio.muted = true;
-                audioToggle.innerHTML = '<i class="fa-solid fa-volume-xmark"></i>';
-            } else {
-                audio.muted = false;
-                audioToggle.innerHTML = '<i class="fa-solid fa-volume-high"></i>';
-            }
-        });
-    }
 
-    // Player math (Variables consolidated at the top)
-    function formatTime(seconds) {
-        if (isNaN(seconds)) return "0:00";
-        const mins = Math.floor(seconds / 60);
-        const secs = Math.floor(seconds % 60);
-        return `${mins}:${secs < 10 ? "0" : ""}${secs}`;
-    }
 
-    audio.addEventListener("loadedmetadata", () => {
-        totalTimeEl.textContent = formatTime(audio.duration);
-    });
 
-    audio.addEventListener("timeupdate", () => {
-        if (audio.duration) {
-            const progressPercent = (audio.currentTime / audio.duration) * 100;
-            progressBarFill.style.width = progressPercent + "%";
-            currentTimeEl.textContent = formatTime(audio.currentTime);
-        }
-    });
 
-    progressBarBg.addEventListener("click", (e) => {
-        const width = progressBarBg.clientWidth;
-        const clickX = e.offsetX;
-        const duration = audio.duration;
-        audio.currentTime = (clickX / width) * duration;
-    });
 
-    playPauseBtn.addEventListener("click", () => {
-        if (isPlaying) {
-            audio.pause();
-            isPlaying = false;
-        } else {
-            audio.play();
-            isPlaying = true;
-        }
-        updatePlayPauseIcon();
-    });
 
-    function updatePlayPauseIcon() {
-        playPauseBtn.className = isPlaying ? "fa-solid fa-pause" : "fa-solid fa-play";
-    }
+
+
+
+
+
 
     // Rain
     const rainContainer = document.getElementById("rain-container");
@@ -1305,6 +1217,195 @@ document.addEventListener("DOMContentLoaded", () => {
     }
     
     initWindEffect();
+
+    // --- DANMAKU SCROLLING COMMENTS ---
+    function initDanmaku() {
+        const container = document.getElementById("danmaku-container");
+        if (!container) return;
+        const comments = [
+            "Love the vibe! 🔥", "我在等你...", "This drop is insane! 🎹", "Cyberpunk aesthetic 🤖",
+            "太酷了！✨", "Obscura Records 🧊", "Masterpiece alert! 🔔", "Stay tuned for more...",
+            "Vibing in the matrix 🌌", "这里的氛围太棒了", "Next level production!", "Legendary track 🏆",
+            "Wait for the hit! 💥", "这一刻，音乐无国界", "Chilled vibes only 🌙", "Pure talent! ✨",
+            "最美的一瞬间...", "Obscura energy 🔋", "Neon dreams 🌃", "夜城之声 🎤",
+            "Keep it spinning!", "节奏感太强了 🥁", "Digital soul 🧬", "无梦之境 🌪",
+            "Sounds from the future 🚀", "幻像中的旋律", "Bass boost on! 🔈", "这是艺术 🖤",
+            "Virtual reality vibes", "跨越时空的节奏", "Sonic boom! 🔊", "音乐是灵魂的语言",
+            "Obscura connection 🔌", "沉浸在旋律中", "Lost in transition 🌀", "每一个音符都是故事",
+            "System online...", "欢迎来到奥布斯丘拉", "Vibe check passed ✅", "无限的循环",
+            "Another Obscura hit!", "这就是我想听的", "Aesthetic overload 📼", "光影与节奏",
+            "Underground vibes 🚇", "沉默中的轰鸣", "Elite production 🎖", "超越极限",
+            "Cyber soul 🦾", "听碎碎的星光", "Dark wave coming 🌊", "Obscura for life 🕊"
+        ];
+        function createDanmaku() {
+            const comment = comments[Math.floor(Math.random() * comments.length)];
+            const div = document.createElement("div");
+            div.className = "danmaku-item";
+            div.innerHTML = `<span class="danmaku-text">${comment}</span>`;
+            div.style.left = (Math.random() * 80 + 10) + "%";
+            div.style.setProperty("--scale", Math.random() * 0.3 + 0.8);
+            div.style.setProperty("--drift", (Math.random() * 100 - 50) + "px");
+            const duration = Math.random() * 5 + 8;
+            div.style.animation = `danmakuFloat ${duration}s linear forwards`;
+            container.appendChild(div);
+            setTimeout(() => div.remove(), duration * 1000);
+        }
+        setInterval(createDanmaku, 4000); // Slower generation as requested
+    }
+    initDanmaku();
+
+    // --- FIRESTORE DATA SYNC (LIVE SETTINGS & COUNTDOWN) ---
+    function syncSiteSettings() {
+        if (typeof db === 'undefined') return;
+        
+        db.collection('settings').doc('main').onSnapshot(doc => {
+            if (doc.exists) {
+                const data = doc.data();
+                
+                // Update Latest Single Section
+                if (data.latestSingle) {
+                    const ls = data.latestSingle;
+                    if (document.getElementById("ls-title")) document.getElementById("ls-title").textContent = ls.title || "Echoing Funk";
+                    if (document.getElementById("ls-artist")) document.getElementById("ls-artist").textContent = ls.artist || "||RANGA||";
+                    if (document.getElementById("ls-type")) document.getElementById("ls-type").textContent = ls.type || "LATEST SINGLE";
+                    if (document.getElementById("ls-qty")) document.getElementById("ls-qty").textContent = ls.qty || '1 Song';
+                    if (document.getElementById("ls-prod")) document.getElementById("ls-prod").textContent = ls.prod || "RANGA";
+                    if (document.getElementById("ls-mix")) document.getElementById("ls-mix").textContent = ls.mix || "SVYUXU";
+                    if (document.getElementById("ls-coprod")) document.getElementById("ls-coprod").textContent = ls.coprod || "FL4ME";
+                    if (document.getElementById("ls-url")) document.getElementById("ls-url").href = ls.url || "#";
+                    if (document.getElementById("ls-cover")) document.getElementById("ls-cover").src = ls.cover || "";
+
+
+
+                    // Countdown Logic Integration
+                    if (ls.releaseDate) {
+                        initCountdown(ls.releaseDate);
+                    }
+                }
+            }
+        });
+    }
+
+    // --- LATEST SINGLE COUNTDOWN ---
+    let countdownTimer;
+    function initCountdown(dateString) {
+        if (countdownTimer) clearInterval(countdownTimer);
+        const releaseDate = new Date(dateString).getTime();
+        const countdownContainer = document.getElementById("ls-countdown-container");
+        const streamBtn = document.getElementById("ls-url");
+        
+        function update() {
+            const now = new Date().getTime();
+            const diff = releaseDate - now;
+            
+            if (diff <= 0) {
+                if (countdownContainer) countdownContainer.style.display = "none";
+                if (streamBtn) {
+                    streamBtn.style.display = "flex";
+                    streamBtn.style.pointerEvents = "all";
+                    streamBtn.style.opacity = "1";
+                    streamBtn.innerHTML = '<i class="fa-brands fa-spotify" style="font-size: 1.1rem;"></i> STREAM SINGLE NOW';
+                }
+                return;
+            }
+            
+            if (countdownContainer) countdownContainer.style.display = "flex";
+            if (streamBtn) {
+                streamBtn.style.display = "flex";
+                streamBtn.style.pointerEvents = "none";
+                streamBtn.style.opacity = "0.4";
+                streamBtn.innerHTML = '<i class="fa-solid fa-lock" style="font-size: 1.1rem;"></i> RELEASING SOON';
+            }
+            
+            const d = Math.floor(diff / (1000 * 60 * 60 * 24));
+            const h = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+            const s = Math.floor((diff % (1000 * 60)) / 1000);
+            
+            if (document.getElementById("cd-days")) document.getElementById("cd-days").textContent = d.toString().padStart(2, '0');
+            if (document.getElementById("cd-hours")) document.getElementById("cd-hours").textContent = h.toString().padStart(2, '0');
+            if (document.getElementById("cd-mins")) document.getElementById("cd-mins").textContent = m.toString().padStart(2, '0');
+            if (document.getElementById("cd-secs")) document.getElementById("cd-secs").textContent = s.toString().padStart(2, '0');
+        }
+        
+        countdownTimer = setInterval(update, 1000);
+        update();
+    }
+    
+    // Vibe Audio Player Logic Continued
+    if (vibeAudio) {
+        vibeSongTitle.textContent = CONFIG.songTitle || "CYBER VIBE";
+        
+        vibePlayPause.addEventListener("click", () => {
+            if (vibeAudio.paused) {
+                vibeAudio.play();
+                vibePlayPause.innerHTML = '<i class="fa-solid fa-pause"></i>';
+                vibePlayer.classList.add("playing");
+            } else {
+                vibeAudio.pause();
+                vibePlayPause.innerHTML = '<i class="fa-solid fa-play"></i>';
+                vibePlayer.classList.remove("playing");
+            }
+        });
+
+        vibeAudio.addEventListener("loadedmetadata", () => {
+            if (document.getElementById("vibe-duration")) {
+                document.getElementById("vibe-duration").textContent = formatVibeTime(vibeAudio.duration);
+            }
+        });
+
+        vibeAudio.addEventListener("timeupdate", () => {
+            if (!isNaN(vibeAudio.duration)) {
+                const progress = (vibeAudio.currentTime / vibeAudio.duration) * 100;
+                vibeProgressFill.style.width = progress + "%";
+                if (document.getElementById("vibe-current-time")) {
+                    document.getElementById("vibe-current-time").textContent = formatVibeTime(vibeAudio.currentTime);
+                }
+            }
+        });
+
+        function formatVibeTime(seconds) {
+            if (isNaN(seconds)) return "0:00";
+            const mins = Math.floor(seconds / 60);
+            const secs = Math.floor(seconds % 60);
+            return `${mins}:${secs < 10 ? "0" : ""}${secs}`;
+        }
+
+
+        vibeProgressBg.addEventListener("click", (e) => {
+            const rect = vibeProgressBg.getBoundingClientRect();
+            const clickX = e.clientX - rect.left;
+            const newTime = (clickX / rect.width) * vibeAudio.duration;
+            vibeAudio.currentTime = newTime;
+        });
+
+        if (vibeVolumeSlider) {
+            vibeAudio.volume = 0.5;
+            vibeVolumeSlider.value = 50;
+            vibeVolumeSlider.addEventListener("input", (e) => {
+                vibeAudio.volume = e.target.value / 100;
+            });
+        }
+
+        // --- VOLUME FADE ON SCROLL ---
+        window.addEventListener('scroll', () => {
+            if (!vibeAudio) return;
+            const obs = document.getElementById('obscura-section');
+            if (!obs) return;
+            const rect = obs.getBoundingClientRect();
+            if (rect.top < window.innerHeight) {
+                // Fades down to 0.1 as we approach obscura section
+                const fadeFactor = Math.max(0, 1 - (rect.top / window.innerHeight));
+                vibeAudio.volume = Math.max(0.1, 0.5 - (fadeFactor * 0.4));
+                if (vibeVolumeSlider) vibeVolumeSlider.value = vibeAudio.volume * 100;
+            } else {
+                vibeAudio.volume = 0.5;
+                if (vibeVolumeSlider) vibeVolumeSlider.value = 50;
+            }
+        });
+    }
+
+    syncSiteSettings();
 });
 
 // Modal Logic for Spotify and Apple Music
@@ -1313,8 +1414,9 @@ window.openModal = function(modalId) {
     if (!modal) return;
     
     // Auto-disable Lenis scrolling when modal opens, prevents scrolling background
-    if (typeof lenis !== "undefined") lenis.stop();
+    if (window.lenis) window.lenis.stop();
     document.body.style.overflow = "hidden";
+    document.documentElement.style.overflow = "hidden"; // Extra lock for some browsers
     
     modal.classList.add("modal-active");
 };
@@ -1324,8 +1426,7 @@ window.closeModals = function() {
     modals.forEach(m => m.classList.remove('modal-active'));
     
     // Re-enable scrolling when modals are all closed
-    if (typeof lenis !== "undefined") lenis.start();
+    if (window.lenis) window.lenis.start();
     document.body.style.overflow = "";
+    document.documentElement.style.overflow = "";
 };
-
-
