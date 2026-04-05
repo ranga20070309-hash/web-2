@@ -84,6 +84,22 @@ document.addEventListener("DOMContentLoaded", () => {
                 if (dbData.obscuraTitle && dbData.obscuraTitle !== "") { const ot = document.querySelector('.obscura-title'); if (ot) ot.textContent = dbData.obscuraTitle; }
                 if (dbData.obscuraDesc && dbData.obscuraDesc !== "") { const od = document.querySelector('.obscura-description'); if (od) od.innerHTML = dbData.obscuraDesc; }
                 if (dbData.obscuraDiscord && dbData.obscuraDiscord !== "") { const oi = document.querySelector('.obscura-invite-btn'); if (oi) oi.href = dbData.obscuraDiscord; }
+                
+                // NEW: Dyna-Site Link Injections
+                if (dbData.obscuraSiteText && dbData.obscuraSiteText !== "") { 
+                    const slBtn = document.querySelector('.obscura-invite-btn.site-link'); 
+                    if (slBtn) {
+                        const icon = slBtn.querySelector('i');
+                        slBtn.innerHTML = ''; 
+                        if (icon) slBtn.appendChild(icon);
+                        slBtn.appendChild(document.createTextNode(' ' + dbData.obscuraSiteText));
+                    }
+                }
+                if (dbData.obscuraSiteURL && dbData.obscuraSiteURL !== "") { 
+                    const slBtn = document.querySelector('.obscura-invite-btn.site-link'); 
+                    if (slBtn) slBtn.href = dbData.obscuraSiteURL; 
+                }
+
                 if (dbData.obscuraFooterTitle && dbData.obscuraFooterTitle !== "") { const ft = document.querySelector('.footer-title'); if (ft) ft.textContent = dbData.obscuraFooterTitle; }
                 if (dbData.obscuraFooterDesc && dbData.obscuraFooterDesc !== "") { const fd = document.querySelector('.footer-desc'); if (fd) fd.textContent = dbData.obscuraFooterDesc; }
                 if (dbData.copyrightText && dbData.copyrightText !== "") { const ct = document.querySelector('.tape-copyright p'); if (ct) ct.textContent = dbData.copyrightText; }
@@ -135,7 +151,7 @@ document.addEventListener("DOMContentLoaded", () => {
                                     cdContainer.style.display = 'none';
                                     streamBtn.style.pointerEvents = 'all';
                                     streamBtn.style.opacity = '1';
-                                    streamBtn.innerHTML = '<i class="fa-brands fa-spotify" style="font-size: 1.1rem;"></i> STREAM NOW';
+                                    streamBtn.innerHTML = '<i class="fa-brands fa-spotify" style="font-size: 1.1rem;"></i> STREAM SINGLE NOW';
                                     if (timerInterval) clearInterval(timerInterval);
                                 }
                             };
@@ -147,13 +163,13 @@ document.addEventListener("DOMContentLoaded", () => {
                             cdContainer.style.display = 'none';
                             streamBtn.style.pointerEvents = 'all';
                             streamBtn.style.opacity = '1';
-                            streamBtn.innerHTML = '<i class="fa-brands fa-spotify" style="font-size: 1.1rem;"></i> STREAM NOW';
+                            streamBtn.innerHTML = '<i class="fa-brands fa-spotify" style="font-size: 1.1rem;"></i> STREAM SINGLE NOW';
                         }
                     } else if (cdContainer && streamBtn) {
                         cdContainer.style.display = 'none';
                         streamBtn.style.pointerEvents = 'all';
                         streamBtn.style.opacity = '1';
-                        streamBtn.innerHTML = '<i class="fa-brands fa-spotify" style="font-size: 1.1rem;"></i> STREAM NOW';
+                        streamBtn.innerHTML = '<i class="fa-brands fa-spotify" style="font-size: 1.1rem;"></i> STREAM SINGLE NOW';
                     }
                 }
 
@@ -1306,7 +1322,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     streamBtn.style.display = "flex";
                     streamBtn.style.pointerEvents = "all";
                     streamBtn.style.opacity = "1";
-                    streamBtn.innerHTML = '<i class="fa-brands fa-spotify" style="font-size: 1.1rem;"></i> STREAM NOW';
+                    streamBtn.innerHTML = '<i class="fa-brands fa-spotify" style="font-size: 1.1rem;"></i> STREAM SINGLE NOW';
                 }
                 return;
             }
