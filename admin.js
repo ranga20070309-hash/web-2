@@ -135,7 +135,9 @@ document.addEventListener('DOMContentLoaded', () => {
             d.enterVideo = "https://image2url.com/r2/default/videos/1773178239885-4fc6156d-03bd-4dd6-ae95-ba022f2a9959.mp4";
             d.enterTitle = "Welcome To My Site Buddy"; d.enterButton = "I'm Here To Look Your Site";
             d.obscuraTitle = "OBSCURA RECORDS"; d.obscuraDesc = "OBSCURA RECORDS is an independent music label focused on artist development, music production, and official releases.<br/>Our mission is to support talented artists and create high-quality music through collaboration and innovation.";
-            d.obscuraDiscord = "https://discord.gg/uyvWq2UN"; d.obscuraFooterTitle = "We Are The Team Of OBSCURA";
+            d.obscuraDiscord = "https://discord.gg/uyvWq2UN";
+            d.obscuraSiteText = "OFFICIAL WEBSITE"; d.obscuraSiteURL = "https://www.obscurarecord.com/";
+            d.obscuraFooterTitle = "We Are The Team Of OBSCURA";
             d.obscuraFooterDesc = "Join to the server and make music with other producers"; d.copyrightText = "COPYRIGHTED BY OBSCURA RECORDS";
             d.bottomSocialTitle = "CONTACT WITH SOCIAL MEDIA";
             d.latestSingle = {
@@ -166,7 +168,8 @@ document.addEventListener('DOMContentLoaded', () => {
         setVal('cfg-trans-top', d.transTop || "  WELCOME       欢迎  "); setVal('cfg-trans-mid', d.transMid || " ACCESS GRANTED 授权通过");
 
         // Obscura Info
-        setVal('cfg-obs-title', d.obscuraTitle); setVal('cfg-obs-desc', d.obscuraDesc); setVal('cfg-obs-discord', d.obscuraDiscord);
+        setVal('cfg-obs-title', d.obscuraTitle); setVal('cfg-obs-desc', d.obscuraDesc); 
+        setVal('cfg-obs-discord', d.obscuraDiscord); setVal('cfg-obs-site-text', d.obscuraSiteText); setVal('cfg-obs-site-url', d.obscuraSiteURL);
         setVal('cfg-obs-footer-title', d.obscuraFooterTitle); setVal('cfg-obs-footer-desc', d.obscuraFooterDesc); setVal('cfg-obs-copyright', d.copyrightText);
         setVal('cfg-btm-soc-title', d.bottomSocialTitle);
         
@@ -233,6 +236,7 @@ document.addEventListener('DOMContentLoaded', () => {
             transTop: val('cfg-trans-top'), transMid: val('cfg-trans-mid'),
 
             obscuraTitle:val('cfg-obs-title'), obscuraDesc:val('cfg-obs-desc'), obscuraDiscord:val('cfg-obs-discord'),
+            obscuraSiteText:val('cfg-obs-site-text'), obscuraSiteURL:val('cfg-obs-site-url'),
             obscuraFooterTitle:val('cfg-obs-footer-title'), obscuraFooterDesc:val('cfg-obs-footer-desc'), copyrightText:val('cfg-obs-copyright'),
             bottomSocialTitle:val('cfg-btm-soc-title'),
             latestSingle: {
