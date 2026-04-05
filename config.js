@@ -29,5 +29,9 @@ const CONFIG = {
         spotify: "https://open.spotify.com/artist/4qzgHdPtzT0UJgcV9Bbc5O",
         tiktok: "https://www.tiktok.com/@phonixwave",
         apple: "https://music.apple.com/us/artist/ph%C3%B8nixwave/1838299671"
-    }
+    },
+
+    // Obscura Branding
+    obscuraSiteText: "OFFICIAL WEBSITE",
+    obscuraSiteURL: "https://www.obscurarecord.com/"
 };
