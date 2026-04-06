@@ -725,7 +725,34 @@ document.addEventListener("DOMContentLoaded", () => {
         }, 3000);
     };
 
+    // Start intro sequence immediately
     initEnterSequence();
+
+    // Custom Alert Logic (Non-blocking)
+    const customAlert = document.getElementById('custom-alert');
+    const alertDomain = document.getElementById('alert-domain');
+    if (customAlert) {
+        if (alertDomain) alertDomain.textContent = window.location.hostname;
+        const okBtn = document.getElementById('alert-ok-btn');
+        setTimeout(() => { 
+            customAlert.classList.add('active'); 
+            // Disable scroll when alert shows
+            if (window.lenis) window.lenis.stop();
+            document.body.style.overflow = "hidden";
+        }, 1500);
+
+        if (okBtn) {
+            okBtn.onclick = () => { 
+                customAlert.classList.add('hide'); 
+                setTimeout(() => { 
+                    customAlert.style.display='none'; 
+                    // Re-enable scroll when OK is clicked
+                    if (window.lenis) window.lenis.start();
+                    document.body.style.overflow = "";
+                }, 300); 
+            };
+        }
+    }
 
     if (enterBtn) {
         enterBtn.addEventListener("click", () => {
