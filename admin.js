@@ -1,8 +1,12 @@
 /* ADMIN.JS FULL SCRIPT */
 const firebaseConfig = {
-    apiKey: "AIzaSyBHVei7sBSauONN2s7Ecn9rGjDLw-EwfEU", authDomain: "admin-site-ranga.firebaseapp.com",
-    projectId: "admin-site-ranga", storageBucket: "admin-site-ranga.firebasestorage.app",
-    messagingSenderId: "308380589863", appId: "1:308380589863:web:ea6a55d4674a35c0f1d302"
+  apiKey: "AIzaSyBHVei7sBSauONN2s7Ecn9rGjDLw-EwfEU",
+  authDomain: "admin-site-ranga.firebaseapp.com",
+  databaseURL: "https://admin-site-ranga-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "admin-site-ranga",
+  storageBucket: "admin-site-ranga.firebasestorage.app",
+  messagingSenderId: "308380589863",
+  appId: "1:308380589863:web:ea6a55d4674a35c0f1d302"
 };
 try{ firebase.initializeApp(firebaseConfig); } catch(e){}
 const db = firebase.firestore();
